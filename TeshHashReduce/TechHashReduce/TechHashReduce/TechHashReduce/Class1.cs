@@ -17,7 +17,7 @@ namespace TechHashReduce
     {
         public const string MOD_GUID = "com.Valoneu.TechHashReduce";
         public const string MOD_NAME = "TechHashReduce";
-        public const string MOD_VERSION = "1.0.1";
+        public const string MOD_VERSION = "1.0.3";
 
         static float HashrateScale = 1.0f;
 
@@ -44,6 +44,8 @@ namespace TechHashReduce
                     TechState state = __instance.techStates[dataArray[j].ID];
                     long cost = dataArray[j].GetHashNeeded(state.curLevel);
                     state.hashNeeded = cost;
+                    if (state.hashNeeded > state.hashUploaded)
+                        state.hashUploaded = state.hashNeeded;
                     __instance.techStates[dataArray[j].ID] = state;
                 }
 
@@ -56,7 +58,7 @@ namespace TechHashReduce
             {
                 
                 if (__instance.Level != __instance.MaxLevel) {
-                    __result = (long)Mathf.RoundToInt(__result * HashrateScale);
+                    __result = (long)(__result * HashrateScale + 0.5f);
                 }
               
             }
