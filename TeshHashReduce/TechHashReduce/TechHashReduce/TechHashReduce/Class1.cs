@@ -17,53 +17,46 @@ namespace TechHashReduce
     {
         public const string MOD_GUID = "com.Valoneu.TechHashReduce";
         public const string MOD_NAME = "TechHashReduce";
-        public const string MOD_VERSION = "1.0.3";
+        public const string MOD_VERSION = "1.1.0";
 
-        static float HashrateScale = 1.0f;
+        public static float HashrateScale = 1.0f;
 
-        internal void Awake()
+        public void Awake()
         {
             var harmony = new Harmony(MOD_GUID);
             harmony.PatchAll(typeof(Patch));
 
             HashrateScale = Config.Bind<float>("General", "HashrateScale", 1f, "multiplies the hashrate for technologies by the value").Value;
-
-
         }
+    }
 
-        public class Patch
+    public class Patch
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameHistoryData), "Import")]
+        public static void ChangeTechCost(GameHistoryData __instance)
         {
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(GameHistoryData), "Import")]
-            public static void ChangeTechCost(GameHistoryData __instance)
+            TechProto[] dataArray = LDB.techs.dataArray;
+            for (int i = 0; i < dataArray.Length; i++)
             {
-
-                TechProto[] dataArray = LDB.techs.dataArray;
-                for (int j = 0; j < dataArray.Length; j++)
+                TechState techState = __instance.techStates[dataArray[i].ID];
+                if (techState.hashUploaded >= techState.hashNeeded)
                 {
-                    TechState state = __instance.techStates[dataArray[j].ID];
-                    long cost = dataArray[j].GetHashNeeded(state.curLevel);
-                    state.hashNeeded = cost;
-                    if (state.hashNeeded > state.hashUploaded)
-                        state.hashUploaded = state.hashNeeded;
-                    __instance.techStates[dataArray[j].ID] = state;
+                    techState.hashUploaded = techState.hashNeeded;
                 }
-
-
-            }
-
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(TechProto), "GetHashNeeded")]
-            public static void Modify(TechProto __instance, int levelRequest, ref long __result)
-            {
+                __instance.techStates[dataArray[i].ID] = techState;
                 
-                if (__instance.Level != __instance.MaxLevel) {
-                    __result = (long)(__result * HashrateScale + 0.5f);
-                }
-              
             }
-
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(TechProto), "GetHashNeeded")]
+        public static void Modify(TechProto __instance, int levelRequest, ref long __result)
+        {
+            if (__instance.MaxLevel >= 0)
+            {
+                __result = (long)((double)__result * (double)TechHashReduce.HashrateScale + 0.5);
+            }
+        }
     }
 }
