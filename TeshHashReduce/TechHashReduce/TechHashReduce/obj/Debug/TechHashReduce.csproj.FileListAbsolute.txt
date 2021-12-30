@@ -1,0 +1,2 @@
+C:\Users\filip\Desktop\DysonMods\TechHashReduce\TechHashReduce\TechHashReduce\obj\Debug\TechHashReduce.csproj.AssemblyReference.cache
+C:\Users\filip\Desktop\DysonMods\TechHashReduce\TechHashReduce\TechHashReduce\obj\Debug\TechHashReduce.csproj.CoreCompileInputs.cache
