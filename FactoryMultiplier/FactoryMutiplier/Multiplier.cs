@@ -328,6 +328,13 @@ namespace Multiplier
       ItemProto itemProto14 = ((ProtoSet<ItemProto>)LDB.items).Select(3700);
       ItemProto itemProto15 = ((ProtoSet<ItemProto>)LDB.items).Select(3701);
       ItemProto itemProto16 = ((ProtoSet<ItemProto>)LDB.items).Select(3702);
+            var protos = new ItemProto[] { itemProto1, itemProto2, itemProto3, itemProto4, itemProto5, itemProto6, itemProto7, itemProto8, itemProto9, itemProto10, itemProto12, itemProto14, itemProto15, itemProto16 };
+            for (int i = 0; i < protos.Length; i++)
+            {
+                if (protos[i] is null)
+                    UnityEngine.Debug.Log("The proto at the following index is null: " + i);
+            }
+
             for (int index = 1; index < __instance.consumerCursor; ++index)
       {
         int entityId = __instance.consumerPool[index].entityId;
