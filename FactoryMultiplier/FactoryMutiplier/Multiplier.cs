@@ -142,15 +142,16 @@ namespace Multiplier
       for (int index = 1; index < __instance.assemblerCursor; ++index)
       {
         int entityId = __instance.assemblerPool[index].entityId;
-        if (entityId > 0)
-         {
-           ItemProto itemProto4 = ((ProtoSet<ItemProto>)LDB.items).Select((int)__instance.factory.entityPool[entityId].protoId);
-           if (((Proto)itemProto4).ID == ((Proto)itemProto1).ID)
-             __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto1.prefabDesc.assemblerSpeed;
-           else if (((Proto)itemProto4).ID == ((Proto)itemProto2).ID)
-             __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto2.prefabDesc.assemblerSpeed;
-           else if (((Proto)itemProto4).ID == ((Proto)itemProto3).ID)
-             __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto3.prefabDesc.assemblerSpeed;
+                if (entityId > 0)
+                {
+                    ItemProto itemProto4 = ((ProtoSet<ItemProto>)LDB.items).Select((int)__instance.factory.entityPool[entityId].protoId);
+                    if (((Proto)itemProto4).ID == ((Proto)itemProto1).ID)
+                        __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto1.prefabDesc.assemblerSpeed;
+                    else if (((Proto)itemProto4).ID == ((Proto)itemProto2).ID)
+                        __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto2.prefabDesc.assemblerSpeed;
+                    else if (((Proto)itemProto4).ID == ((Proto)itemProto3).ID)
+                        __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto3.prefabDesc.assemblerSpeed;
+                }
       }
     }
 
