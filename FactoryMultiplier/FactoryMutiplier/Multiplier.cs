@@ -11,7 +11,9 @@ using System;
 namespace Multiplier
 {
   [BepInPlugin("com.Valoneu.Multiplier", "Multiplier", "1.0.0")]
-  public class Multiplier : BaseUnityPlugin
+    [BepInDependency("org.kremnev8.plugin.BetterMachines", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("me.xiaoye97.plugin.Dyson.LDBTool", BepInDependency.DependencyFlags.SoftDependency)]
+    public class Multiplier : BaseUnityPlugin
   {
     private static int walkspeed_set;
     private static int walkspeedMultiply;
