@@ -346,13 +346,13 @@ namespace Multiplier
                     if (((Proto) itemProto13).ID == ((Proto) itemProto2).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.smeltMultiply * itemProto2.prefabDesc.workEnergyPerTick;                   
                     if (((Proto)itemProto13).ID == ((Proto)itemProto14).ID)
-             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.smeltMultiply * itemProto14.prefabDesc.workEnergyPerTick;       
+            __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.smeltMultiply * itemProto14.prefabDesc.workEnergyPerTick;       
                     if (((Proto) itemProto13).ID == ((Proto) itemProto3).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.chemicalMultiply * itemProto3.prefabDesc.workEnergyPerTick;
                     if (((Proto)itemProto13).ID == ((Proto)itemProto15).ID)
-             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * itemProto15.prefabDesc.workEnergyPerTick;                   
+            __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * itemProto15.prefabDesc.workEnergyPerTick;                   
                     if (((Proto)itemProto13).ID == ((Proto)itemProto16).ID)
-             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * itemProto16.prefabDesc.workEnergyPerTick;                  
+            __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * itemProto16.prefabDesc.workEnergyPerTick;                  
                     if (((Proto) itemProto13).ID == ((Proto) itemProto4).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.refineMultiply * itemProto4.prefabDesc.workEnergyPerTick;                 
                     if (((Proto) itemProto13).ID == ((Proto) itemProto5).ID)
@@ -365,10 +365,10 @@ namespace Multiplier
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.particleMultiply * itemProto8.prefabDesc.workEnergyPerTick;                   
                     if (((Proto) itemProto13).ID == ((Proto) itemProto9).ID)
           {
-            if (Multiplier.fractionateMultiply == 1)
-              __instance.consumerPool[index].workEnergyPerTick = itemProto9.prefabDesc.workEnergyPerTick;
-            else if (Multiplier.fractionateMultiply != 1)
-              __instance.consumerPool[index].workEnergyPerTick = (long) (Math.Pow(1.055, (double) Multiplier.fractionateMultiply) * (double) Multiplier.fractionateMultiply * (double) itemProto9.prefabDesc.workEnergyPerTick);
+                    if (Multiplier.fractionateMultiply == 1)
+            __instance.consumerPool[index].workEnergyPerTick = itemProto9.prefabDesc.workEnergyPerTick;
+                    else if (Multiplier.fractionateMultiply != 1)
+            __instance.consumerPool[index].workEnergyPerTick = (long) (Math.Pow(1.055, (double) Multiplier.fractionateMultiply) * (double) Multiplier.fractionateMultiply * (double) itemProto9.prefabDesc.workEnergyPerTick);
           }                   
                     if (((Proto) itemProto13).ID == ((Proto) itemProto10).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.labMultiply * itemProto10.prefabDesc.workEnergyPerTick;                    
