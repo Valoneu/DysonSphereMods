@@ -341,17 +341,17 @@ namespace Multiplier
         if (entityId > 0)
         {
           ItemProto itemProto13 = ((ProtoSet<ItemProto>) LDB.items).Select((int) __instance.factory.entityPool[entityId].protoId);
-          if (((Proto) itemProto13).ID == ((Proto) itemProto1).ID)
+                    if (((Proto) itemProto13).ID == ((Proto) itemProto1).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.smeltMultiply * itemProto1.prefabDesc.workEnergyPerTick;                  
                     if (((Proto) itemProto13).ID == ((Proto) itemProto2).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.smeltMultiply * itemProto2.prefabDesc.workEnergyPerTick;                   
-          if (((Proto)itemProto13).ID == ((Proto)itemProto14).ID)
+                    if (((Proto)itemProto13).ID == ((Proto)itemProto14).ID)
              __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.smeltMultiply * itemProto14.prefabDesc.workEnergyPerTick;       
                     if (((Proto) itemProto13).ID == ((Proto) itemProto3).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.chemicalMultiply * itemProto3.prefabDesc.workEnergyPerTick;
-          if (((Proto)itemProto13).ID == ((Proto)itemProto15).ID)
+                    if (((Proto)itemProto13).ID == ((Proto)itemProto15).ID)
              __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * itemProto15.prefabDesc.workEnergyPerTick;                   
-          if (((Proto)itemProto13).ID == ((Proto)itemProto16).ID)
+                    if (((Proto)itemProto13).ID == ((Proto)itemProto16).ID)
              __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * itemProto16.prefabDesc.workEnergyPerTick;                  
                     if (((Proto) itemProto13).ID == ((Proto) itemProto4).ID)
             __instance.consumerPool[index].workEnergyPerTick = (long) Multiplier.refineMultiply * itemProto4.prefabDesc.workEnergyPerTick;                 
