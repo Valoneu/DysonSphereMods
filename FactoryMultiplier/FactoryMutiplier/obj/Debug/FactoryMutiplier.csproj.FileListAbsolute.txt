@@ -138,3 +138,4 @@ D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMu
 D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMutiplier.csproj.CopyComplete
 D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMutiplier.dll
 D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMutiplier.pdb
+D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\bin\Debug\LDBTool.dll
