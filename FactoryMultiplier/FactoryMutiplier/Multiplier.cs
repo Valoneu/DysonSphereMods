@@ -7,7 +7,6 @@
 using BepInEx;
 using HarmonyLib;
 using System;
-using xiaoye97;
 
 namespace Multiplier
 {
@@ -29,7 +28,7 @@ namespace Multiplier
         private static int siloMultiply;
         private static int gamaMultiply;
 
-        private void Start()
+        public void Start()
         {
             Harmony.CreateAndPatchAll(typeof(Multiplier), (string)null);
             Multiplier.walkspeedMultiply = this.Config.Bind<int>("config", "walkspeedMultiply", 1, "Multiplies walking speed").Value;
@@ -47,13 +46,9 @@ namespace Multiplier
 
         }
 
-        private void Update()
-        {
-        }
-
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameHistoryData), "Import")]
-        private static void MechawalkingSpeed_get(GameHistoryData __instance)
+        public static void MechawalkingSpeed_get(GameHistoryData __instance)
         {
             for (int index = 8; index > 0; --index)
             {
@@ -72,7 +67,7 @@ namespace Multiplier
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(Mecha), "Import")]
-        private static void MechawalkingSpeed_patch(Mecha __instance)
+        public static void MechawalkingSpeed_patch(Mecha __instance)
         {
             if (Multiplier.walkspeed_set == 0)
                 __instance.walkSpeed = Configs.freeMode.mechaWalkSpeed * (float)Multiplier.walkspeedMultiply;
@@ -90,7 +85,7 @@ namespace Multiplier
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameHistoryData), "Import")]
-        private static void MiningSpeedScale_patch(GameHistoryData __instance)
+        public static void MiningSpeedScale_patch(GameHistoryData __instance)
         {
             for (int index = 4; index > 0; --index)
             {
@@ -114,7 +109,7 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Smelt_patch(FactorySystem __instance)
+        public static void Smelt_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2302);
             ItemProto itemProto2 = ((ProtoSet<ItemProto>)LDB.items).Select(2315);
@@ -124,6 +119,7 @@ namespace Multiplier
                 int entityId = __instance.assemblerPool[index].entityId;
                 if (entityId > 0)
                 {
+                    UnityEngine.Debug.Log("SmelterSpeedChanged");
                     ItemProto itemProto4 = ((ProtoSet<ItemProto>)LDB.items).Select((int)__instance.factory.entityPool[entityId].protoId);
                     if (((Proto)itemProto4).ID == ((Proto)itemProto1).ID)
                         __instance.assemblerPool[index].speed = Multiplier.smeltMultiply * itemProto1.prefabDesc.assemblerSpeed;
@@ -137,7 +133,7 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Chemical_patch(FactorySystem __instance)
+        public static void Chemical_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2309);
             ItemProto itemProto2 = ((ProtoSet<ItemProto>)LDB.items).Select(3701);
@@ -147,6 +143,7 @@ namespace Multiplier
                 int entityId = __instance.assemblerPool[index].entityId;
                 if (entityId > 0)
                 {
+                    UnityEngine.Debug.Log("ChemicalSpeedChanged");
                     ItemProto itemProto4 = ((ProtoSet<ItemProto>)LDB.items).Select((int)__instance.factory.entityPool[entityId].protoId);
                     if (((Proto)itemProto4).ID == ((Proto)itemProto1).ID)
                         __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto1.prefabDesc.assemblerSpeed;
@@ -160,11 +157,12 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Refine_patch(FactorySystem __instance)
+        public static void Refine_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2308);
             for (int index = 1; index < __instance.assemblerCursor; ++index)
             {
+                UnityEngine.Debug.Log("RefinerySpeedChanged");
                 if (__instance.assemblerPool[index].id == index && (int)__instance.assemblerPool[index].recipeType == 3)
                     __instance.assemblerPool[index].speed = Multiplier.refineMultiply * itemProto.prefabDesc.assemblerSpeed;
             }
@@ -172,7 +170,7 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Assemble_patch(FactorySystem __instance)
+        public static void Assemble_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2303);
             ItemProto itemProto2 = ((ProtoSet<ItemProto>)LDB.items).Select(2304);
@@ -182,6 +180,7 @@ namespace Multiplier
                 int entityId = __instance.assemblerPool[index].entityId;
                 if (entityId > 0)
                 {
+                    UnityEngine.Debug.Log("AssemblerSpeedChanged");
                     ItemProto itemProto4 = ((ProtoSet<ItemProto>)LDB.items).Select((int)__instance.factory.entityPool[entityId].protoId);
                     if (((Proto)itemProto4).ID == ((Proto)itemProto1).ID)
                         __instance.assemblerPool[index].speed = Multiplier.assembleMultiply * itemProto1.prefabDesc.assemblerSpeed;
@@ -195,11 +194,12 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Particle_patch(FactorySystem __instance)
+        public static void Particle_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2310);
             for (int index = 1; index < __instance.assemblerCursor; ++index)
             {
+                UnityEngine.Debug.Log("ColliderSpeedChanged");
                 if (__instance.assemblerPool[index].id == index && (int)__instance.assemblerPool[index].recipeType == 5)
                     __instance.assemblerPool[index].speed = Multiplier.particleMultiply * itemProto.prefabDesc.assemblerSpeed;
             }
@@ -207,7 +207,7 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Lab_patch(FactorySystem __instance)
+        public static void Lab_patch(FactorySystem __instance)
         {
             RecipeProto recipeProto1 = ((ProtoSet<RecipeProto>)LDB.recipes).Select(9);
             RecipeProto recipeProto2 = ((ProtoSet<RecipeProto>)LDB.recipes).Select(18);
@@ -219,6 +219,7 @@ namespace Multiplier
             {
                 if (__instance.labPool[index].recipeId > 0)
                 {
+                    UnityEngine.Debug.Log("LabSpeedChanged");
                     if (__instance.labPool[index].recipeId == ((Proto)recipeProto1).ID)
                         __instance.labPool[index].timeSpend = recipeProto1.TimeSpend * 10000 / Multiplier.labMultiply;
                     else if (__instance.labPool[index].recipeId == ((Proto)recipeProto2).ID)
@@ -237,10 +238,11 @@ namespace Multiplier
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameHistoryData), "Import")]
-        private static void Techspeed_patch(GameHistoryData __instance)
+        public static void Techspeed_patch(GameHistoryData __instance)
         {
             for (int index = 2; index > 0; --index)
             {
+                UnityEngine.Debug.Log("TechSpeedChanged");
                 if (__instance.techStates[3903].unlocked)
                 {
                     __instance.techSpeed = __instance.techStates[3904].curLevel * Multiplier.labMultiply;
@@ -261,24 +263,28 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Fractionate_patch(FactorySystem __instance)
+        public static void Fractionate_patch(FactorySystem __instance)
         {
             for (int index = 1; index < __instance.fractionateCursor; ++index)
             {
                 if (__instance.fractionatePool[index].id == index)
+                {
+                    UnityEngine.Debug.Log("FractionatorSpeedChanged");
                     __instance.fractionatePool[index].produceProb = (float)Multiplier.fractionateMultiply * 0.01f;
+                }
             }
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Ejector_patch(FactorySystem __instance)
+        public static void Ejector_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2311);
             for (int index = 1; index < __instance.ejectorCursor; ++index)
             {
                 if (__instance.ejectorPool[index].id == index)
                 {
+                    UnityEngine.Debug.Log("RailSpeedChanged");
                     __instance.ejectorPool[index].chargeSpend = itemProto.prefabDesc.ejectorChargeFrame * 10000 / Multiplier.ejectorMultiply;
                     __instance.ejectorPool[index].coldSpend = itemProto.prefabDesc.ejectorColdFrame * 10000 / Multiplier.ejectorMultiply;
                 }
@@ -287,13 +293,14 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void Silo_patch(FactorySystem __instance)
+        public static void Silo_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2312);
             for (int index = 1; index < __instance.siloCursor; ++index)
             {
                 if (__instance.siloPool[index].id == index)
                 {
+                    UnityEngine.Debug.Log("SiloSpeedChanged");
                     __instance.siloPool[index].chargeSpend = itemProto.prefabDesc.siloChargeFrame * 10000 / Multiplier.siloMultiply;
                     __instance.siloPool[index].coldSpend = itemProto.prefabDesc.siloColdFrame * 10000 / Multiplier.siloMultiply;
                 }
@@ -302,19 +309,22 @@ namespace Multiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PowerSystem), "GameTick")]
-        private static void Gamma_patch(PowerSystem __instance)
+        public static void Gamma_patch(PowerSystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2208);
             for (int index = 1; index < __instance.genCursor; ++index)
             {
+                UnityEngine.Debug.Log("RrSpeedChanged");
                 if (__instance.genPool[index].id == index && __instance.genPool[index].gamma)
+                {
                     __instance.genPool[index].genEnergyPerTick = (long)Multiplier.gamaMultiply * itemProto.prefabDesc.genEnergyPerTick;
+                }
             }
         }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PowerSystem), "GameTick")]
-        private static void Power_patch(PowerSystem __instance)
+        public static void Power_patch(PowerSystem __instance)
         {
 
             ItemProto SmelterMK1 = ((ProtoSet<ItemProto>)LDB.items).Select(2302);
@@ -342,94 +352,127 @@ namespace Multiplier
                     if (SmelterMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)SmelterMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.smeltMultiply * SmelterMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
                     if (SmelterMK3 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)SmelterMK3).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.smeltMultiply * SmelterMK3.prefabDesc.workEnergyPerTick;
+                        }
                     }
                     if (SmelterMK2 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)SmelterMK2).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.smeltMultiply * SmelterMK2.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (ChemicalMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)ChemicalMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * ChemicalMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
                     if (ChemicalMK2 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)ChemicalMK2).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * ChemicalMK2.prefabDesc.workEnergyPerTick;
+                        }
                     }
                     if (ChemicalMK3 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)ChemicalMK3).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.chemicalMultiply * ChemicalMK3.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (AssemblerMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)AssemblerMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.assembleMultiply * AssemblerMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
                     if (AssemblerMK2 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)AssemblerMK2).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.assembleMultiply * AssemblerMK2.prefabDesc.workEnergyPerTick;
+                        }
                     }
                     if (AssemblerMK3 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)AssemblerMK3).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.assembleMultiply * AssemblerMK3.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (RefineryMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)RefineryMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.refineMultiply * RefineryMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (ColliderMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)ColliderMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.refineMultiply * ColliderMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (LabMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)LabMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.refineMultiply * LabMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (RailMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)RailMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.ejectorMultiply * RailMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (SiloMK1 != null)
                     {
                         if (((Proto)itemProtoCheck).ID == ((Proto)SiloMK1).ID)
+                        {
                             __instance.consumerPool[index].workEnergyPerTick = (long)Multiplier.siloMultiply * SiloMK1.prefabDesc.workEnergyPerTick;
+                        }
                     }
 
                     if (FractionatorMK1 != null)
                         if (((Proto)itemProtoCheck).ID == ((Proto)FractionatorMK1).ID)
                         {
                             if (Multiplier.fractionateMultiply == 1)
+                            {
                                 __instance.consumerPool[index].workEnergyPerTick = FractionatorMK1.prefabDesc.workEnergyPerTick;
+                            }
                             else if (Multiplier.fractionateMultiply != 1)
+                            {
                                 __instance.consumerPool[index].workEnergyPerTick = (long)(Math.Pow(1.055, (double)Multiplier.fractionateMultiply) * (double)Multiplier.fractionateMultiply * (double)FractionatorMK1.prefabDesc.workEnergyPerTick);
+                            }
                         }
                 }
             }
         }
     }
 }
+
 
 
 
