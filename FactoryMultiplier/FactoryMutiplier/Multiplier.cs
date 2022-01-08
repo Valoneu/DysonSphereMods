@@ -1,10 +1,4 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: Multiplier.Multiplier
-// Assembly: FactoryMutiplier, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: AFE8885A-2900-4516-BE60-4BE0B832FDFD
-// Assembly location: D:\FactoryMutiplier.dll
-
-using BepInEx;
+﻿using BepInEx;
 using HarmonyLib;
 using System;
 
@@ -108,7 +102,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Smelt_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2302);
@@ -132,7 +126,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Chemical_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2309);
@@ -156,7 +150,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Refine_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2308);
@@ -169,7 +163,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Assemble_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2303);
@@ -193,7 +187,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Particle_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2310);
@@ -206,7 +200,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Lab_patch(FactorySystem __instance)
         {
             RecipeProto recipeProto1 = ((ProtoSet<RecipeProto>)LDB.recipes).Select(9);
@@ -262,7 +256,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Fractionate_patch(FactorySystem __instance)
         {
             for (int index = 1; index < __instance.fractionateCursor; ++index)
@@ -276,7 +270,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Ejector_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2311);
@@ -292,7 +286,7 @@ namespace Multiplier
         }
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Silo_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2312);
@@ -314,7 +308,6 @@ namespace Multiplier
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2208);
             for (int index = 1; index < __instance.genCursor; ++index)
             {
-                UnityEngine.Debug.Log("RrSpeedChanged");
                 if (__instance.genPool[index].id == index && __instance.genPool[index].gamma)
                 {
                     __instance.genPool[index].genEnergyPerTick = (long)Multiplier.gamaMultiply * itemProto.prefabDesc.genEnergyPerTick;
