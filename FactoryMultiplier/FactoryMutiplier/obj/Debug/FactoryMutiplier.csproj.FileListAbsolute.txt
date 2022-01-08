@@ -138,4 +138,6 @@ D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMu
 D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMutiplier.csproj.CopyComplete
 D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMutiplier.dll
 D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\obj\Debug\FactoryMutiplier.pdb
-D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\bin\Debug\LDBTool.dll
+D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\bin\Debug\System.dll
+D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\bin\Debug\Mono.Security.dll
+D:\GitHub\DysonSphereMods\FactoryMultiplier\FactoryMutiplier\bin\Debug\System.Xml.dll
