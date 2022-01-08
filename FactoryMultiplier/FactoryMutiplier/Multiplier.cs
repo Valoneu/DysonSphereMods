@@ -1,15 +1,11 @@
+using System;
 using BepInEx;
 using HarmonyLib;
-using System;
 using UnityEngine;
 
 namespace Multiplier
 {
-    [BepInPlugin(
-        "com.Valoneu.Multiplier",
-        "Multiplier",
-        "1.0.0"
-        )]
+    [BepInPlugin("com.Valoneu.Multiplier", "Multiplier", "1.0.0")]
     public class Multiplier : BaseUnityPlugin
     {
         private static int walkspeed_set;
@@ -46,106 +42,117 @@ namespace Multiplier
         private static int countDown = 100;
 
         // instead of adding the same patch multiple times we'll just call our other functions from here
-        /*  [HarmonyPrefix]
-          [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
-          public static bool FactorySystem_GameTick_Prefix(FactorySystem __instance)
-          {
-              if (countDown-- > 0)
-              {
-                  Debug.Log($"Calling other functions for FactorySystem_GameTick_Prefix");
-                  try
-                  {
-                      Smelt_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"smelt patch got exception : {e.Message}");
-                      countDown++;
-                  }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool))]
+        // [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+        public static bool FactorySystem_GameTick_Prefix(FactorySystem __instance)
+        {
+            if (countDown-- > 0)
+            {
+                Console.WriteLine($"Calling other functions for FactorySystem_GameTick_Prefix");
+                try
+                {
+                    Smelt_patch(__instance);
+                    Console.WriteLine($"called smelt");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"smelt patch got exception : {e.Message}");
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Chemical_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"chemical patch got exception : {e.Message}");
-                      countDown++;
-                  }
+                try
+                {
+                    Chemical_patch(__instance);
+                    Console.WriteLine($"called chem");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"chemical patch got exception : {e.Message}");
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Refine_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"refine patch got exception : {e.Message}");
-                      countDown++;
-                  }
+                try
+                {
+                    Refine_patch(__instance);
+                    Console.WriteLine($"called refine");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"refine patch got exception : {e.Message}");
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Assemble_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"assemble patch got exception : {e.Message}");
-                      countDown++;
-                  }
+                try
+                {
+                    Assemble_patch(__instance);
+                    Console.WriteLine($"called assemble");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"assemble patch got exception : {e.Message}");
+                    
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Particle_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"particle patch got exception : {e.Message}");
-                      countDown++;
-                  }
+                try
+                {
+                    Particle_patch(__instance);
+                    Console.WriteLine($"called particle");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"particle patch got exception : {e.Message}");
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Lab_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"lab patch got exception : {e.Message}");
-                      countDown++;
-                  }
+                try
+                {
+                    Lab_patch(__instance);
+                    Console.WriteLine($"called lab");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"lab patch got exception : {e.Message}");
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Fractionate_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"fract patch got exception : {e.Message}");
-                      countDown++;
-                  }
+                try
+                {
+                    Fractionate_patch(__instance);
+                    Console.WriteLine($"called fract");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"fract patch got exception : {e.Message}");
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Silo_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"Silo_patch got exception : {e.Message}");
-                      countDown++;
-                  }
+                try
+                {
+                    Silo_patch(__instance);
+                    Console.WriteLine($"called silo");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"Silo_patch got exception : {e.Message}");
+                    countDown++;
+                }
 
-                  try
-                  {
-                      Ejector_patch(__instance);
-                  }
-                  catch (Exception e)
-                  {
-                      Debug.Log($"ejector patch got exception : {e.Message}");
-                      countDown++;
-                  }
-              }
+                try
+                {
+                    Ejector_patch(__instance);
+                    Console.WriteLine($"called ejector");
+                }
+                catch (Exception e)
+                {
+                    Debug.Log($"ejector patch got exception : {e.Message}");
+                    countDown++;
+                }
+            }
 
-              return true;
-          } */
+            return true;
+        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameHistoryData), "Import")]
@@ -208,8 +215,7 @@ namespace Multiplier
                 }
             }
         }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+
         public static void Smelt_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2302);
@@ -224,15 +230,14 @@ namespace Multiplier
                     ItemProto itemProto4 = ((ProtoSet<ItemProto>)LDB.items).Select((int)__instance.factory.entityPool[entityId].protoId);
                     if (((Proto)itemProto4).ID == ((Proto)itemProto1).ID)
                         __instance.assemblerPool[index].speed = Multiplier.smeltMultiply * itemProto1.prefabDesc.assemblerSpeed;
-                    if (((Proto)itemProto4).ID == ((Proto)itemProto2).ID)
+                    else if (((Proto)itemProto4).ID == ((Proto)itemProto2).ID)
                         __instance.assemblerPool[index].speed = Multiplier.smeltMultiply * itemProto2.prefabDesc.assemblerSpeed;
-                    if (((Proto)itemProto4).ID == ((Proto)itemProto3).ID)
+                    else if (((Proto)itemProto4).ID == ((Proto)itemProto3).ID)
                         __instance.assemblerPool[index].speed = Multiplier.smeltMultiply * itemProto2.prefabDesc.assemblerSpeed;
                 }
             }
         }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+
         public static void Chemical_patch(FactorySystem __instance)
         {
             ItemProto itemProto1 = ((ProtoSet<ItemProto>)LDB.items).Select(2309);
@@ -247,16 +252,16 @@ namespace Multiplier
                     ItemProto itemProto4 = ((ProtoSet<ItemProto>)LDB.items).Select((int)__instance.factory.entityPool[entityId].protoId);
                     if (((Proto)itemProto4).ID == ((Proto)itemProto1).ID)
                         __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto1.prefabDesc.assemblerSpeed;
-                    if (((Proto)itemProto4).ID == ((Proto)itemProto2).ID)
+                    else if (((Proto)itemProto4).ID == ((Proto)itemProto2).ID)
                         __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto2.prefabDesc.assemblerSpeed;
-                    if (((Proto)itemProto4).ID == ((Proto)itemProto3).ID)
+                    else if (((Proto)itemProto4).ID == ((Proto)itemProto3).ID)
                         __instance.assemblerPool[index].speed = Multiplier.chemicalMultiply * itemProto3.prefabDesc.assemblerSpeed;
                 }
             }
         }
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+        // [HarmonyPrefix]
+        // [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Refine_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2308);
@@ -267,8 +272,7 @@ namespace Multiplier
                     __instance.assemblerPool[index].speed = Multiplier.refineMultiply * itemProto.prefabDesc.assemblerSpeed;
             }
         }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+
         public static void Assemble_patch(FactorySystem __instance)
         {
             if (countDown-- > 0)
@@ -290,15 +294,14 @@ namespace Multiplier
                     ItemProto itemProto4 = LDB.items.Select(__instance.factory.entityPool[entityId].protoId);
                     if (itemProto4.ID == itemProto1.ID)
                         __instance.assemblerPool[index].speed = assembleMultiply * itemProto1.prefabDesc.assemblerSpeed;
-                    if (itemProto4.ID == itemProto2.ID)
+                    else if (itemProto4.ID == itemProto2.ID)
                         __instance.assemblerPool[index].speed = assembleMultiply * itemProto2.prefabDesc.assemblerSpeed;
-                    if (itemProto4.ID == itemProto3.ID)
+                    else if (itemProto4.ID == itemProto3.ID)
                         __instance.assemblerPool[index].speed = assembleMultiply * itemProto3.prefabDesc.assemblerSpeed;
                 }
             }
         }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+
         public static void Particle_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2310);
@@ -310,8 +313,8 @@ namespace Multiplier
             }
         }
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+        // [HarmonyPrefix]
+        // [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
         public static void Lab_patch(FactorySystem __instance)
         {
             RecipeProto recipeProto1 = ((ProtoSet<RecipeProto>)LDB.recipes).Select(9);
@@ -327,15 +330,15 @@ namespace Multiplier
                     UnityEngine.Debug.Log("LabSpeedChanged");
                     if (__instance.labPool[index].recipeId == ((Proto)recipeProto1).ID)
                         __instance.labPool[index].timeSpend = recipeProto1.TimeSpend * 10000 / Multiplier.labMultiply;
-                    if (__instance.labPool[index].recipeId == ((Proto)recipeProto2).ID)
+                    else if (__instance.labPool[index].recipeId == ((Proto)recipeProto2).ID)
                         __instance.labPool[index].timeSpend = recipeProto2.TimeSpend * 10000 / Multiplier.labMultiply;
-                    if (__instance.labPool[index].recipeId == ((Proto)recipeProto3).ID)
+                    else if (__instance.labPool[index].recipeId == ((Proto)recipeProto3).ID)
                         __instance.labPool[index].timeSpend = recipeProto3.TimeSpend * 10000 / Multiplier.labMultiply;
-                    if (__instance.labPool[index].recipeId == ((Proto)recipeProto4).ID)
+                    else if (__instance.labPool[index].recipeId == ((Proto)recipeProto4).ID)
                         __instance.labPool[index].timeSpend = recipeProto4.TimeSpend * 10000 / Multiplier.labMultiply;
-                    if (__instance.labPool[index].recipeId == ((Proto)recipeProto5).ID)
+                    else if (__instance.labPool[index].recipeId == ((Proto)recipeProto5).ID)
                         __instance.labPool[index].timeSpend = recipeProto5.TimeSpend * 10000 / Multiplier.labMultiply;
-                    if (__instance.labPool[index].recipeId == ((Proto)recipeProto6).ID)
+                    else if (__instance.labPool[index].recipeId == ((Proto)recipeProto6).ID)
                         __instance.labPool[index].timeSpend = recipeProto6.TimeSpend * 10000 / Multiplier.labMultiply;
                 }
             }
@@ -367,8 +370,7 @@ namespace Multiplier
                 }
             }
         }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+
         public static void Fractionate_patch(FactorySystem __instance)
         {
             for (int index = 1; index < __instance.fractionateCursor; ++index)
@@ -380,8 +382,7 @@ namespace Multiplier
                 }
             }
         }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+
         public static void Ejector_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2311);
@@ -395,8 +396,7 @@ namespace Multiplier
                 }
             }
         }
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int))]
+
         public static void Silo_patch(FactorySystem __instance)
         {
             ItemProto itemProto = ((ProtoSet<ItemProto>)LDB.items).Select(2312);
@@ -418,7 +418,7 @@ namespace Multiplier
             ItemProto itemProto = LDB.items.Select(2208);
             for (int index = 1; index < __instance.genCursor; ++index)
             {
-
+                // Debug.Log("RrSpeedChanged");
                 if (__instance.genPool[index].id == index && __instance.genPool[index].gamma)
                 {
                     __instance.genPool[index].genEnergyPerTick = gamaMultiply * itemProto.prefabDesc.genEnergyPerTick;
