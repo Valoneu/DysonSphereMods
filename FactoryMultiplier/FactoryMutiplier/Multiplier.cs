@@ -10,7 +10,7 @@ namespace Multiplier
     [BepInPlugin("com.Valoneu.Multiplier", "Multiplier", "2.0.0")]
     public class Multiplier : BaseUnityPlugin
     {
-        private static ConfigEntry<int> walkspeed_set;
+        private static int walkspeed_set;
         private static ConfigEntry<int> walkspeedMultiply;
         private static ConfigEntry<int> miningMultiply;
         private static ConfigEntry<int> smeltMultiply;
@@ -167,13 +167,13 @@ namespace Multiplier
             {
                 if (!__instance.techStates[2201].unlocked)
                 {
-                    walkspeed_set.Value = 0;
+                    walkspeed_set = 0;
                     break;
                 }
 
                 if (__instance.techStates[2200 + index].unlocked)
                 {
-                    walkspeed_set.Value = index;
+                    walkspeed_set = index;
                     break;
                 }
             }
@@ -183,22 +183,22 @@ namespace Multiplier
         [HarmonyPatch(typeof(Mecha), "Import")]
         public static void MechawalkingSpeed_patch(Mecha __instance)
         {
-            if (walkspeed_set.Value == 0)
+            if (walkspeed_set == 0)
             {
                 __instance.walkSpeed = Configs.freeMode.mechaWalkSpeed * walkspeedMultiply.Value;
             }
-            else if (walkspeed_set.Value >= 7)
+            else if (walkspeed_set >= 7)
             {
-                __instance.walkSpeed = (float)(Configs.freeMode.mechaWalkSpeed + (double)((walkspeed_set.Value - 6) * 2) + 6.0) * walkspeedMultiply.Value;
+                __instance.walkSpeed = (float)(Configs.freeMode.mechaWalkSpeed + (double)((walkspeed_set - 6) * 2) + 6.0) * walkspeedMultiply.Value;
             }
             else
             {
-                if (walkspeed_set.Value >= 7)
+                if (walkspeed_set >= 7)
                 {
                     return;
                 }
 
-                __instance.walkSpeed = (Configs.freeMode.mechaWalkSpeed + walkspeed_set.Value) * walkspeedMultiply.Value;
+                __instance.walkSpeed = (Configs.freeMode.mechaWalkSpeed + walkspeed_set) * walkspeedMultiply.Value;
             }
         }
 
