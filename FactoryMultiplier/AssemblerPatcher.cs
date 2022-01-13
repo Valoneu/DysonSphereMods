@@ -29,18 +29,21 @@ namespace FactoryMultiplier
             MultiplySilos(factorySystem);
             MultiplyEjectors(factorySystem);
         }
+
         private static void MultiplySilos(FactorySystem factorySystem)
         {
-            ItemProto itemProto = LDB.items.Select(2312);
             for (int index = 1; index < factorySystem.siloCursor; ++index)
             {
-                if (factorySystem.siloPool[index].id == index)
+                var siloComponent = factorySystem.siloPool[index];
+                if (siloComponent.id == index && ItemUtil.IsSilo(siloComponent.entityId))
                 {
-                    factorySystem.siloPool[index].chargeSpend = itemProto.prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
-                    factorySystem.siloPool[index].coldSpend = itemProto.prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
+                    var itemProto = LDB.items.Select(siloComponent.entityId);
+                    siloComponent.chargeSpend = itemProto.prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
+                    siloComponent.coldSpend = itemProto.prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
                 }
             }
         }
+
         private static void MultiplyEjectors(FactorySystem factorySystem)
         {
             ItemProto proto = null;

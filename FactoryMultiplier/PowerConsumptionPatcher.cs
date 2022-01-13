@@ -76,5 +76,16 @@ namespace FactoryMultiplier
                 }
             }
         }
+        public static void MultiplyReceivers(PowerSystem powerSystem)
+        {
+            for (int index = 1; index < powerSystem.genCursor; ++index)
+            {
+                var itemProto = LDB.items.Select(powerSystem.consumerPool[index].entityId);
+                if (powerSystem.genPool[index].id == index && powerSystem.genPool[index].gamma)
+                {
+                    powerSystem.genPool[index].genEnergyPerTick = (long)PluginConfig.gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
+                }
+            }
+        }
     }
 }
