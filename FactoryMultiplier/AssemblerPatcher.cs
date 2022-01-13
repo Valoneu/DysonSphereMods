@@ -6,28 +6,31 @@ namespace FactoryMultiplier
 {
     public static class AssemblerPatcher
     {
+        // Depending on whether GameMain.multithreadSystem.multithreadSystemEnable one of these next two will be used 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool) })]
+        private static void FactorySystem_GameTick_TwoArgs_Prefix(FactorySystem __instance)
+        {
+            FactorySystemPatch(__instance);
+        }
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
         private static void FactorySystem_GameTick_Prefix(FactorySystem __instance)
         {
-            MultiplyAssemblers(__instance);
-            MultiplyLabs(__instance);
-            MultiplyFractionators(__instance);
-            MultiplySilos(__instance);
+            FactorySystemPatch(__instance);
+        }
+        
+        private static void FactorySystemPatch(FactorySystem factorySystem)
+        {
+            MultiplyAssemblers(factorySystem);
+            MultiplyLabs(factorySystem);
+            MultiplyFractionators(factorySystem);
+            MultiplySilos(factorySystem);
         }
         private static void MultiplySilos(FactorySystem factorySystem)
         {
             ItemProto itemProto = LDB.items.Select(2312);
-            // Log.LogWithFrequency("{0} for silo",
-                // JsonUtility.ToJson(itemProto));
-                
-                /*
-{"Name":"垂直发射井","ID":2312,"SID":"","Type":6,"SubID":0,"MiningFrom":"","ProduceFrom":"","StackSize":10,
-"Grade":0,"Upgrades":[],"IsFluid":false,"IsEntity":true,"CanBuild":true,"BuildInGas":false,
-"IconPath":"Icons/ItemRecipe/vertical-launching-silo","ModelIndex":74,"ModelCount":1,
-"HpMax":8000,"Ability":0,"HeatValue":0,"Potential":0,"ReactorInc":0.0,"FuelType":0,"BuildIndex":803,"BuildMode":1,"GridIndex":2310,"UnlockKey":0,"PreTechOverride":0,"DescFields":[35,11,12,1],"Description":"I垂直发射井"}
-
-                 */
             for (int index = 1; index < factorySystem.siloCursor; ++index)
             {
                 if (factorySystem.siloPool[index].id == index)
