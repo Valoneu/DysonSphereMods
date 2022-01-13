@@ -13,7 +13,7 @@ namespace FactoryMultiplier.Util
         public static ConfigEntry<int> particleMultiplier;
         private static ConfigEntry<int> _labMultiplier;
         private static ConfigEntry<int> _fractionatorMultiplier;
-        public static ConfigEntry<int> ejectorMultiplier;
+        private static ConfigEntry<int> _ejectorMultiplier;
         private static ConfigEntry<int> _siloMultiplier;
         public static ConfigEntry<int> gammaMultiplier;
         public static ConfigEntry<bool> keyTestMode;
@@ -21,6 +21,7 @@ namespace FactoryMultiplier.Util
         public static ConfigEntry<bool> enableAssemblerPopupLogMessage;
 
         public static int siloMultiplier => multiplierEnabled.Value ? _siloMultiplier.Value : 1;
+        public static int ejectorMultiplier => multiplierEnabled.Value ? _ejectorMultiplier.Value : 1;
 
         public static int fractionatorMultiplier => multiplierEnabled.Value ? _fractionatorMultiplier.Value : 1;
         public static int labMultiplier => multiplierEnabled.Value ? _labMultiplier.Value : 1;
@@ -38,7 +39,7 @@ namespace FactoryMultiplier.Util
             particleMultiplier = confFile.Bind("config", "particleMultiplier", 1, "Multiplies speed of particle colliders");
             _labMultiplier = confFile.Bind("config", "labMultiplier", 1, "Multiplies speed of laboratories");
             _fractionatorMultiplier = confFile.Bind("config", "fractionateMultiplier", 1, "Multiplies % of fractionators");
-            ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, "Multiplies speed of EM rail ejectors");
+            _ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, "Multiplies speed of EM rail ejectors");
             _siloMultiplier = confFile.Bind("config", "siloMultiplier", 1, "Multiplies speed of silos");
             gammaMultiplier = confFile.Bind("config", "gammaMultiplier", 1, "Multiplies speed of ray recievers");
             keyTestMode = confFile.Bind("config", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
@@ -61,7 +62,7 @@ namespace FactoryMultiplier.Util
             }
 
             if (desc.isEjector)
-                return ejectorMultiplier.Value;
+                return ejectorMultiplier;
             if (desc.isLab)
                 return labMultiplier;
 

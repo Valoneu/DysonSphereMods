@@ -27,6 +27,7 @@ namespace FactoryMultiplier
             MultiplyLabs(factorySystem);
             MultiplyFractionators(factorySystem);
             MultiplySilos(factorySystem);
+            MultiplyEjectors(factorySystem);
         }
         private static void MultiplySilos(FactorySystem factorySystem)
         {
@@ -37,6 +38,25 @@ namespace FactoryMultiplier
                 {
                     factorySystem.siloPool[index].chargeSpend = itemProto.prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
                     factorySystem.siloPool[index].coldSpend = itemProto.prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
+                }
+            }
+        }
+        private static void MultiplyEjectors(FactorySystem factorySystem)
+        {
+            ItemProto proto = null;
+            for (int index = 1; index < factorySystem.ejectorCursor; ++index)
+            {
+                var ejectorComponent = factorySystem.ejectorPool[index];
+                if (ejectorComponent.id == index)
+                {
+                    if (proto == null)
+                    {
+                        var entityData = factorySystem.factory.entityPool[ejectorComponent.entityId];
+                        proto = LDB.items.Select(entityData.protoId);
+                    }
+
+                    ejectorComponent.chargeSpend = proto.prefabDesc.ejectorChargeFrame * 10000 / PluginConfig.ejectorMultiplier;
+                    ejectorComponent.coldSpend = proto.prefabDesc.ejectorColdFrame * 10000 / PluginConfig.ejectorMultiplier;
                 }
             }
         }
