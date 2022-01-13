@@ -73,7 +73,6 @@ namespace FactoryMultiplier
 
                     var prefabEnergyPerTick = itemProto.prefabDesc.workEnergyPerTick;
                     powerSystem.consumerPool[index].workEnergyPerTick = multiplier * prefabEnergyPerTick;
-                }
             }
         }
         public static void MultiplyReceivers(PowerSystem powerSystem)
