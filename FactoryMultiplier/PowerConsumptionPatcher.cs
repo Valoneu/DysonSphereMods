@@ -45,7 +45,7 @@ namespace FactoryMultiplier
                     var itemProto = LDB.items.Select(powerSystem.factory.entityPool[entityId].protoId);
                     if (itemProto.Type == EItemType.Logistics)
                         continue;
-                  
+
                     var multiplier = -1;
 
 
@@ -65,26 +65,27 @@ namespace FactoryMultiplier
                         LogOnce("Multiplier is < 1 ({0}) for {1}, {2}", ref _loggedMultiLtOne, multiplier, itemProto, powerConsumerComponent);
                         continue;
                     }
-                    if ( powerConsumerComponent.id == 6512)
+                    if (powerConsumerComponent.id == 6512)
                     {
                         LogOnce("item is asmbler {0}, {1} \n {2} \n {3}", ref _loggedAsmOnce, multiplier, itemProto, powerConsumerComponent,
                             itemProto.prefabDesc);
                     }
 
                     var prefabEnergyPerTick = itemProto.prefabDesc.workEnergyPerTick;
-                    powerSystem.consumerPool[index].workEnergyPerTick = multiplier * prefabEnergyPerTick;
+                    powerSystem.consumerPool[index].workEnergyPerTick = multiplier * 2 * prefabEnergyPerTick;
+                }
             }
         }
-        public static void MultiplyReceivers(PowerSystem powerSystem)
-        {
-            for (int index = 1; index < powerSystem.genCursor; ++index)
+            public static void MultiplyReceivers(PowerSystem powerSystem)
             {
-                var itemProto = LDB.items.Select(powerSystem.consumerPool[index].entityId);
-                if (powerSystem.genPool[index].id == index && powerSystem.genPool[index].gamma)
+                for (int index = 1; index < powerSystem.genCursor; ++index)
                 {
-                    powerSystem.genPool[index].genEnergyPerTick = (long)PluginConfig.gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
+                    var itemProto = LDB.items.Select(powerSystem.consumerPool[index].entityId);
+                    if (powerSystem.genPool[index].id == index && powerSystem.genPool[index].gamma)
+                    {
+                        powerSystem.genPool[index].genEnergyPerTick = (long)PluginConfig.gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
+                    }
                 }
             }
         }
     }
-}

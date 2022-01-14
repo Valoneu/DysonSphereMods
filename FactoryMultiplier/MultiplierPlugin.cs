@@ -33,7 +33,7 @@ namespace FactoryMultiplier
         {
             var testKeyInvoked = keyTestMode.Value && VFInput.alt && Input.GetKeyDown("1");
 
-            if (CustomKeyBindSystem.GetKeyBind("ToggleMultiply").keyValue || testKeyInvoked)
+            if (CustomKeyBindSystem.GetKeyBind("ToggleOverclock").keyValue || testKeyInvoked)
             {
                 multiplierEnabled.Value = !multiplierEnabled.Value;
                 if (!multiplierEnabled.Value)
@@ -51,16 +51,16 @@ namespace FactoryMultiplier
 
         private void InitKeyBinds()
         {
-            if (!CustomKeyBindSystem.HasKeyBind("ToggleMultiply"))
+            if (!CustomKeyBindSystem.HasKeyBind("ToggleOverclock"))
                 CustomKeyBindSystem.RegisterKeyBind<PressKeyBind>(new BuiltinKey
                 {
                     id = 214,
-                    key = new CombineKey((int)KeyCode.CapsLock, CombineKey.ALT_COMB, ECombineKeyAction.OnceClick, false),
+                    key = new CombineKey((int)KeyCode.LeftShift, CombineKey.ALT_COMB, ECombineKeyAction.OnceClick, false),
                     conflictGroup = 2052,
-                    name = "ToggleMultiply",
+                    name = "ToggleOverclock",
                     canOverride = true
                 });
-            ProtoRegistry.RegisterString("KEYToggleMultiply", "Enable/disable factory multiplier");
+            ProtoRegistry.RegisterString("KEYToggleOverClock", "Enable/disable factory OverClock");
         }
 
         internal void OnDestroy()

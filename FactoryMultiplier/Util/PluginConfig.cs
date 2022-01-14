@@ -28,17 +28,17 @@ namespace FactoryMultiplier.Util
 
         public static void InitConfig(ConfigFile confFile)
         {
-            walkspeedMultiplier = confFile.Bind("mecha", "WalkSpeedMultiplier", 1, new ConfigDescription( "How fast do you want to go", new AcceptableValueRange<int>(1, 10)));
-            smeltMultiplier = confFile.Bind("config", "smeltMultiplier", 1, new ConfigDescription( "Multiplies speed of smelters", new AcceptableValueRange<int>(1, 10)));
-            chemicalMultiplier = confFile.Bind("config", "chemicalMultiplier", 1, new ConfigDescription( "Multiplies speed of chemical plants", new AcceptableValueRange<int>(1, 10)));
-            refineMultiplier = confFile.Bind("config", "refineMultiplier", 1, new ConfigDescription( "Multiplies speed of refineries", new AcceptableValueRange<int>(1, 10)));
-            assembleMultiplier = confFile.Bind("config", "assembleMultiplier", 1, new ConfigDescription( "Multiplies speed of assemblers", new AcceptableValueRange<int>(1, 10)));
-            particleMultiplier = confFile.Bind("config", "particleMultiplier", 1, new ConfigDescription( "Multiplies speed of particle colliders", new AcceptableValueRange<int>(1, 10)));
-            _labMultiplier = confFile.Bind("config", "labMultiplier", 1, new ConfigDescription( "Multiplies speed of laboratories", new AcceptableValueRange<int>(1, 10)));
-            _fractionatorMultiplier = confFile.Bind("config", "fractionateMultiplier", 1, new ConfigDescription( "Multiplies % of fractionators", new AcceptableValueRange<int>(1, 10)));
-            _ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, new ConfigDescription( "Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 10)));
-            _siloMultiplier = confFile.Bind("config", "siloMultiplier", 1, new ConfigDescription( "Multiplies speed of silos", new AcceptableValueRange<int>(1, 10)));
-            gammaMultiplier = confFile.Bind("config", "gammaMultiplier", 1, new ConfigDescription( "Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 10)));
+            walkspeedMultiplier = confFile.Bind("mecha", "WalkSpeedMultiplier", 1, new ConfigDescription( "How fast do you want to go", new AcceptableValueRange<int>(1, 20)));
+            smeltMultiplier = confFile.Bind("config", "smeltMultiplier", 1, new ConfigDescription( "Multiplies speed of smelters", new AcceptableValueRange<int>(1, 20)));
+            chemicalMultiplier = confFile.Bind("config", "chemicalMultiplier", 1, new ConfigDescription( "Multiplies speed of chemical plants", new AcceptableValueRange<int>(1, 20)));
+            refineMultiplier = confFile.Bind("config", "refineMultiplier", 1, new ConfigDescription( "Multiplies speed of refineries", new AcceptableValueRange<int>(1, 20)));
+            assembleMultiplier = confFile.Bind("config", "assembleMultiplier", 1, new ConfigDescription( "Multiplies speed of assemblers", new AcceptableValueRange<int>(1, 20)));
+            particleMultiplier = confFile.Bind("config", "particleMultiplier", 1, new ConfigDescription( "Multiplies speed of particle colliders", new AcceptableValueRange<int>(1, 20)));
+            _labMultiplier = confFile.Bind("config", "labMultiplier", 1, new ConfigDescription( "Multiplies speed of laboratories", new AcceptableValueRange<int>(1, 20)));
+            _fractionatorMultiplier = confFile.Bind("config", "fractionateMultiplier", 1, new ConfigDescription( "Multiplies % of fractionators", new AcceptableValueRange<int>(1, 20)));
+            _ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, new ConfigDescription( "Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 20)));
+            _siloMultiplier = confFile.Bind("config", "siloMultiplier", 1, new ConfigDescription( "Multiplies speed of silos", new AcceptableValueRange<int>(1, 20)));
+            gammaMultiplier = confFile.Bind("config", "gammaMultiplier", 1, new ConfigDescription( "Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 20)));
             keyTestMode = confFile.Bind("config", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
             multiplierEnabled = confFile.Bind("config", "multiplierEnabled", true, "Determine whether we are currently multiplying values");
             enableAssemblerPopupLogMessage = confFile.Bind("config", "enableAssemblerPopupLogMessage", false, "Ignore - For debugging, log message when UI window is opened");
