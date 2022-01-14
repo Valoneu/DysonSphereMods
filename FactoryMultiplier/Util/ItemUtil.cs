@@ -6,7 +6,7 @@ namespace FactoryMultiplier.Util
 {
     public static class ItemUtil
     {
-        private static ConcurrentDictionary<int, ERecipeType> recipeByProtoId = new();
+        private static readonly ConcurrentDictionary<int, ERecipeType> recipeByProtoId = new();
 
         public static ERecipeType GetRecipeByProtoId(int protoId)
         {
@@ -18,27 +18,21 @@ namespace FactoryMultiplier.Util
             return recipeByProtoId[itemProto.ID];
         }
 
-        private static ConcurrentDictionary<int, byte> _siloProtos;
-        public static bool IsSilo(int protoId)
-        {
-            if (_siloProtos == null)
-            {
-                _siloProtos = new ConcurrentDictionary<int, byte>();
-                LDB.items.dataArray.ToList().FindAll(i => i.prefabDesc.isSilo).ForEach(i => _siloProtos[i.ID] = 0);
-            }
-            return _siloProtos.ContainsKey(protoId);
-        }
-
-        private static ConcurrentDictionary<int, byte> _rayPhotonReceiverProtos;
+        private static ConcurrentDictionary<int, byte> rayPhotonReceiverProtos;
         public static bool IsPhotonRayReceiver(int protoId)
         {
-            if (_rayPhotonReceiverProtos == null)
+            if (rayPhotonReceiverProtos == null)
             {
-                _rayPhotonReceiverProtos = new ConcurrentDictionary<int, byte>();
-                LDB.items.dataArray.ToList().FindAll(i => i.prefabDesc.gammaRayReceiver).ForEach(i => _rayPhotonReceiverProtos[i.ID] = 0);
+                rayPhotonReceiverProtos = new ConcurrentDictionary<int, byte>();
+                LDB.items.dataArray.ToList().FindAll(i => i.prefabDesc.gammaRayReceiver).ForEach(i => rayPhotonReceiverProtos[i.ID] = 0);
             }
-            return _rayPhotonReceiverProtos.ContainsKey(protoId);
+            return rayPhotonReceiverProtos.ContainsKey(protoId);
         }
 
+        private static readonly ItemProto _siloProto = LDB.items.dataArray.ToList().Find(i => i.prefabDesc.isSilo);
+        public static ItemProto GetSiloProto()
+        {
+            return _siloProto;
+        }
     }
 }

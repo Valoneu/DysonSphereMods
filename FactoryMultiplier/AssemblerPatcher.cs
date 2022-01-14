@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using FactoryMultiplier.Util;
 using HarmonyLib;
 
@@ -20,29 +21,13 @@ namespace FactoryMultiplier
         {
             FactorySystemPatch(__instance);
         }
-        
+
         private static void FactorySystemPatch(FactorySystem factorySystem)
         {
             MultiplyAssemblers(factorySystem);
-            MultiplyLabs(factorySystem);
             MultiplyFractionators(factorySystem);
-            MultiplySilos(factorySystem);
             MultiplyEjectors(factorySystem);
             MultiplySorters(factorySystem);
-        }
-
-        private static void MultiplySilos(FactorySystem factorySystem)
-        {
-            for (int index = 1; index < factorySystem.siloCursor; ++index)
-            {
-                var siloComponent = factorySystem.siloPool[index];
-                if (siloComponent.id == index && ItemUtil.IsSilo(siloComponent.entityId))
-                {
-                    var itemProto = LDB.items.Select(siloComponent.entityId);
-                    siloComponent.chargeSpend = itemProto.prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
-                    siloComponent.coldSpend = itemProto.prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
-                }
-            }
         }
 
         private static void MultiplyEjectors(FactorySystem factorySystem)
@@ -74,18 +59,28 @@ namespace FactoryMultiplier
             }
         }
 
-        private static void MultiplyLabs(FactorySystem factorySystem)
+        private static ConcurrentDictionary<int, RecipeProto> _recipeProtosById = new();
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(LabComponent), "InternalUpdateAssemble")]
+        private static void MultiplyLab(ref LabComponent __instance)
         {
-            for (int index = 1; index < factorySystem.labCursor; ++index)
+            if (__instance.recipeId > 0)
             {
-                var labComponent = factorySystem.labPool[index];
-                if (labComponent.id != index) 
-                    continue;
-                RecipeProto recipeProto = LDB.recipes.Select(labComponent.recipeId);
-                if (labComponent.recipeId > 0)
+                if (!_recipeProtosById.TryGetValue(__instance.recipeId, out RecipeProto proto))
                 {
-                    labComponent.timeSpend = recipeProto.TimeSpend * 10000 / PluginConfig.labMultiplier;
+                    RecipeProto recipeProto = LDB.recipes.Select(__instance.recipeId);
+                    if (recipeProto.ID > 0)
+                    {
+                        proto = _recipeProtosById[__instance.recipeId] = recipeProto;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
+
+                __instance.timeSpend = proto.TimeSpend * 10000 / PluginConfig.labMultiplier;
             }
         }
 
@@ -116,6 +111,14 @@ namespace FactoryMultiplier
                     factorySystem.inserterPool[index].stt = inserterProto.prefabDesc.inserterSTT / PluginConfig.inserterMultiplier.Value;
                 }
             }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SiloComponent), "InternalUpdate")]
+        public static void SiloComponent_InternalUpdate_Prefix(ref SiloComponent __instance)
+        {
+            __instance.chargeSpend = ItemUtil.GetSiloProto().prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
+            __instance.coldSpend = ItemUtil.GetSiloProto().prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
         }
     }
 }
