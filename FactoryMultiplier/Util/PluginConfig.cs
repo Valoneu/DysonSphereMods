@@ -16,6 +16,7 @@ namespace FactoryMultiplier.Util
         private static ConfigEntry<int> _ejectorMultiplier;
         private static ConfigEntry<int> _siloMultiplier;
         public static ConfigEntry<int> gammaMultiplier;
+        public static ConfigEntry<int> inserterMultiplier;
         public static ConfigEntry<bool> keyTestMode;
         public static ConfigEntry<bool> multiplierEnabled;
         public static ConfigEntry<bool> enableAssemblerPopupLogMessage;
@@ -39,6 +40,7 @@ namespace FactoryMultiplier.Util
             _ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, new ConfigDescription( "Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 20)));
             _siloMultiplier = confFile.Bind("config", "siloMultiplier", 1, new ConfigDescription( "Multiplies speed of silos", new AcceptableValueRange<int>(1, 20)));
             gammaMultiplier = confFile.Bind("config", "gammaMultiplier", 1, new ConfigDescription( "Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 20)));
+            inserterMultiplier = confFile.Bind("config", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4)));
             keyTestMode = confFile.Bind("config", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
             multiplierEnabled = confFile.Bind("config", "multiplierEnabled", true, "Determine whether we are currently multiplying values");
             enableAssemblerPopupLogMessage = confFile.Bind("config", "enableAssemblerPopupLogMessage", false, "Ignore - For debugging, log message when UI window is opened");

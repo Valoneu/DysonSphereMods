@@ -28,6 +28,7 @@ namespace FactoryMultiplier
             MultiplyFractionators(factorySystem);
             MultiplySilos(factorySystem);
             MultiplyEjectors(factorySystem);
+            MultiplySorters(factorySystem);
         }
 
         private static void MultiplySilos(FactorySystem factorySystem)
@@ -100,6 +101,19 @@ namespace FactoryMultiplier
                     int multi = PluginConfig.GetMultiplierByRecipe(eRecipeType);
 
                     factorySystem.assemblerPool[index].speed = multi * assemblerProto.prefabDesc.assemblerSpeed;
+                }
+            }
+        }
+
+        private static void MultiplySorters(FactorySystem factorySystem)
+        {
+            for (int index = 1; index < factorySystem.inserterCursor; ++index)
+            {
+                int entityId = factorySystem.inserterPool[index].entityId;
+                if (entityId > 0)
+                {
+                    ItemProto inserterProto = LDB.items.Select(factorySystem.factory.entityPool[entityId].protoId);
+                    factorySystem.inserterPool[index].stt = inserterProto.prefabDesc.inserterSTT / PluginConfig.inserterMultiplier.Value;
                 }
             }
         }
