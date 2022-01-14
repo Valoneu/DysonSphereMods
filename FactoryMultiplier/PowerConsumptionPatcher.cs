@@ -56,7 +56,19 @@ namespace FactoryMultiplier
                     }
                     else
                     {
-                        multiplier = GetMultiplierFromPrefabDesc(itemProto.prefabDesc, multiplier);
+                        if (itemProto.prefabDesc.isLab)
+                        {
+                            var entityData = powerSystem.factory.entityPool[powerConsumerComponent.entityId];
+                            var labComponent = powerSystem.factory.factorySystem.labPool[entityData.labId];
+                            if (labComponent.researchMode)
+                                multiplier = 1;
+                            else
+                                multiplier = labMultiplier;
+                        }
+                        else
+                        {
+                            multiplier = GetMultiplierFromPrefabDesc(itemProto.prefabDesc);
+                        }
                     }
 
 
@@ -83,7 +95,7 @@ namespace FactoryMultiplier
                     var itemProto = LDB.items.Select(powerSystem.consumerPool[index].entityId);
                     if (powerSystem.genPool[index].id == index && powerSystem.genPool[index].gamma)
                     {
-                        powerSystem.genPool[index].genEnergyPerTick = (long)PluginConfig.gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
+                        powerSystem.genPool[index].genEnergyPerTick = gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
                     }
                 }
             }

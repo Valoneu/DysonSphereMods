@@ -26,28 +26,7 @@ namespace FactoryMultiplier
         {
             MultiplyAssemblers(factorySystem);
             MultiplyFractionators(factorySystem);
-            MultiplyEjectors(factorySystem);
             MultiplySorters(factorySystem);
-        }
-
-        private static void MultiplyEjectors(FactorySystem factorySystem)
-        {
-            ItemProto proto = null;
-            for (int index = 1; index < factorySystem.ejectorCursor; ++index)
-            {
-                var ejectorComponent = factorySystem.ejectorPool[index];
-                if (ejectorComponent.id == index)
-                {
-                    if (proto == null)
-                    {
-                        var entityData = factorySystem.factory.entityPool[ejectorComponent.entityId];
-                        proto = LDB.items.Select(entityData.protoId);
-                    }
-
-                    ejectorComponent.chargeSpend = proto.prefabDesc.ejectorChargeFrame * 10000 / PluginConfig.ejectorMultiplier;
-                    ejectorComponent.coldSpend = proto.prefabDesc.ejectorColdFrame * 10000 / PluginConfig.ejectorMultiplier;
-                }
-            }
         }
 
         private static void MultiplyFractionators(FactorySystem factorySystem)
@@ -113,6 +92,15 @@ namespace FactoryMultiplier
             }
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
+        public static void EjectorComponent_InternalUpdate_Prefix(ref EjectorComponent __instance)
+        {
+            var ejectorProto = ItemUtil.ejectorProto;
+            __instance.chargeSpend = ejectorProto.prefabDesc.ejectorChargeFrame * 10000 / PluginConfig.ejectorMultiplier;
+            __instance.coldSpend = ejectorProto.prefabDesc.ejectorColdFrame * 10000 / PluginConfig.ejectorMultiplier;
+        }
+        
         [HarmonyPrefix]
         [HarmonyPatch(typeof(SiloComponent), "InternalUpdate")]
         public static void SiloComponent_InternalUpdate_Prefix(ref SiloComponent __instance)

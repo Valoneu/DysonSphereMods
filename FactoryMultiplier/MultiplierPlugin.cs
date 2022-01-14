@@ -70,6 +70,18 @@ namespace FactoryMultiplier
 
 
         [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIEjectorWindow), nameof(UIEjectorWindow._OnOpen))]
+        private static void UIEjectorWindow_Open_Postfix(UIEjectorWindow __instance)
+        {
+            if (!enableAssemblerPopupLogMessage.Value) 
+                return;
+            var ejector = __instance.factorySystem.ejectorPool[__instance.ejectorId];
+            logger.LogInfo($"opened ejector {ejector.chargeSpend} {ejector.coldSpend} {JsonUtility.ToJson(ejector)}");
+            var powerConsumerComponent = __instance.powerSystem.consumerPool[ejector.pcId];
+            logger.LogInfo($"ejector consumption {JsonUtility.ToJson(powerConsumerComponent)}");
+        }
+
+        [HarmonyPostfix]
         [HarmonyPatch(typeof(UIAssemblerWindow), "_OnOpen")]
         private static void UIAssembler_Open_Postfix(UIAssemblerWindow __instance)
         {
