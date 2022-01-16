@@ -17,3 +17,6 @@
 
 #### things to upgrade:
 1. change all things to internal update (less lag) 
+2. mining
+3. cfg for power draw
+4. mech speed
