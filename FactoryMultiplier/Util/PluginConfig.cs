@@ -1,11 +1,9 @@
 ﻿using BepInEx.Configuration;
-using static FactoryMultiplier.Util.Log;
 
 namespace FactoryMultiplier.Util
 {
     public static class PluginConfig
     {
-        public static ConfigEntry<int> walkspeedMultiplier;
         public static ConfigEntry<int> smeltMultiplier;
         public static ConfigEntry<int> chemicalMultiplier;
         public static ConfigEntry<int> refineMultiplier;
@@ -16,12 +14,13 @@ namespace FactoryMultiplier.Util
         private static ConfigEntry<int> _ejectorMultiplier;
         private static ConfigEntry<int> _siloMultiplier;
         public static ConfigEntry<int> gammaMultiplier;
-        public static ConfigEntry<int> inserterMultiplier;
+        public static ConfigEntry<int> _inserterMultiplier;
         public static ConfigEntry<bool> keyTestMode;
         public static ConfigEntry<bool> multiplierEnabled;
         public static ConfigEntry<bool> enableAssemblerPopupLogMessage;
 
         public static int siloMultiplier => multiplierEnabled.Value ? _siloMultiplier.Value : 1;
+        public static int inserterMultiplier => multiplierEnabled.Value ? _inserterMultiplier.Value : 1;
         public static int ejectorMultiplier => multiplierEnabled.Value ? _ejectorMultiplier.Value : 1;
 
         public static int fractionatorMultiplier => multiplierEnabled.Value ? _fractionatorMultiplier.Value : 1;
@@ -29,7 +28,6 @@ namespace FactoryMultiplier.Util
 
         public static void InitConfig(ConfigFile confFile)
         {
-            walkspeedMultiplier = confFile.Bind("mecha", "WalkSpeedMultiplier", 1, new ConfigDescription( "How fast do you want to go", new AcceptableValueRange<int>(1, 20)));
             smeltMultiplier = confFile.Bind("config", "smeltMultiplier", 1, new ConfigDescription( "Multiplies speed of smelters", new AcceptableValueRange<int>(1, 20)));
             chemicalMultiplier = confFile.Bind("config", "chemicalMultiplier", 1, new ConfigDescription( "Multiplies speed of chemical plants", new AcceptableValueRange<int>(1, 20)));
             refineMultiplier = confFile.Bind("config", "refineMultiplier", 1, new ConfigDescription( "Multiplies speed of refineries", new AcceptableValueRange<int>(1, 20)));
@@ -40,7 +38,7 @@ namespace FactoryMultiplier.Util
             _ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, new ConfigDescription( "Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 20)));
             _siloMultiplier = confFile.Bind("config", "siloMultiplier", 1, new ConfigDescription( "Multiplies speed of silos", new AcceptableValueRange<int>(1, 20)));
             gammaMultiplier = confFile.Bind("config", "gammaMultiplier", 1, new ConfigDescription( "Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 20)));
-            inserterMultiplier = confFile.Bind("config", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4)));
+            _inserterMultiplier = confFile.Bind("config", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4)));
             keyTestMode = confFile.Bind("config", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
             multiplierEnabled = confFile.Bind("config", "multiplierEnabled", true, "Determine whether we are currently multiplying values");
             enableAssemblerPopupLogMessage = confFile.Bind("config", "enableAssemblerPopupLogMessage", false, "Ignore - For debugging, log message when UI window is opened");
