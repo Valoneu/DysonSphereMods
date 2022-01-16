@@ -23,7 +23,7 @@ namespace FactoryMultiplier
 
             try
             {
-                // MultiplyGamma(__instance);
+                // MultiplyReceivers(__instance);
             }
             catch (Exception e)
             {
@@ -92,7 +92,9 @@ namespace FactoryMultiplier
             {
                 for (int index = 1; index < powerSystem.genCursor; ++index)
                 {
-                    var itemProto = LDB.items.Select(powerSystem.consumerPool[index].entityId);
+                int entityId = powerSystem.genPool[index].entityId;
+                int protoId = powerSystem.factory.entityPool[entityId].protoId;
+                var itemProto = LDB.items.Select(protoId);
                     if (powerSystem.genPool[index].id == index && powerSystem.genPool[index].gamma)
                     {
                         powerSystem.genPool[index].genEnergyPerTick = gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
