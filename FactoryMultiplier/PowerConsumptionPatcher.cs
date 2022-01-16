@@ -23,7 +23,7 @@ namespace FactoryMultiplier
 
             try
             {
-                // MultiplyReceivers(__instance);
+                MultiplyReceivers(__instance);
             }
             catch (Exception e)
             {
