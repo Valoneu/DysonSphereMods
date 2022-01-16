@@ -26,7 +26,6 @@ namespace FactoryMultiplier
         {
             MultiplyAssemblers(factorySystem);
             MultiplyFractionators(factorySystem);
-            MultiplySorters(factorySystem);
         }
 
         private static void MultiplyFractionators(FactorySystem factorySystem)
@@ -79,19 +78,6 @@ namespace FactoryMultiplier
             }
         }
 
-        private static void MultiplySorters(FactorySystem factorySystem)
-        {
-            for (int index = 1; index < factorySystem.inserterCursor; ++index)
-            {
-                int entityId = factorySystem.inserterPool[index].entityId;
-                if (entityId > 0)
-                {
-                    ItemProto inserterProto = LDB.items.Select(factorySystem.factory.entityPool[entityId].protoId);
-                    factorySystem.inserterPool[index].stt = inserterProto.prefabDesc.inserterSTT / PluginConfig.inserterMultiplier.Value;
-                }
-            }
-        }
-
         [HarmonyPrefix]
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
         public static void EjectorComponent_InternalUpdate_Prefix(ref EjectorComponent __instance)
@@ -107,6 +93,31 @@ namespace FactoryMultiplier
         {
             __instance.chargeSpend = ItemUtil.GetSiloProto().prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
             __instance.coldSpend = ItemUtil.GetSiloProto().prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdate))]
+        public static void InserterComponent_InternalUpdate_Prefix(ref InserterComponent __instance, PlanetFactory factory)
+        {
+            if (__instance.id == 0 || __instance.entityId == 0)
+                return;
+            var entityData = factory.entityPool[__instance.entityId];
+            
+            ItemProto inserterProto = LDB.items.Select(entityData.protoId);
+            if (inserterProto.prefabDesc != null)
+                __instance.stt = inserterProto.prefabDesc.inserterSTT / PluginConfig.inserterMultiplier;
+    
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdateNoAnim))]
+        public static void InserterComponent_InternalUpdateNoAnim_Prefix(ref InserterComponent __instance, PlanetFactory factory)
+        {
+            if (__instance.id == 0 || __instance.entityId == 0)
+                return;
+            var entityData = factory.entityPool[__instance.entityId];
+            
+            ItemProto inserterProto = LDB.items.Select(entityData.protoId);
+            if (inserterProto.prefabDesc != null)
+                __instance.stt = inserterProto.prefabDesc.inserterSTT / PluginConfig.inserterMultiplier;
         }
     }
 }
