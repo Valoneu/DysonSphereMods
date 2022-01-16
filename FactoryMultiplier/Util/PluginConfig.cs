@@ -35,9 +35,9 @@ namespace FactoryMultiplier.Util
             particleMultiplier = confFile.Bind("config", "particleMultiplier", 1, new ConfigDescription( "Multiplies speed of particle colliders", new AcceptableValueRange<int>(1, 20)));
             _labMultiplier = confFile.Bind("config", "labMultiplier", 1, new ConfigDescription( "Multiplies speed of laboratories", new AcceptableValueRange<int>(1, 20)));
             _fractionatorMultiplier = confFile.Bind("config", "fractionateMultiplier", 1, new ConfigDescription( "Multiplies % of fractionators", new AcceptableValueRange<int>(1, 20)));
-            _ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, new ConfigDescription( "Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 20)));
-            _siloMultiplier = confFile.Bind("config", "siloMultiplier", 1, new ConfigDescription( "Multiplies speed of silos", new AcceptableValueRange<int>(1, 20)));
-            gammaMultiplier = confFile.Bind("config", "gammaMultiplier", 1, new ConfigDescription( "Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 20)));
+            _ejectorMultiplier = confFile.Bind("config", "ejectorMultiplier", 1, new ConfigDescription( "Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 50)));
+            _siloMultiplier = confFile.Bind("config", "siloMultiplier", 1, new ConfigDescription( "Multiplies speed of silos", new AcceptableValueRange<int>(1, 50)));
+            gammaMultiplier = confFile.Bind("config", "gammaMultiplier", 1, new ConfigDescription( "Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 100)));
             _inserterMultiplier = confFile.Bind("config", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4)));
             keyTestMode = confFile.Bind("config", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
             multiplierEnabled = confFile.Bind("config", "multiplierEnabled", true, "Determine whether we are currently multiplying values");
