@@ -104,7 +104,7 @@ namespace FactoryMultiplier
             
             ItemProto inserterProto = LDB.items.Select(entityData.protoId);
             if (inserterProto.prefabDesc != null)
-                __instance.stt = inserterProto.prefabDesc.inserterSTT / PluginConfig.inserterMultiplier;
+                __instance.speed = 10000 * PluginConfig.inserterMultiplier;
     
         }
         [HarmonyPrefix]
@@ -117,7 +117,7 @@ namespace FactoryMultiplier
             
             ItemProto inserterProto = LDB.items.Select(entityData.protoId);
             if (inserterProto.prefabDesc != null)
-                __instance.stt = inserterProto.prefabDesc.inserterSTT / PluginConfig.inserterMultiplier;
+                __instance.speed = 10000 * PluginConfig.inserterMultiplier;
         }
     }
 }
