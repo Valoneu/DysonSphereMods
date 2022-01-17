@@ -22,3 +22,4 @@
 3. cfg for power draw
 4. mech speed
 5. exchanger speed
+6. generator produce
