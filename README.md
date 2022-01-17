@@ -8,6 +8,7 @@
 1. Quick clicks like in factorio to pick up and insert fast with mech
 2. Add to overclock all other things: vessels, drones, belt
 3. Only inserter booster
+4. QuantumBelt mod
 
 ## Issues/Updates:
 ### Overclock:
