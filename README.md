@@ -10,6 +10,7 @@
 3. Only inserter booster
 4. QuantumBelt mod
 5. custom warp sound
+6. power network rename
 
 ## Issues/Updates:
 ### Overclock:
