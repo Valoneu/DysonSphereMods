@@ -26,3 +26,8 @@
 4. mech speed
 5. exchanger speed
 6. generator produce
+
+### TechHashReduce:
+#### issues:
+#### things to upgrade:
+1. when changing tech cost dont alter the non cube ones
