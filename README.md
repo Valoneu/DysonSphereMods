@@ -12,12 +12,15 @@
 5. custom warp sound
 6. power network rename
 7. remove limitation of mk2 miner
+8. Fix Stack Editor
+9. Fix EnergyMultiplier
 
 ## Issues/Updates:
 ### Overclock:
 #### issues: 
 1. lags the game from version 1.0.4 maybe
 2. desc of sorters not work while placing
+3. power patch dont work
 
 #### things to upgrade:
 1. change all things to internal update (less lag) 
