@@ -8,12 +8,29 @@
 1. Quick clicks like in factorio to pick up and insert fast with mech
 2. Add to overclock all other things: vessels, drones, belt
 3. Only inserter booster
+4. QuantumBelt mod
+5. custom warp sound
+6. power network rename
+7. remove limitation of mk2 miner
+8. Fix Stack Editor
+9. Fix EnergyMultiplier
 
 ## Issues/Updates:
 ### Overclock:
 #### issues: 
 1. lags the game from version 1.0.4 maybe
 2. desc of sorters not work while placing
+3. power patch dont work
 
 #### things to upgrade:
 1. change all things to internal update (less lag) 
+2. mining
+3. cfg for power draw
+4. mech speed
+5. exchanger speed
+6. generator produce
+
+### TechHashReduce:
+#### issues:
+#### things to upgrade:
+1. when changing tech cost dont alter the non cube ones
