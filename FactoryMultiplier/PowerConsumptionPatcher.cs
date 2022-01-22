@@ -30,10 +30,6 @@ namespace FactoryMultiplier
                 logger.LogWarning($"Multiply gamma exception {e.Message} {e.StackTrace}");
             }
         }
-
-        private static bool _loggedMultiLtOne;
-        private static bool _loggedAsmOnce;
-
         private static void MultiplyPowerConsumption(PowerSystem powerSystem)
         {
             for (var index = 1; index < powerSystem.consumerCursor; ++index)
@@ -44,6 +40,8 @@ namespace FactoryMultiplier
                 {
                     var itemProto = LDB.items.Select(powerSystem.factory.entityPool[entityId].protoId);
                     if (itemProto.Type == EItemType.Logistics)
+                        continue;
+                    if (itemProto == null)
                         continue;
 
                     var multiplier = -1;
@@ -69,18 +67,6 @@ namespace FactoryMultiplier
                         {
                             multiplier = GetMultiplierFromPrefabDesc(itemProto.prefabDesc);
                         }
-                    }
-
-
-                    if (multiplier < 1)
-                    {
-                        LogOnce("Multiplier is < 1 ({0}) for {1}, {2}", ref _loggedMultiLtOne, multiplier, itemProto, powerConsumerComponent);
-                        continue;
-                    }
-                    if (powerConsumerComponent.id == 6512)
-                    {
-                        LogOnce("item is asembler {0}, {1} \n {2} \n {3}", ref _loggedAsmOnce, multiplier, itemProto, powerConsumerComponent,
-                            itemProto.prefabDesc);
                     }
 
                     var prefabEnergyPerTick = itemProto.prefabDesc.workEnergyPerTick;

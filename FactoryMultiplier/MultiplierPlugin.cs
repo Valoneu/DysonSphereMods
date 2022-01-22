@@ -24,6 +24,7 @@ namespace FactoryMultiplier
             logger = Logger;
             _harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             _harmony.PatchAll(typeof(PowerConsumptionPatcher));
+            _harmony.PatchAll(typeof(PowerGenerationPatcher));
             _harmony.PatchAll(typeof(MultiplierPlugin));
             _harmony.PatchAll(typeof(AssemblerPatcher));
             Logger.LogInfo($"Plugin: {PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} is loaded!");
