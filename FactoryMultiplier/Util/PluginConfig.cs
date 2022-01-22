@@ -43,29 +43,29 @@ namespace FactoryMultiplier.Util
 
         public static void InitConfig(ConfigFile confFile)
         {
-            smeltMultiplier = confFile.Bind("Factory", "smeltMultiplier", 1, new ConfigDescription("Multiplies speed of smelters", new AcceptableValueRange<int>(1, 20)));
-            chemicalMultiplier = confFile.Bind("Factory", "chemicalMultiplier", 1, new ConfigDescription("Multiplies speed of chemical plants", new AcceptableValueRange<int>(1, 20)));
-            refineMultiplier = confFile.Bind("Factory", "refineMultiplier", 1, new ConfigDescription("Multiplies speed of refineries", new AcceptableValueRange<int>(1, 20)));
-            assembleMultiplier = confFile.Bind("Factory", "assembleMultiplier", 1, new ConfigDescription("Multiplies speed of assemblers", new AcceptableValueRange<int>(1, 20)));
-            particleMultiplier = confFile.Bind("Factory", "particleMultiplier", 1, new ConfigDescription("Multiplies speed of particle colliders", new AcceptableValueRange<int>(1, 20)));
-            _labMultiplier = confFile.Bind("Factory", "labMultiplier", 1, new ConfigDescription("Multiplies speed of laboratories", new AcceptableValueRange<int>(1, 20)));
-            _fractionatorMultiplier = confFile.Bind("Factory", "fractionateMultiplier", 1, new ConfigDescription("Multiplies % of fractionators", new AcceptableValueRange<int>(1, 20)));
-            _ejectorMultiplier = confFile.Bind("Factory", "ejectorMultiplier", 1, new ConfigDescription("Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 50)));
-            _siloMultiplier = confFile.Bind("Factory", "siloMultiplier", 1, new ConfigDescription("Multiplies speed of silos", new AcceptableValueRange<int>(1, 50)));
-            gammaMultiplier = confFile.Bind("Factory", "gammaMultiplier", 1, new ConfigDescription("Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 100)));
-            _inserterMultiplier = confFile.Bind("Factory", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4)));
+            smeltMultiplier = confFile.Bind("1. Factory", "smeltMultiplier", 1, new ConfigDescription("Multiplies speed of smelters", new AcceptableValueRange<int>(1, 20)));
+            chemicalMultiplier = confFile.Bind("1. Factory", "chemicalMultiplier", 1, new ConfigDescription("Multiplies speed of chemical plants", new AcceptableValueRange<int>(1, 20)));
+            refineMultiplier = confFile.Bind("1. Factory", "refineMultiplier", 1, new ConfigDescription("Multiplies speed of refineries", new AcceptableValueRange<int>(1, 20)));
+            assembleMultiplier = confFile.Bind("1. Factory", "assembleMultiplier", 1, new ConfigDescription("Multiplies speed of assemblers", new AcceptableValueRange<int>(1, 20)));
+            particleMultiplier = confFile.Bind("1. Factory", "particleMultiplier", 1, new ConfigDescription("Multiplies speed of particle colliders", new AcceptableValueRange<int>(1, 20)));
+            _labMultiplier = confFile.Bind("1. Factory", "labMultiplier", 1, new ConfigDescription("Multiplies speed of laboratories", new AcceptableValueRange<int>(1, 20)));
+            _fractionatorMultiplier = confFile.Bind("1. Factory", "fractionateMultiplier", 1, new ConfigDescription("Multiplies % of fractionators", new AcceptableValueRange<int>(1, 20)));
+            _ejectorMultiplier = confFile.Bind("1. Factory", "ejectorMultiplier", 1, new ConfigDescription("Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 50)));
+            _siloMultiplier = confFile.Bind("1. Factory", "siloMultiplier", 1, new ConfigDescription("Multiplies speed of silos", new AcceptableValueRange<int>(1, 50)));
+            gammaMultiplier = confFile.Bind("1. Factory", "gammaMultiplier", 1, new ConfigDescription("Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 100)));
+            _inserterMultiplier = confFile.Bind("1. Factory", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4)));
 
-            _genWindMultiplier = confFile.Bind("Generator", "generatorWindMultiplier", 1, new ConfigDescription("Multiplies speed of wind turbines", new AcceptableValueRange<int>(1, 10)));
-            _genSolarMultiplier = confFile.Bind("Generator", "generatorSolarMultiplier", 1, new ConfigDescription("Multiplies speed of solar panels", new AcceptableValueRange<int>(1, 10)));
-            _genGeoMultiplier = confFile.Bind("Generator", "generatorGeothermalMultiplier", 1, new ConfigDescription("Multiplies speed of geothermal plants", new AcceptableValueRange<int>(1, 10)));
-            _genThermalMultiplier = confFile.Bind("Generator", "generatorThermalMultiplier", 1, new ConfigDescription("Multiplies speed of thermal plants", new AcceptableValueRange<int>(1, 10)));
-            _genFusionMultiplier = confFile.Bind("Generator", "generatorFusionMultiplier", 1, new ConfigDescription("Multiplies speed of fusion power plants", new AcceptableValueRange<int>(1, 10)));
-            _genStarMultiplier = confFile.Bind("Generator", "generatorArtificialStarMultiplier", 1, new ConfigDescription("Multiplies speed of artificial stars", new AcceptableValueRange<int>(1, 10)));
-            _genExchMultiplier = confFile.Bind("Generator", "generatorExchangerMultiplier", 1, new ConfigDescription("Multiplies speed of energy exchangers", new AcceptableValueRange<int>(1, 10)));
+            _genWindMultiplier = confFile.Bind("2. Generator", "generatorWindMultiplier", 1, new ConfigDescription("Multiplies speed of wind turbines", new AcceptableValueRange<int>(1, 10)));
+            _genSolarMultiplier = confFile.Bind("2. Generator", "generatorSolarMultiplier", 1, new ConfigDescription("Multiplies speed of solar panels", new AcceptableValueRange<int>(1, 10)));
+            _genGeoMultiplier = confFile.Bind("2. Generator", "generatorGeothermalMultiplier", 1, new ConfigDescription("Multiplies speed of geothermal plants", new AcceptableValueRange<int>(1, 10)));
+            _genThermalMultiplier = confFile.Bind("2. Generator", "generatorThermalMultiplier", 1, new ConfigDescription("Multiplies speed of thermal plants", new AcceptableValueRange<int>(1, 10)));
+            _genFusionMultiplier = confFile.Bind("2. Generator", "generatorFusionMultiplier", 1, new ConfigDescription("Multiplies speed of fusion power plants", new AcceptableValueRange<int>(1, 10)));
+            _genStarMultiplier = confFile.Bind("2. Generator", "generatorArtificialStarMultiplier", 1, new ConfigDescription("Multiplies speed of artificial stars", new AcceptableValueRange<int>(1, 10)));
+            _genExchMultiplier = confFile.Bind("2. Generator", "generatorExchangerMultiplier", 1, new ConfigDescription("Multiplies speed of energy exchangers", new AcceptableValueRange<int>(1, 10)));
 
-            keyTestMode = confFile.Bind("Advanced", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
-            multiplierEnabled = confFile.Bind("Advanced", "multiplierEnabled", true, "Determine whether we are currently multiplying values");
-            enableAssemblerPopupLogMessage = confFile.Bind("Advanced", "enableAssemblerPopupLogMessage", false, "Ignore - For debugging, log message when UI window is opened");
+            keyTestMode = confFile.Bind("3. Advanced", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
+            multiplierEnabled = confFile.Bind("3. Advanced", "multiplierEnabled", true, "Determine whether we are currently multiplying values");
+            enableAssemblerPopupLogMessage = confFile.Bind("3. Advanced", "enableAssemblerPopupLogMessage", false, "Ignore - For debugging, log message when UI window is opened");
         }
 
         public static int GetMultiplierFromPrefabDesc(PrefabDesc desc, int defaultToUse = 1)
