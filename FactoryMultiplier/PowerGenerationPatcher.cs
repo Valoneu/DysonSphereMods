@@ -86,7 +86,7 @@ namespace FactoryMultiplier
                         switch (type)
                         {
                             case FuelConsumerType.None:
-                               // LogOnce($"Invalid fuel consumer type for generator {JsonUtility.ToJson(generatorComponent)}", ref _loggedNoneConsumerOnce);
+                                LogOnce("Invalid fuel consumer type for generator {0}", ref _loggedNoneConsumerOnce, generatorComponent);
                                 break;
                             case FuelConsumerType.Chemical:
                                 generatorComponent.genEnergyPerTick = itemProto.prefabDesc.genEnergyPerTick * PluginConfig.genThermalMultiplier;
