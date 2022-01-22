@@ -79,12 +79,12 @@ namespace FactoryMultiplier
                     }
                     if (powerConsumerComponent.id == 6512)
                     {
-                        LogOnce("item is asmbler {0}, {1} \n {2} \n {3}", ref _loggedAsmOnce, multiplier, itemProto, powerConsumerComponent,
+                        LogOnce("item is asembler {0}, {1} \n {2} \n {3}", ref _loggedAsmOnce, multiplier, itemProto, powerConsumerComponent,
                             itemProto.prefabDesc);
                     }
 
                     var prefabEnergyPerTick = itemProto.prefabDesc.workEnergyPerTick;
-                    powerSystem.consumerPool[index].workEnergyPerTick = multiplier * multiplier * prefabEnergyPerTick;
+                    powerSystem.consumerPool[index].workEnergyPerTick = multiplier * prefabEnergyPerTick;
                 }
             }
         }
