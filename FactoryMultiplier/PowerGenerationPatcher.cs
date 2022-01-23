@@ -18,7 +18,7 @@ namespace FactoryMultiplier
             Antimatter,
             Storage,
         }
-
+      
         private static FuelConsumerType GetFuelConsumerType(PowerGeneratorComponent powerGenerator)
         {
             var fuelMask = powerGenerator.fuelMask;
@@ -39,6 +39,7 @@ namespace FactoryMultiplier
                 return FuelConsumerType.Storage;
             }
 
+
             return FuelConsumerType.None;
         }
 
@@ -52,6 +53,7 @@ namespace FactoryMultiplier
             for (int index = 1; index < __instance.genCursor; ++index)
             {
                 ref PowerGeneratorComponent generatorComponent = ref __instance.genPool[index];
+
                 var entityData = __instance.factory.entityPool[generatorComponent.entityId];
                 var itemProto = LDB.items.Select(entityData.protoId);
 
@@ -75,6 +77,7 @@ namespace FactoryMultiplier
                     {
                         if (!_planetIdToEntityIdToConsumerType.TryGetValue(__instance.factory.planetId,
                                         out ConcurrentDictionary<int, FuelConsumerType> planetFuelConsumingGenerators))
+
                         {
                             _planetIdToEntityIdToConsumerType[__instance.factory.planetId] = planetFuelConsumingGenerators = new ConcurrentDictionary<int, FuelConsumerType>();
                         }
@@ -83,6 +86,7 @@ namespace FactoryMultiplier
                         {
                             planetFuelConsumingGenerators[generatorComponent.entityId] = type = GetFuelConsumerType(generatorComponent);
                         }
+
                         switch (type)
                         {
                             case FuelConsumerType.None:
@@ -99,6 +103,7 @@ namespace FactoryMultiplier
                             case FuelConsumerType.Antimatter:
                                 generatorComponent.genEnergyPerTick = itemProto.prefabDesc.genEnergyPerTick * PluginConfig.genStarMultiplier;
                                 generatorComponent.useFuelPerTick = itemProto.prefabDesc.useFuelPerTick * PluginConfig.genStarMultiplier;
+
                                 break;
                             case FuelConsumerType.Storage:
                                 generatorComponent.genEnergyPerTick = itemProto.prefabDesc.genEnergyPerTick * PluginConfig.genExchMultiplier;
