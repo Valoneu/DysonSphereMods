@@ -12,8 +12,6 @@
 5. custom warp sound
 6. power network rename
 7. remove limitation of mk2 miner
-8. Fix Stack Editor
-9. Fix EnergyMultiplier
 
 ## Issues/Updates:
 ### Overclock:
