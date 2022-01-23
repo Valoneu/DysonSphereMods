@@ -50,7 +50,7 @@ namespace FactoryMultiplier
         {
             for (int index = 1; index < __instance.genCursor; ++index)
             {
-                PowerGeneratorComponent generatorComponent = __instance.genPool[index];
+                ref PowerGeneratorComponent generatorComponent = ref __instance.genPool[index];
                 var entityData = __instance.factory.entityPool[generatorComponent.entityId];
                 var itemProto = LDB.items.Select(entityData.protoId);
 
