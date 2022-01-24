@@ -52,6 +52,18 @@ namespace FactoryMultiplier
                         var recipe = ItemUtil.GetRecipeByProtoId(itemProto.ID);
                         multiplier = GetMultiplierByRecipe(recipe);
                     }
+                    else if (itemProto.prefabDesc.isStation && !itemProto.prefabDesc.veinMiner)
+                    {
+                        // dont mess  non miner station power
+                        continue;
+                    }
+                    else 
+                    if (itemProto.prefabDesc.isStation)
+                    {
+                        // TODO multiplier for miners
+                        continue;
+                    }
+
                     else
                     {
                         if (itemProto.prefabDesc.isLab)
