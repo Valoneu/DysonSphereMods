@@ -86,7 +86,7 @@ namespace FactoryMultiplier
             __instance.chargeSpend = ejectorProto.prefabDesc.ejectorChargeFrame * 10000 / PluginConfig.ejectorMultiplier;
             __instance.coldSpend = ejectorProto.prefabDesc.ejectorColdFrame * 10000 / PluginConfig.ejectorMultiplier;
         }
-        
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(SiloComponent), "InternalUpdate")]
         public static void SiloComponent_InternalUpdate_Prefix(ref SiloComponent __instance)
@@ -101,11 +101,13 @@ namespace FactoryMultiplier
             if (__instance.id == 0 || __instance.entityId == 0)
                 return;
             var entityData = factory.entityPool[__instance.entityId];
-            
+
             ItemProto inserterProto = LDB.items.Select(entityData.protoId);
             if (inserterProto.prefabDesc != null)
+            {
                 __instance.speed = 10000 * PluginConfig.inserterMultiplier;
-    
+                __instance.delay = inserterProto.prefabDesc.inserterDelay / PluginConfig.inserterMultiplier;
+            }
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdateNoAnim))]
@@ -114,10 +116,13 @@ namespace FactoryMultiplier
             if (__instance.id == 0 || __instance.entityId == 0)
                 return;
             var entityData = factory.entityPool[__instance.entityId];
-            
+
             ItemProto inserterProto = LDB.items.Select(entityData.protoId);
             if (inserterProto.prefabDesc != null)
+            {
                 __instance.speed = 10000 * PluginConfig.inserterMultiplier;
+                __instance.delay = inserterProto.prefabDesc.inserterDelay / PluginConfig.inserterMultiplier;
+            }
         }
     }
 }

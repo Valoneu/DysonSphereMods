@@ -15,6 +15,8 @@ namespace FactoryMultiplier.Util
         private static ConfigEntry<int> _siloMultiplier;
         public static ConfigEntry<int> gammaMultiplier;
         public static ConfigEntry<int> _inserterMultiplier;
+        public static ConfigEntry<double> drawMultiplier;
+
         private static ConfigEntry<int> _genWindMultiplier;
         private static ConfigEntry<int> _genSolarMultiplier;
         private static ConfigEntry<int> _genGeoMultiplier;
@@ -50,10 +52,12 @@ namespace FactoryMultiplier.Util
             particleMultiplier = confFile.Bind("1. Factory", "particleMultiplier", 1, new ConfigDescription("Multiplies speed of particle colliders", new AcceptableValueRange<int>(1, 20)));
             _labMultiplier = confFile.Bind("1. Factory", "labMultiplier", 1, new ConfigDescription("Multiplies speed of laboratories", new AcceptableValueRange<int>(1, 20)));
             _fractionatorMultiplier = confFile.Bind("1. Factory", "fractionateMultiplier", 1, new ConfigDescription("Multiplies % of fractionators", new AcceptableValueRange<int>(1, 20)));
-            _ejectorMultiplier = confFile.Bind("1. Factory", "ejectorMultiplier", 1, new ConfigDescription("Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 50)));
-            _siloMultiplier = confFile.Bind("1. Factory", "siloMultiplier", 1, new ConfigDescription("Multiplies speed of silos", new AcceptableValueRange<int>(1, 50)));
-            gammaMultiplier = confFile.Bind("1. Factory", "gammaMultiplier", 1, new ConfigDescription("Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 100)));
-            _inserterMultiplier = confFile.Bind("1. Factory", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4)));
+            _ejectorMultiplier = confFile.Bind("1. Factory", "ejectorMultiplier", 1, new ConfigDescription("Multiplies speed of EM rail ejectors", new AcceptableValueRange<int>(1, 100)));
+            _siloMultiplier = confFile.Bind("1. Factory", "siloMultiplier", 1, new ConfigDescription("Multiplies speed of silos", new AcceptableValueRange<int>(1, 100)));
+            gammaMultiplier = confFile.Bind("1. Factory", "gammaMultiplier", 1, new ConfigDescription("Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 1000)));
+            _inserterMultiplier = confFile.Bind("1. Factory", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4, 8)));
+
+            drawMultiplier = confFile.Bind("1. Factory", "drawMultipler", 1.0, new ConfigDescription("Multiplies how much your factory will draw on top of your normal overclock", new AcceptableValueRange<double>(0.1, 10)));
 
             _genWindMultiplier = confFile.Bind("2. Generator", "generatorWindMultiplier", 1, new ConfigDescription("Multiplies speed of wind turbines", new AcceptableValueRange<int>(1, 100)));
             _genSolarMultiplier = confFile.Bind("2. Generator", "generatorSolarMultiplier", 1, new ConfigDescription("Multiplies speed of solar panels", new AcceptableValueRange<int>(1, 100)));
