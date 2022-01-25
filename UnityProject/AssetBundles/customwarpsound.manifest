@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 2671315176
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 832186a2fcbb1aa9e5e5bd856dd7dee1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3f7d0c5e0986ec71841622bcb2f9be1c
+HashAppended: 0
+ClassTypes:
+- Class: 83
+  Script: {instanceID: 0}
+Assets:
+- Assets/Audio/Working.wav
+- Assets/Audio/SlowDown.mp3
+- Assets/Audio/StartUp.mp3
+Dependencies: []
