@@ -57,7 +57,7 @@ namespace FactoryMultiplier
                         // dont mess  non miner station power
                         continue;
                     }
-                    else 
+                    else
                     if (itemProto.prefabDesc.isStation)
                     {
                         // TODO multiplier for miners
@@ -82,22 +82,35 @@ namespace FactoryMultiplier
                     }
 
                     var prefabEnergyPerTick = itemProto.prefabDesc.workEnergyPerTick;
-                    powerSystem.consumerPool[index].workEnergyPerTick = (int) drawMultiplier.Value * multiplier * prefabEnergyPerTick;
+                    powerSystem.consumerPool[index].workEnergyPerTick = (int)drawMultiplier.Value * multiplier * prefabEnergyPerTick;
                 }
             }
         }
-            public static void MultiplyReceivers(PowerSystem powerSystem)
+        public static void MultiplyReceivers(PowerSystem powerSystem)
+        {
+            for (int index = 1; index < powerSystem.genCursor; ++index)
             {
-                for (int index = 1; index < powerSystem.genCursor; ++index)
-                {
                 int entityId = powerSystem.genPool[index].entityId;
                 int protoId = powerSystem.factory.entityPool[entityId].protoId;
                 var itemProto = LDB.items.Select(protoId);
-                    if (powerSystem.genPool[index].id == index && powerSystem.genPool[index].gamma)
-                    {
-                        powerSystem.genPool[index].genEnergyPerTick = gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
-                    }
+                if (powerSystem.genPool[index].id == index && powerSystem.genPool[index].gamma)
+                {
+                    powerSystem.genPool[index].genEnergyPerTick = gammaMultiplier.Value * itemProto.prefabDesc.genEnergyPerTick;
+                }
+            }
+        }
+        public static void MultiplyExchangers(PowerSystem powerSystem)
+        {
+            for (int index = 1; index < powerSystem.excCursor; ++index)
+            {
+                int entityId = powerSystem.excPool[index].entityId;
+                int protoId = powerSystem.factory.entityPool[entityId].protoId;
+                var itemProto = LDB.items.Select(protoId);
+                if (powerSystem.excPool[index].energyPerTick > 0)
+                {
+                    powerSystem.excPool[index].energyPerTick = genExchMultiplier * itemProto.prefabDesc.exchangeEnergyPerTick;
                 }
             }
         }
     }
+}
