@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3462192063
+CRC: 2278300823
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e8e4964519909fdfda6bd5495e6743da
+    Hash: fe328c8600b9509f827b74bd3dc0f29a
   TypeTreeHash:
     serializedVersion: 2
     Hash: 1ed6ac54dda2f47fa570ea6bba387bf1
@@ -32,8 +32,8 @@ ClassTypes:
 - Class: 224
   Script: {instanceID: 0}
 Assets:
-- Assets/Audio/Working.wav
-- Assets/Audio/SlowDown.mp3
+- Assets/customwarpsound/Audio/Working.wav
+- Assets/customwarpsound/Audio/SlowDown.mp3
 - Assets/Prefab/AudioTest.prefab
-- Assets/Audio/StartUp.mp3
+- Assets/customwarpsound/Audio/StartUp.mp3
 Dependencies: []

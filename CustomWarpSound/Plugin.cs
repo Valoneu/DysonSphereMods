@@ -24,6 +24,7 @@ namespace CustomWarpSound
         private AudioSource _audioSrc;
         private string _savedAudioProto;
         public static ManualLogSource LOG;
+        private const string keyword = "customwarpsound";
 
         private void Awake()
         {
@@ -31,8 +32,8 @@ namespace CustomWarpSound
             using (ProtoRegistry.StartModLoad(PluginInfo.PLUGIN_GUID))
             {
                 var assetBundleFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var resources = new ResourceData(PluginInfo.PLUGIN_GUID, "customwarpsound", assetBundleFolder);
-                resources.LoadAssetBundle("customwarpsound");
+                var resources = new ResourceData(PluginInfo.PLUGIN_GUID, keyword, assetBundleFolder);
+                resources.LoadAssetBundle(keyword);
                 ProtoRegistry.AddResource(resources);
                 
                 var allAssetNames = resources.bundle.GetAllAssetNames();
@@ -40,10 +41,11 @@ namespace CustomWarpSound
                 Logger.LogInfo($"asset names: {assetNames}");
             }
 
-            ProtoRegistry.EditAudio(112, "assets/audio/startup.mp3", 1, 1, 0, 0); // startup
+            ProtoRegistry.EditAudio(112, $"assets/{keyword}/audio/startup.mp3", 1, 1, 0, 0); // startup
             _initAudio = true;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
         }
+
 
         private void Update()
         {
