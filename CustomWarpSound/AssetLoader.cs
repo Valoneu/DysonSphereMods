@@ -43,7 +43,7 @@ namespace CustomWarpSound
 
             LOG.LogWarning($"plugin folder is {assetBundleFolder}");
             var resources = new ResourceData(PluginInfo.PLUGIN_GUID, key, assetBundleFolder);
-            resources.LoadAssetBundle(key);
+            resources.LoadAssetBundle("customwarpsound");
             ProtoRegistry.AddResource(resources);
             AssetBundle = resources.bundle;
         }
