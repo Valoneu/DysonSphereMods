@@ -1,0 +1,7 @@
+ManifestFileVersion: 0
+CRC: 3559738440
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: customwarpsound
+      Dependencies: {}
