@@ -18,12 +18,17 @@
 #### issues: 
 
 #### things to upgrade:
-2. mining
-3. cfg for power draw
-4. mech speed
-5. exchanger speed
+1. mining
+2. mech speed
+3. exchanger speed
+4. vessel and drone speed
+5. vessel and drone departure speed
 
 ### TechHashReduce:
 #### issues:
 #### things to upgrade:
 1. when changing tech cost dont alter the non cube ones
+
+### VesselPower:
+#### issues:
+#### things to upgrade:
