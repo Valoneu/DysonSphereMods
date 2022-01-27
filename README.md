@@ -29,6 +29,6 @@
 #### things to upgrade:
 1. when changing tech cost dont alter the non cube ones
 
-### VesselPower:
+### LessVesselPower:
 #### issues:
 #### things to upgrade:
