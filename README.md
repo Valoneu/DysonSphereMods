@@ -2,7 +2,7 @@
 ## Lisf of my mods:
 1. LessShipPower - reduce power needed by vessels
 2. TechHashReduce - reduce hashes of techs
-3. FactoryMultiplier mod support - can overclock buildings 
+3. FactoryMultiplier mod support - can overclock buildings / generator / all other things
 
 ## Mod ideas:
 1. Quick clicks like in factorio to pick up and insert fast with mech
