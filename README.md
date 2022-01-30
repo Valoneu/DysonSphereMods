@@ -17,6 +17,7 @@
 ## Issues/Updates:
 ### Overclock:
 #### issues: 
+1. production bar in labs dont get sped up
 
 #### things to upgrade:
 1. mining
