@@ -13,6 +13,7 @@
 6. power network rename
 7. remove limitation of mk2 miner
 8. fusion power plant
+9. drag click tesla towers
 
 ## Issues/Updates:
 ### Overclock:
