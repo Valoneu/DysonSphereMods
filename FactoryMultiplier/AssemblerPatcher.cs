@@ -57,8 +57,8 @@ namespace FactoryMultiplier
                         return;
                     }
                 }
-
                 __instance.timeSpend = proto.TimeSpend * 10000 / PluginConfig.labMultiplier;
+                __instance.extraTimeSpend = proto.TimeSpend * 100000 / PluginConfig.labMultiplier;
             }
         }
 
