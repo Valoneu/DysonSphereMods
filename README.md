@@ -14,6 +14,7 @@
 7. remove limitation of mk2 miner
 8. fusion power plant
 9. drag click tesla towers
+10. orbital stations
 
 ## Issues/Updates:
 ### Overclock:
