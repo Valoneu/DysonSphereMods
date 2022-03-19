@@ -34,7 +34,7 @@ namespace HydrogenDissolution
             ProtoRegistry.RegisterString("Hydrogen Dissolution", "Hydrogen Dissolution");
 
             // 1 Hydrogen <- 100 Hydrogen (1120 id of hydrogen), Grid index - Bottomline, 5th from right
-            RecipeProto recipe = ProtoRegistry.RegisterRecipe(650, ERecipeType.Chemical, 10, new[] { 1120 }, new[] { 100 }, new[] { 1120 }, new[] { 1 }, "Hydrogen Dissolution", 1121,  1708 ,"Hydrogen Dissolution" , "assets/HydrogenDissolution/icons/icon");
+            RecipeProto recipe = ProtoRegistry.RegisterRecipe(650, ERecipeType.Chemical, 10, new[] { 1120 }, new[] { 100 }, new[] { 1120 }, new[] { 1 }, "Hydrogen Dissolution", 1121,  1609 ,"Hydrogen Dissolution" , "assets/HydrogenDissolution/icons/icon");
         }
     }
 }
