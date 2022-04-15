@@ -6,7 +6,7 @@
         <Description>FactoryOverclock</Description>
         <Version>1.1.4</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <LangVersion>9.0</LangVersion>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,9 +19,11 @@
 
         <PackageReference Include="DysonSphereProgram.GameLibs" Version="*-*" />
         <PackageReference Include="DysonSphereProgram.Modding.CommonAPI" Version="*-*" />
+		<PackageReference Include="DysonSphereProgram.Modding.UI.Builder" Version="0.0.3" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
-    </ItemGroup>
+
+	</ItemGroup>
 </Project>

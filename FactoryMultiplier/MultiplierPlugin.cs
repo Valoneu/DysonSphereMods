@@ -5,6 +5,8 @@ using HarmonyLib;
 using UnityEngine;
 using static FactoryMultiplier.Util.PluginConfig;
 using static FactoryMultiplier.Util.Log;
+using FactoryMultiplier.UI.Builder;
+using static FactoryMultiplier.UI.Builder.UIBuilderDSL;
 
 namespace FactoryMultiplier
 {
@@ -27,6 +29,8 @@ namespace FactoryMultiplier
             _harmony.PatchAll(typeof(PowerGenerationPatcher));
             _harmony.PatchAll(typeof(MultiplierPlugin));
             _harmony.PatchAll(typeof(AssemblerPatcher));
+            _harmony.PatchAll(typeof(FactoryUI));
+            UIBuilderPlugin.Create(PluginInfo.PLUGIN_GUID,FactoryUI.CreateUI);
             Logger.LogInfo($"Plugin: {PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} is loaded!");
         }
 
@@ -67,6 +71,8 @@ namespace FactoryMultiplier
         internal void OnDestroy()
         {
             _harmony.UnpatchSelf();
+            FactoryUI.DestroyUI();
+            UIBuilderPlugin.Destroy();
         }
 
 
