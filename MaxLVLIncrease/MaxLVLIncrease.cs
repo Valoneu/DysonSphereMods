@@ -1,25 +1,31 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using System.Linq;
+using xiaoye97;
 
 namespace MaxLVLIncrease
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin(GUID, NAME, VERSION)]
     public class plugin : BaseUnityPlugin 
     {
+        public const string GUID = "com.Valoneu.MaxLVLIncrease";
+        public const string NAME = "MaxLVLIncrease";
+        public const string VERSION = "1.0.0";
+
         private void Awake()
         {
-            Harmony harmony = new Harmony(PluginInfo.PLUGIN_GUID);
-            harmony.PatchAll(typeof(LVLPatch));
+            Harmony harmony = new Harmony(GUID);
+            LDBTool.EditDataAction += TechLevelIncrease;
         }
-    }
-
-    public class LVLPatch
-    {
-        [HarmonyPostfix, HarmonyPatch(typeof(TechState), MethodType.Constructor)]
-        public static void MaxLevelPatch(ref TechState __instance)
+        bool didLevelIncrease = false;
+        void TechLevelIncrease(Proto proto)
         {
-            if (__instance.maxLevel == 10000)
-                __instance.maxLevel = 50000;
+            if (didLevelIncrease) return;
+            foreach (var tech in LDB.techs.dataArray.Where(t => t.MaxLevel >= 1000))
+            {
+                tech.MaxLevel = 50000;
+            }
+            didLevelIncrease = true;
         }
     }
 }
