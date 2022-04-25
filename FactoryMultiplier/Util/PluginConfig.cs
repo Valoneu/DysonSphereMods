@@ -81,7 +81,7 @@ namespace FactoryMultiplier.Util
                 return siloMultiplier;
             }
 
-            if (desc.isFractionate)
+            if (desc.isFractionator)
             {
                 return fractionatorMultiplier;
             }

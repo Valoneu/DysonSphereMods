@@ -30,10 +30,10 @@ namespace FactoryMultiplier
 
         private static void MultiplyFractionators(FactorySystem factorySystem)
         {
-            for (int index = 1; index < factorySystem.fractionateCursor; ++index)
+            for (int index = 1; index < factorySystem.fractionatorCursor; ++index)
             {
-                if (factorySystem.fractionatePool[index].id == index)
-                    factorySystem.fractionatePool[index].produceProb = PluginConfig.fractionatorMultiplier * 0.01f;
+                if (factorySystem.fractionatorPool[index].id == index)
+                    factorySystem.fractionatorPool[index].produceProb = PluginConfig.fractionatorMultiplier * 0.01f;
             }
         }
 
