@@ -11,7 +11,7 @@ namespace MaxLVLIncrease
     {
         public const string GUID = "com.Valoneu.MaxLVLIncrease";
         public const string NAME = "MaxLVLIncrease";
-        public const string VERSION = "1.0.3";
+        public const string VERSION = "1.0.4";
 
         static int MaxLevelValue = 50000;
 
@@ -41,7 +41,7 @@ namespace MaxLVLIncrease
             for (int i = 0; i < dataArray.Length; i++)
             {
                 TechState techState = __instance.techStates[dataArray[i].ID];
-                if (techState.maxLevel == 10000)
+                if (techState.maxLevel >= 10000)
                 {
                     techState.maxLevel = MaxLevelValue;
                     techState.unlocked = false;
