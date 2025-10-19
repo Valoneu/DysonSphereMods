@@ -1,6 +1,6 @@
-﻿using System;
+﻿using BepInEx.Logging;
+using System;
 using System.Linq;
-using BepInEx.Logging;
 using UnityEngine;
 
 namespace FactoryMultiplier.Util
@@ -30,7 +30,7 @@ namespace FactoryMultiplier.Util
             if (flag)
                 return;
             flag = true;
-            var argVals = args == null ? Array.Empty<string>() : args.ToList().Select(arg => arg is int ? arg.ToString() :  JsonUtility.ToJson(arg)).ToArray();
+            var argVals = args == null ? Array.Empty<string>() : args.ToList().Select(arg => arg is int ? arg.ToString() : JsonUtility.ToJson(arg)).ToArray();
             Info(string.Format(msg, argVals));
         }
     }

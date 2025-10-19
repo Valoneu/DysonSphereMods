@@ -1,6 +1,6 @@
-﻿using System;
-using FactoryMultiplier.Util;
+﻿using FactoryMultiplier.Util;
 using HarmonyLib;
+using System;
 using static FactoryMultiplier.Util.Log;
 using static FactoryMultiplier.Util.PluginConfig;
 
@@ -8,9 +8,10 @@ namespace FactoryMultiplier
 {
     public static class PowerConsumptionPatcher
     {
+        // Updated HarmonyPatch with the new parameters for GameTick
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(PowerSystem), "GameTick")]
-        private static void PowerSystem_GameTick_Prefix(PowerSystem __instance)
+        [HarmonyPatch(typeof(PowerSystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(bool), typeof(int) })]
+        private static void PowerSystem_GameTick_Prefix(PowerSystem __instance) // The method itself doesn't need the extra parameters, just __instance
         {
             try
             {

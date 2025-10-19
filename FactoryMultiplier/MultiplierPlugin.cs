@@ -3,10 +3,8 @@ using CommonAPI;
 using CommonAPI.Systems;
 using HarmonyLib;
 using UnityEngine;
-using static FactoryMultiplier.Util.PluginConfig;
 using static FactoryMultiplier.Util.Log;
-using FactoryMultiplier.UI.Builder;
-using static FactoryMultiplier.UI.Builder.UIBuilderDSL;
+using static FactoryMultiplier.Util.PluginConfig;
 
 namespace FactoryMultiplier
 {
@@ -30,7 +28,6 @@ namespace FactoryMultiplier
             _harmony.PatchAll(typeof(MultiplierPlugin));
             _harmony.PatchAll(typeof(AssemblerPatcher));
             _harmony.PatchAll(typeof(FactoryUI));
-            UIBuilderPlugin.Create(PluginInfo.PLUGIN_GUID,FactoryUI.CreateUI);
             Logger.LogInfo($"Plugin: {PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} is loaded!");
         }
 
@@ -72,7 +69,6 @@ namespace FactoryMultiplier
         {
             _harmony.UnpatchSelf();
             FactoryUI.DestroyUI();
-            UIBuilderPlugin.Destroy();
         }
 
 
@@ -80,7 +76,7 @@ namespace FactoryMultiplier
         [HarmonyPatch(typeof(UIEjectorWindow), nameof(UIEjectorWindow._OnOpen))]
         private static void UIEjectorWindow_Open_Postfix(UIEjectorWindow __instance)
         {
-            if (!enableAssemblerPopupLogMessage.Value) 
+            if (!enableAssemblerPopupLogMessage.Value)
                 return;
             var ejector = __instance.factorySystem.ejectorPool[__instance.ejectorId];
             logger.LogInfo($"opened ejector {ejector.chargeSpend} {ejector.coldSpend} {JsonUtility.ToJson(ejector)}");
@@ -92,7 +88,7 @@ namespace FactoryMultiplier
         [HarmonyPatch(typeof(UIAssemblerWindow), "_OnOpen")]
         private static void UIAssembler_Open_Postfix(UIAssemblerWindow __instance)
         {
-            if (!enableAssemblerPopupLogMessage.Value) 
+            if (!enableAssemblerPopupLogMessage.Value)
                 return;
             var ac = __instance.factorySystem.assemblerPool[__instance.assemblerId];
             logger.LogInfo($"opened assembler {ac.speed} {JsonUtility.ToJson(ac)}");

@@ -7,25 +7,28 @@ namespace FactoryMultiplier
 {
     public static class AssemblerPatcher
     {
-        // Depending on whether GameMain.multithreadSystem.multithreadSystemEnable one of these next two will be used 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool) })]
-        private static void FactorySystem_GameTick_TwoArgs_Prefix(FactorySystem __instance)
+        [HarmonyPatch(typeof(AssemblerComponent), "InternalUpdate")]
+        private static void AssemblerComponent_InternalUpdate_Prefix(ref AssemblerComponent __instance)
         {
-            FactorySystemPatch(__instance);
-        }
+            if (__instance.recipeId == 0)
+            {
+                return;
+            }
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(int), typeof(int), typeof(int) })]
-        private static void FactorySystem_GameTick_Prefix(FactorySystem __instance)
-        {
-            FactorySystemPatch(__instance);
-        }
+            PlanetFactory factory = GameMain.localPlanet.factory;
+            if (factory == null)
+            {
+                return;
+            }
 
-        private static void FactorySystemPatch(FactorySystem factorySystem)
-        {
-            MultiplyAssemblers(factorySystem);
-            MultiplyFractionators(factorySystem);
+            int protoId = factory.entityPool[__instance.entityId].protoId;
+            ItemProto assemblerProto = LDB.items.Select(protoId);
+
+            ERecipeType eRecipeType = ItemUtil.GetRecipeByProtoId(assemblerProto.ID);
+            int multi = PluginConfig.GetMultiplierByRecipe(eRecipeType);
+
+            __instance.speed = multi * assemblerProto.prefabDesc.assemblerSpeed;
         }
 
         private static void MultiplyFractionators(FactorySystem factorySystem)
@@ -35,6 +38,13 @@ namespace FactoryMultiplier
                 if (factorySystem.fractionatorPool[index].id == index)
                     factorySystem.fractionatorPool[index].produceProb = PluginConfig.fractionatorMultiplier * 0.01f;
             }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool) })]
+        private static void FactorySystem_GameTick_Fractionator_Prefix(FactorySystem __instance)
+        {
+            MultiplyFractionators(__instance);
         }
 
         private static ConcurrentDictionary<int, RecipeProto> _recipeProtosById = new();
@@ -62,21 +72,6 @@ namespace FactoryMultiplier
             }
         }
 
-        private static void MultiplyAssemblers(FactorySystem factorySystem)
-        {
-            for (int index = 1; index < factorySystem.assemblerCursor; ++index)
-            {
-                int entityId = factorySystem.assemblerPool[index].entityId;
-                if (entityId > 0)
-                {
-                    ItemProto assemblerProto = LDB.items.Select(factorySystem.factory.entityPool[entityId].protoId);
-                    ERecipeType eRecipeType = ItemUtil.GetRecipeByProtoId(assemblerProto.ID);
-                    int multi = PluginConfig.GetMultiplierByRecipe(eRecipeType);
-
-                    factorySystem.assemblerPool[index].speed = multi * assemblerProto.prefabDesc.assemblerSpeed;
-                }
-            }
-        }
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
@@ -94,6 +89,7 @@ namespace FactoryMultiplier
             __instance.chargeSpend = ItemUtil.GetSiloProto().prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
             __instance.coldSpend = ItemUtil.GetSiloProto().prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
         }
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdate))]
         public static void InserterComponent_InternalUpdate_Prefix(ref InserterComponent __instance, PlanetFactory factory)
@@ -109,6 +105,7 @@ namespace FactoryMultiplier
                 __instance.delay = inserterProto.prefabDesc.inserterDelay / PluginConfig.inserterMultiplier;
             }
         }
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdateNoAnim))]
         public static void InserterComponent_InternalUpdateNoAnim_Prefix(ref InserterComponent __instance, PlanetFactory factory)

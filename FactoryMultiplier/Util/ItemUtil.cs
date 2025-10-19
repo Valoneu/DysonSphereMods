@@ -29,12 +29,27 @@ namespace FactoryMultiplier.Util
             return rayPhotonReceiverProtos.ContainsKey(protoId);
         }
 
-        public static readonly ItemProto ejectorProto = LDB.items.dataArray.ToList()
-            .Find(i => i.prefabDesc.isEjector);
-        private static readonly ItemProto _siloProto = LDB.items.dataArray.ToList()
-            .Find(i => i.prefabDesc.isSilo);
+        // --- FIX IS HERE ---
+        private static ItemProto _ejectorProto;
+        public static ItemProto ejectorProto
+        {
+            get
+            {
+                if (_ejectorProto == null)
+                {
+                    _ejectorProto = LDB.items.dataArray.ToList().Find(i => i.prefabDesc.isEjector);
+                }
+                return _ejectorProto;
+            }
+        }
+
+        private static ItemProto _siloProto;
         public static ItemProto GetSiloProto()
         {
+            if (_siloProto == null)
+            {
+                _siloProto = LDB.items.dataArray.ToList().Find(i => i.prefabDesc.isSilo);
+            }
             return _siloProto;
         }
     }

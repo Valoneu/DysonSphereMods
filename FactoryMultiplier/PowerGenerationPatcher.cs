@@ -1,10 +1,9 @@
-﻿using System;
-using FactoryMultiplier.Util;
+﻿using FactoryMultiplier.Util;
 using HarmonyLib;
-using UnityEngine;
+using System;
 using System.Collections.Concurrent;
+using UnityEngine;
 using static FactoryMultiplier.Util.Log;
-using static FactoryMultiplier.Util.PluginConfig;
 
 namespace FactoryMultiplier
 {
@@ -46,8 +45,9 @@ namespace FactoryMultiplier
         private static ConcurrentDictionary<int, ConcurrentDictionary<int, FuelConsumerType>> _planetIdToEntityIdToConsumerType = new ConcurrentDictionary<int, ConcurrentDictionary<int, FuelConsumerType>>();
         private static bool _loggedNoneConsumerOnce;
 
+        // Updated HarmonyPatch with the new parameters for GameTick
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(PowerSystem), "GameTick")]
+        [HarmonyPatch(typeof(PowerSystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(bool), typeof(int) })]
         private static void PowerSystem_GameTick_Prefix_GenPool(PowerSystem __instance)
         {
             for (int index = 1; index < __instance.genCursor; ++index)
