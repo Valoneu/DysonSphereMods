@@ -29,7 +29,6 @@ namespace FactoryMultiplier.Util
             return rayPhotonReceiverProtos.ContainsKey(protoId);
         }
 
-        // --- FIX IS HERE ---
         private static ItemProto _ejectorProto;
         public static ItemProto ejectorProto
         {

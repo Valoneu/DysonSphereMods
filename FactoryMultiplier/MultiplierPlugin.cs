@@ -18,7 +18,6 @@ namespace FactoryMultiplier
 
         private void Awake()
         {
-            // Plugin startup logic
             InitConfig(this.Config);
             InitKeyBinds();
             logger = Logger;

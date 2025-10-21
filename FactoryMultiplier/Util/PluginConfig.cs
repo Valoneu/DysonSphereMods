@@ -14,7 +14,8 @@ namespace FactoryMultiplier.Util
         private static ConfigEntry<int> _ejectorMultiplier;
         private static ConfigEntry<int> _siloMultiplier;
         public static ConfigEntry<int> gammaMultiplier;
-        public static ConfigEntry<int> _inserterMultiplier;
+        private static ConfigEntry<int> _inserterMultiplier;
+        private static ConfigEntry<int> _beltMultiplier;
         public static ConfigEntry<double> drawMultiplier;
 
         private static ConfigEntry<int> _genWindMultiplier;
@@ -39,6 +40,7 @@ namespace FactoryMultiplier.Util
 
         public static int siloMultiplier => multiplierEnabled.Value ? _siloMultiplier.Value : 1;
         public static int inserterMultiplier => multiplierEnabled.Value ? _inserterMultiplier.Value : 1;
+        public static int beltMultiplier => multiplierEnabled.Value ? _beltMultiplier.Value : 1;
         public static int ejectorMultiplier => multiplierEnabled.Value ? _ejectorMultiplier.Value : 1;
         public static int fractionatorMultiplier => multiplierEnabled.Value ? _fractionatorMultiplier.Value : 1;
         public static int labMultiplier => multiplierEnabled.Value ? _labMultiplier.Value : 1;
@@ -56,6 +58,7 @@ namespace FactoryMultiplier.Util
             _siloMultiplier = confFile.Bind("1. Factory", "siloMultiplier", 1, new ConfigDescription("Multiplies speed of silos", new AcceptableValueRange<int>(1, 100)));
             gammaMultiplier = confFile.Bind("1. Factory", "gammaMultiplier", 1, new ConfigDescription("Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 1000)));
             _inserterMultiplier = confFile.Bind("1. Factory", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4, 8)));
+            _beltMultiplier = confFile.Bind("1. Factory", "beltMultiplier", 1, new ConfigDescription("Multiplies speed of belts", new AcceptableValueRange<int>(1, 10)));
 
             drawMultiplier = confFile.Bind("1. Factory", "drawMultipler", 1.0, new ConfigDescription("Multiplies how much your factory will draw on top of your normal overclock", new AcceptableValueRange<double>(0.1, 10)));
 

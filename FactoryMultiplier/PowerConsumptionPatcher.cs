@@ -8,10 +8,9 @@ namespace FactoryMultiplier
 {
     public static class PowerConsumptionPatcher
     {
-        // Updated HarmonyPatch with the new parameters for GameTick
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PowerSystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(bool), typeof(int) })]
-        private static void PowerSystem_GameTick_Prefix(PowerSystem __instance) // The method itself doesn't need the extra parameters, just __instance
+        private static void PowerSystem_GameTick_Prefix(PowerSystem __instance)
         {
             try
             {
@@ -55,13 +54,11 @@ namespace FactoryMultiplier
                     }
                     else if (itemProto.prefabDesc.isStation && !itemProto.prefabDesc.veinMiner)
                     {
-                        // dont mess  non miner station power
                         continue;
                     }
                     else
                     if (itemProto.prefabDesc.isStation)
                     {
-                        // TODO multiplier for miners
                         continue;
                     }
 

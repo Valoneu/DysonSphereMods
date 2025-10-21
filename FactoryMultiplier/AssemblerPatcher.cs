@@ -8,27 +8,45 @@ namespace FactoryMultiplier
     public static class AssemblerPatcher
     {
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(AssemblerComponent), "InternalUpdate")]
-        private static void AssemblerComponent_InternalUpdate_Prefix(ref AssemblerComponent __instance)
+        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool) })]
+        private static void FactorySystem_GameTick_Prefix(FactorySystem __instance)
         {
-            if (__instance.recipeId == 0)
+            MultiplyAssemblers(__instance);
+            MultiplyFractionators(__instance);
+            MultiplyBelts(__instance);
+        }
+
+        private static void MultiplyAssemblers(FactorySystem factorySystem)
+        {
+            for (int index = 1; index < factorySystem.assemblerCursor; ++index)
             {
-                return;
+                int entityId = factorySystem.assemblerPool[index].entityId;
+                if (entityId > 0)
+                {
+                    ItemProto assemblerProto = LDB.items.Select(factorySystem.factory.entityPool[entityId].protoId);
+                    ERecipeType eRecipeType = ItemUtil.GetRecipeByProtoId(assemblerProto.ID);
+                    int multi = PluginConfig.GetMultiplierByRecipe(eRecipeType);
+                    factorySystem.assemblerPool[index].speed = multi * assemblerProto.prefabDesc.assemblerSpeed;
+                }
             }
+        }
 
-            PlanetFactory factory = GameMain.localPlanet.factory;
-            if (factory == null)
+        private static void MultiplyBelts(FactorySystem factorySystem)
+        {
+            CargoTraffic traffic = factorySystem.factory.cargoTraffic;
+            for (int index = 1; index < traffic.beltCursor; ++index)
             {
-                return;
+                if (traffic.beltPool[index].id == index)
+                {
+                    int entityId = traffic.beltPool[index].entityId;
+                    if (entityId > 0)
+                    {
+                        ItemProto beltProto = LDB.items.Select(factorySystem.factory.entityPool[entityId].protoId);
+                        int baseSpeed = beltProto.prefabDesc.beltSpeed;
+                        traffic.beltPool[index].speed = baseSpeed * PluginConfig.beltMultiplier;
+                    }
+                }
             }
-
-            int protoId = factory.entityPool[__instance.entityId].protoId;
-            ItemProto assemblerProto = LDB.items.Select(protoId);
-
-            ERecipeType eRecipeType = ItemUtil.GetRecipeByProtoId(assemblerProto.ID);
-            int multi = PluginConfig.GetMultiplierByRecipe(eRecipeType);
-
-            __instance.speed = multi * assemblerProto.prefabDesc.assemblerSpeed;
         }
 
         private static void MultiplyFractionators(FactorySystem factorySystem)
@@ -38,13 +56,6 @@ namespace FactoryMultiplier
                 if (factorySystem.fractionatorPool[index].id == index)
                     factorySystem.fractionatorPool[index].produceProb = PluginConfig.fractionatorMultiplier * 0.01f;
             }
-        }
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(FactorySystem), "GameTick", new Type[] { typeof(long), typeof(bool) })]
-        private static void FactorySystem_GameTick_Fractionator_Prefix(FactorySystem __instance)
-        {
-            MultiplyFractionators(__instance);
         }
 
         private static ConcurrentDictionary<int, RecipeProto> _recipeProtosById = new();

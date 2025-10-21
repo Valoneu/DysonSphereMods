@@ -45,7 +45,6 @@ namespace FactoryMultiplier
         private static ConcurrentDictionary<int, ConcurrentDictionary<int, FuelConsumerType>> _planetIdToEntityIdToConsumerType = new ConcurrentDictionary<int, ConcurrentDictionary<int, FuelConsumerType>>();
         private static bool _loggedNoneConsumerOnce;
 
-        // Updated HarmonyPatch with the new parameters for GameTick
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PowerSystem), "GameTick", new Type[] { typeof(long), typeof(bool), typeof(bool), typeof(int) })]
         private static void PowerSystem_GameTick_Prefix_GenPool(PowerSystem __instance)
