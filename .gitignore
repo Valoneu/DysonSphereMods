@@ -33,6 +33,7 @@ _assets/UnityProject/Build/
 _assets/UnityProject/Builds/
 _assets/UnityProject/Logs/
 _assets/UnityProject/UserSettings/
+definitions
 
 # Python
 __pycache__/

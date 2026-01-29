@@ -1,10 +1,10 @@
 {
-    "name": "MaxLVLIncrease",
-    "version_number": "1.0.4",
-    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/MaxLVLIncrease",
-    "description": "are you maxed on lvl 10k well now you are not",
-    "dependencies": [
-        "xiaoye97-BepInEx-5.4.5",
-        "CommonAPI-CommonAPI-1.2.0"
-    ]
+    "name":  "MaxLVLIncrease",
+    "version_number":  "1.0.4",
+    "website_url":  "https://github.com/Valoneu/DysonSphereMods/tree/main/src/MaxLVLIncrease",
+    "description":  "are you maxed on lvl 10k well now you are not",
+    "dependencies":  [
+                         "xiaoye97-BepInEx-5.4.5",
+                         "CommonAPI-CommonAPI-1.2.0"
+                     ]
 }

@@ -1,10 +1,10 @@
 {
-    "name": "HydrogenDissolution",
-    "version_number": "1.0.1",
-    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/HydrogenDissolution",
-    "description": "having too much hydrogen? well no more",
-    "dependencies": [
-        "xiaoye97-BepInEx-5.4.5",
-        "CommonAPI-CommonAPI-1.2.0"
-    ]
+    "name":  "HydrogenDissolution",
+    "version_number":  "1.0.1",
+    "website_url":  "https://github.com/Valoneu/DysonSphereMods/tree/main/src/HydrogenDissolution",
+    "description":  "having too much hydrogen? well no more",
+    "dependencies":  [
+                         "xiaoye97-BepInEx-5.4.5",
+                         "CommonAPI-CommonAPI-1.2.0"
+                     ]
 }

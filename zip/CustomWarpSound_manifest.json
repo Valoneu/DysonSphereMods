@@ -1,10 +1,10 @@
 {
-    "name": "CustomWarpSound",
-    "version_number": "1.0.0",
-    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/CustomWarpSound",
-    "description": "This mod changes how warping sounds",
-    "dependencies": [
-        "xiaoye97-BepInEx-5.4.5",
-        "CommonAPI-CommonAPI-1.2.0"
-    ]
+    "name":  "CustomWarpSound",
+    "version_number":  "1.0.0",
+    "website_url":  "https://github.com/Valoneu/DysonSphereMods/tree/main/src/CustomWarpSound",
+    "description":  "This mod changes how warping sounds",
+    "dependencies":  [
+                         "xiaoye97-BepInEx-5.4.5",
+                         "CommonAPI-CommonAPI-1.2.0"
+                     ]
 }

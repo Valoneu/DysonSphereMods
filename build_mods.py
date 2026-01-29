@@ -97,6 +97,52 @@ def update_versions():
             except Exception as e:
                 print(f"  [Error] Failed to update manifest {manifest_path}: {e}")
 
+        # 3. Update README.md (in src/ModName/README.md or zip/ModName_README.md)
+        # We look for a pattern like "Version x.x.x" or badge URLs if common, 
+        # but simple replacement of the version string is risky without context.
+        # Instead, we will look for specific lines or just replace the manifest version if mentioned.
+        # For simplicity, let's look for `Version: <old_ver>` or similar patterns if they exist.
+        
+        # Check src README
+        readme_src = os.path.join(mod_path, "README.md")
+        if os.path.exists(readme_src):
+            update_readme_version(readme_src, new_version)
+            
+        # Check zip README
+        readme_zip_pattern = os.path.join(ASSETS_DIR, f"{mod_folder}_README.md")
+        readmes_zip = glob.glob(readme_zip_pattern)
+        for r_path in readmes_zip:
+            update_readme_version(r_path, new_version)
+
+def update_readme_version(file_path, new_version):
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        
+        # Regex to match generic version patterns:
+        # "Version: 1.0.0"
+        # "v1.0.0"
+        # "Version 1.0.0"
+        # We try to be conservative to avoid breaking other numbers.
+        # This regex looks for "Version" followed by a space or colon, then the version number.
+        # Or typical manifest badges.
+        
+        # Simple approach: Replace the previous known version if we knew it? 
+        # Since we don't track the *old* version easily here without reading it first, 
+        # let's assume standard format or just replace if found in specific context.
+        
+        # Current strategy: Look for "Version: X.Y.Z" pattern
+        # This regex matches "Version: " followed by digits/dots
+        content_new = re.sub(r"(Version[:\s]+)(\d+\.\d+\.\d+)", f"\\g<1>{new_version}", content, flags=re.IGNORECASE)
+        
+        if content != content_new:
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write(content_new)
+            # print(f"  Updated README: {os.path.basename(file_path)}")
+            
+    except Exception as e:
+        print(f"  [Error] Failed to update README {file_path}: {e}")
+
 def run_build():
     print("Building solution in Release mode...")
     try:
