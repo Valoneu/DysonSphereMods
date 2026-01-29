@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>HydrogenDissolution</Description>
+    <Version>1.0.1</Version>
+    <BepInExPluginGuid>com.Valoneu.HydrogenDissolution</BepInExPluginGuid>
+    <BepInExPluginName>HydrogenDissolution</BepInExPluginName>
+    <BepInExPluginVersion>1.0.1</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+</Project>

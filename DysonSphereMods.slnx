@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CustomWarpSound/CustomWarpSound.csproj" />
+    <Project Path="src/FactoryMultiplier/FactoryMultiplier.csproj" />
+    <Project Path="src/HydrogenDissolution/HydrogenDissolution.csproj" />
+    <Project Path="src/LessVesselPower/LessVesselPower.csproj" />
+    <Project Path="src/MaxLVLIncrease/MaxLVLIncrease.csproj" />
+    <Project Path="src/PilerMax/PilerMax.csproj" />
+    <Project Path="src/Shared/Shared.csproj" />
+    <Project Path="src/TechHashReduce/TechHashReduce.csproj" />
+  </Folder>
+</Solution>

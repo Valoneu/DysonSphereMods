@@ -1,0 +1,9 @@
+{
+    "name": "LessShipPower",
+    "version_number": "1.0.5",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/LessVesselPower/LessVesselPower/LessShipPower",
+    "description": "Allows the user to change how much power logistics vessels use",
+    "dependencies": [ 
+        "xiaoye97-BepInEx-5.4.11" 
+    ]
+}
