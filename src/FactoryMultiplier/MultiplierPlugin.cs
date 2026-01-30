@@ -29,6 +29,7 @@ namespace FactoryMultiplier
             _harmony.PatchAll(typeof(PowerGenerationPatcher));
             _harmony.PatchAll(typeof(MultiplierPlugin));
             _harmony.PatchAll(typeof(AssemblerPatcher));
+            _harmony.PatchAll(typeof(TurretPatcher));
             Logger.LogInfo($"Plugin: {PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} is loaded!");
         }
 
@@ -46,7 +47,7 @@ namespace FactoryMultiplier
                 }
                 else
                 {
-                    Log.Warning($"applying multipliers");
+                    Log.Warning($"applying multipliers. Config: Asm={assembleMultiplier.Value}, Mine={miningMultiplier.Value}, Smelt={smeltMultiplier.Value}, Lab={labMultiplier}, Ejector={ejectorMultiplier}");
                     UIRealtimeTip.Popup($"Applying multipliers to factory");
                 }
 
@@ -98,12 +99,14 @@ namespace FactoryMultiplier
                 CustomKeyBindSystem.RegisterKeyBind<PressKeyBind>(new BuiltinKey
                 {
                     id = 214,
-                    key = new CombineKey((int)KeyCode.LeftShift, CombineKey.ALT_COMB, ECombineKeyAction.OnceClick, false),
+                    key = new CombineKey((int)KeyCode.KeypadMinus, 0, ECombineKeyAction.OnceClick, false),
                     conflictGroup = 2052,
                     name = "ToggleOverclock",
                     canOverride = true
                 });
+#pragma warning disable CS0618
             ProtoRegistry.RegisterString("KEYToggleOverClock", "Enable/disable factory OverClock");
+#pragma warning restore CS0618
         }
 
         internal void OnDestroy()

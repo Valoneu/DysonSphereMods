@@ -13,7 +13,9 @@ Then just click Start modded, and the game will run with the mod installed.
 Valoneu#8617 on discord, you can dm me but i prefer if u make an issue on github please
 
 ## Changelog
-2.0.3 fix for new patch 0.10.34.28326 hopefully
+2.0.5 fix crash due to InserterComponent.speed removal in new game version
+
+2.0.4 fix for new patch 0.10.34.28326 hopefully
 
 2.0.2 fix for overclocking belts, fix power for battlefield analysis base
 
@@ -23,7 +25,7 @@ Valoneu#8617 on discord, you can dm me but i prefer if u make an issue on github
 
 1.1.6 maybe minor ups gain
 
-1.1.5 fixed for game version 0.9.25.11996
+1.1.5 fixed for game version 2.0.4.11996
 
 1.1.4 fixed lab productivity not being faster with overclock
 

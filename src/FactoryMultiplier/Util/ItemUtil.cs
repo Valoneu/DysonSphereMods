@@ -10,12 +10,18 @@ namespace FactoryMultiplier.Util
 
         public static ERecipeType GetRecipeByProtoId(int protoId)
         {
-            if (recipeByProtoId.ContainsKey(protoId))
-                return recipeByProtoId[protoId];
+            if (recipeByProtoId.TryGetValue(protoId, out var type))
+                return type;
+            
             Log.Debug($"looking up recipe by protoid {protoId}");
             var itemProto = LDB.items.Select(protoId);
-            recipeByProtoId[itemProto.ID] = itemProto.prefabDesc.assemblerRecipeType;
-            return recipeByProtoId[itemProto.ID];
+            if (itemProto != null && itemProto.prefabDesc != null)
+            {
+                type = itemProto.prefabDesc.assemblerRecipeType;
+                recipeByProtoId[protoId] = type;
+                return type;
+            }
+            return ERecipeType.None;
         }
 
         private static ConcurrentDictionary<int, byte> rayPhotonReceiverProtos;

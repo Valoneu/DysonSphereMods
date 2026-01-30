@@ -6,26 +6,21 @@ import zipfile
 import json
 import re
 
-# Configuration
 SRC_DIR = "src"
 ASSETS_DIR = "zip"
 FINAL_DIR = "final"
 
-# Mods that had specific zip names different from their folder names
 ZIP_NAME_MAP = {
     "FactoryMultiplier": "FactoryOverclock.zip",
     "HydrogenDissolution": "Hydrogen dissolution.zip"
 }
 
-# Map Folder Name -> Version Key in versions.json
-# If key is different from folder name
 VERSION_KEY_MAP = {
     "FactoryMultiplier": "FactoryOverclock",
     "DSPFactorySpaceStations": "FactorySpaceStation",
     "LessVesselPower": "LessShipPower"
 }
 
-# DLLs to exclude from the zip (system/game libraries)
 EXCLUDE_DLLS = {
     "bepinex.dll", "0harmony.dll", "unityengine.dll", "unityengine.coremodule.dll", 
     "assembly-csharp.dll", "system.dll", "mscorlib.dll"
@@ -51,7 +46,6 @@ def update_versions():
         if not os.path.isdir(mod_path) or mod_folder == "Shared":
             continue
 
-        # Determine the key to use for looking up the version
         version_key = VERSION_KEY_MAP.get(mod_folder, mod_folder)
         
         if version_key not in versions:
@@ -61,27 +55,21 @@ def update_versions():
         new_version = versions[version_key]
         print(f"  Updating {mod_folder} to {new_version}...")
 
-        # 1. Update .csproj
         csproj_files = glob.glob(os.path.join(mod_path, "*.csproj"))
         if csproj_files:
             csproj_path = csproj_files[0]
             with open(csproj_path, "r", encoding="utf-8") as f:
                 content = f.read()
             
-            # Regex to replace <Version>1.0.0</Version>
-            # Handles <Version>...</Version> and <BepInExPluginVersion>...</BepInExPluginVersion>
             content = re.sub(r"<Version>.*?</Version>", f"<Version>{new_version}</Version>", content)
             content = re.sub(r"<BepInExPluginVersion>.*?</BepInExPluginVersion>", f"<BepInExPluginVersion>{new_version}</BepInExPluginVersion>", content)
 
             with open(csproj_path, "w", encoding="utf-8") as f:
                 f.write(content)
         
-        # 2. Update manifest.json in zip/ folder
-        # We need to find the manifest file which might have a prefix like "ModName_manifest.json"
         manifest_pattern = os.path.join(ASSETS_DIR, f"{mod_folder}_manifest.json")
         manifests = glob.glob(manifest_pattern)
         
-        # Also try exact match if prefix lookup failed (though we standardized on prefixes)
         if not manifests:
              manifests = glob.glob(os.path.join(ASSETS_DIR, "manifest.json"))
 
@@ -97,18 +85,10 @@ def update_versions():
             except Exception as e:
                 print(f"  [Error] Failed to update manifest {manifest_path}: {e}")
 
-        # 3. Update README.md (in src/ModName/README.md or zip/ModName_README.md)
-        # We look for a pattern like "Version x.x.x" or badge URLs if common, 
-        # but simple replacement of the version string is risky without context.
-        # Instead, we will look for specific lines or just replace the manifest version if mentioned.
-        # For simplicity, let's look for `Version: <old_ver>` or similar patterns if they exist.
-        
-        # Check src README
         readme_src = os.path.join(mod_path, "README.md")
         if os.path.exists(readme_src):
             update_readme_version(readme_src, new_version)
             
-        # Check zip README
         readme_zip_pattern = os.path.join(ASSETS_DIR, f"{mod_folder}_README.md")
         readmes_zip = glob.glob(readme_zip_pattern)
         for r_path in readmes_zip:
@@ -119,26 +99,11 @@ def update_readme_version(file_path, new_version):
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         
-        # Regex to match generic version patterns:
-        # "Version: 1.0.0"
-        # "v1.0.0"
-        # "Version 1.0.0"
-        # We try to be conservative to avoid breaking other numbers.
-        # This regex looks for "Version" followed by a space or colon, then the version number.
-        # Or typical manifest badges.
-        
-        # Simple approach: Replace the previous known version if we knew it? 
-        # Since we don't track the *old* version easily here without reading it first, 
-        # let's assume standard format or just replace if found in specific context.
-        
-        # Current strategy: Look for "Version: X.Y.Z" pattern
-        # This regex matches "Version: " followed by digits/dots
         content_new = re.sub(r"(Version[:\s]+)(\d+\.\d+\.\d+)", f"\\g<1>{new_version}", content, flags=re.IGNORECASE)
         
         if content != content_new:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content_new)
-            # print(f"  Updated README: {os.path.basename(file_path)}")
             
     except Exception as e:
         print(f"  [Error] Failed to update README {file_path}: {e}")
@@ -152,22 +117,17 @@ def run_build():
         exit(1)
 
 def package_mod(mod_folder_name):
-    # Skip the Shared library project itself, it's not a mod to be zipped alone
     if mod_folder_name == "Shared":
         return
 
     print(f"Packaging {mod_folder_name}...")
 
-    # Determine output zip name
     zip_filename = ZIP_NAME_MAP.get(mod_folder_name, f"{mod_folder_name}.zip")
     zip_path = os.path.join(FINAL_DIR, zip_filename)
 
-    # Temporary directory for staging this mod's zip content
     stage_dir = os.path.join("temp_stage", mod_folder_name)
     clean_and_create_dir(stage_dir)
 
-    # 1. Find and Copy Compiled DLLs
-    # Look in bin/Release/netstandard2.1/ (or similar)
     bin_dir = os.path.join(SRC_DIR, mod_folder_name, "bin", "Release")
     
     found_dll = False
@@ -183,17 +143,13 @@ def package_mod(mod_folder_name):
     if not found_dll:
         print(f"  [Warning] No compiled DLL found for {mod_folder_name}. Did the build succeed?")
 
-    # 2. Find and Copy Assets from 'zip' folder
-    # We look for files starting with "{mod_folder_name}_"
     prefix = f"{mod_folder_name}_"
     
-    # Use glob to find all matching files/folders in the zip directory
     asset_pattern = os.path.join(ASSETS_DIR, f"{prefix}*")
     assets = glob.glob(asset_pattern)
 
     for asset_path in assets:
         filename = os.path.basename(asset_path)
-        # Strip the prefix to restore original name (e.g. "CustomWarpSound_manifest.json" -> "manifest.json")
         original_name = filename[len(prefix):]
         
         dest_path = os.path.join(stage_dir, original_name)
@@ -204,12 +160,10 @@ def package_mod(mod_folder_name):
         else:
             shutil.copy2(asset_path, dest_path)
 
-    # 3. Create the Zip file
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(stage_dir):
             for file in files:
                 file_path = os.path.join(root, file)
-                # Create relative path for inside the zip
                 arcname = os.path.relpath(file_path, stage_dir)
                 zf.write(file_path, arcname)
     
@@ -221,15 +175,12 @@ def main():
     update_versions()
     run_build()
 
-    # Iterate over directories in src
     if os.path.exists(SRC_DIR):
         for item in os.listdir(SRC_DIR):
             item_path = os.path.join(SRC_DIR, item)
-            # Check if it is a directory and not a hidden folder (like .vs)
             if os.path.isdir(item_path) and not item.startswith("."):
                 package_mod(item)
     
-    # Cleanup staging directory
     if os.path.exists("temp_stage"):
         shutil.rmtree("temp_stage")
     

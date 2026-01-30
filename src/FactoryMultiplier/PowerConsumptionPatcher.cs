@@ -18,7 +18,7 @@ namespace FactoryMultiplier
             }
             catch (Exception e)
             {
-                Log.Warning($"Multiply power failed. {e.Message} {e.StackTrace}");
+                // Log.Warning($"Multiply power failed. {e.Message} {e.StackTrace}");
             }
 
             try
@@ -27,7 +27,7 @@ namespace FactoryMultiplier
             }
             catch (Exception e)
             {
-                Log.Warning($"Multiply gamma exception {e.Message} {e.StackTrace}");
+                // Log.Warning($"Multiply gamma exception {e.Message} {e.StackTrace}");
             }
         }
         private static void MultiplyPowerConsumption(PowerSystem powerSystem)
@@ -65,12 +65,15 @@ namespace FactoryMultiplier
                     {
                         if (itemProto.prefabDesc.isLab)
                         {
-                            var entityData = powerSystem.factory.entityPool[powerConsumerComponent.entityId];
-                            var labComponent = powerSystem.factory.factorySystem.labPool[entityData.labId];
-                            if (labComponent.researchMode)
-                                multiplier = 1;
-                            else
-                                multiplier = labMultiplier;
+                            multiplier = labMultiplier;
+                        }
+                        else if (itemProto.prefabDesc.minerType != EMinerType.None)
+                        {
+                            multiplier = miningMultiplier.Value;
+                        }
+                        else if (itemProto.prefabDesc.isTurret)
+                        {
+                            multiplier = turretMultiplier;
                         }
                         else
                         {
@@ -82,14 +85,6 @@ namespace FactoryMultiplier
                     powerSystem.consumerPool[index].workEnergyPerTick = (int)(drawMultiplier.Value * multiplier * prefabEnergyPerTick);
                 }
             }
-        }
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.SetPCState))]
-        public static void StationComponent_SetPCState_Postfix(ref StationComponent __instance, PowerConsumerComponent[] pcPool)
-        {
-            __instance.energyPerTick = (long)(pcPool[__instance.pcId].requiredEnergy * genExchMultiplier);
-            pcPool[__instance.pcId].requiredEnergy = __instance.energyPerTick;
         }
 
         public static void MultiplyReceivers(PowerSystem powerSystem)

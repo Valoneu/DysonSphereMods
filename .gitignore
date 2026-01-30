@@ -33,7 +33,6 @@ _assets/UnityProject/Build/
 _assets/UnityProject/Builds/
 _assets/UnityProject/Logs/
 _assets/UnityProject/UserSettings/
-definitions
 
 # Python
 __pycache__/
@@ -42,11 +41,13 @@ __pycache__/
 *.pyd
 
 # Project Specific
+gameDefinitions
 final/
 temp_stage/
 *.zip
 *.rar
 *.7z
+*gemini*
 
 # NuGet
 *.nuget.props
