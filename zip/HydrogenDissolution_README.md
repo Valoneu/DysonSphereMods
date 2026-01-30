@@ -1,3 +1,5 @@
+Version: 1.0.1
+
 # Description
 - Add recipe to get rid of hydrogen (Icon and name of the recipe is currently broken, its next to mass energy storage recipe)
 

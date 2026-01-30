@@ -1,6 +1,6 @@
 {
     "name": "FactoryOverclock",
-    "version_number": "2.0.4",
+    "version_number": "2.0.5",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/FactoryMultiplier",
     "description": "This mod will allow you to overclock buildings, more speed, more power draw, Should support all mods",
     "dependencies": [

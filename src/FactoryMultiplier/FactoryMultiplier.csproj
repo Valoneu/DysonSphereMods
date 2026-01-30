@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>FactoryOverclock</Description>
-    <Version>2.0.4</Version>
+    <Version>2.0.5</Version>
     <BepInExPluginGuid>com.Valoneu.FactoryOverclock</BepInExPluginGuid>
     <BepInExPluginName>FactoryOverclock</BepInExPluginName>
-    <BepInExPluginVersion>2.0.4</BepInExPluginVersion>
+    <BepInExPluginVersion>2.0.5</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />

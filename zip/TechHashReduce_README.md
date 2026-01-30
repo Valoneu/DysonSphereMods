@@ -1,3 +1,5 @@
+Version: 1.1.2
+
 # TechHashReduce
 ## How it works
 This mod changes how much hashes is need for every science. The HashNeeded is multiplied by the value you set in the config file. It can be cheaty if you set it to 0.1 or it could be challenge if you set it to 10. Have Fun. 

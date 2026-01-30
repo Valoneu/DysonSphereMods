@@ -1,3 +1,5 @@
+Version: 1.0.5
+
 # LessVesselPower
 ## How it works
 This mod changes how much power logistics vessels use. The power usage is multiplied by the value you set in the config file.

@@ -1,3 +1,5 @@
+Version: 1.0.4
+
 # Description
 - are you maxed on lvl 10k well now you are not
 - increases max LVL of infinite tech to 50k

@@ -7,7 +7,7 @@ A collection of mods for [Dyson Sphere Program](https://store.steampowered.com/a
 | Mod Name | Description | Current Version |
 | :--- | :--- | :--- |
 | **CustomWarpSound** | Customizes the sound effects for warping. | 1.0.10 |
-| **FactoryOverclock** | Allows overclocking of factory buildings for higher speed and power consumption. | 2.0.3 |
+| **FactoryOverclock** | Allows overclocking of factory buildings for higher speed and power consumption. | 2.0.5 |
 | **HydrogenDissolution** | Adds recipes to dissolve excess Hydrogen. | 1.0.1 |
 | **LessShipPower** | Reduces the power consumption of logistics vessels. | 1.0.5 |
 | **MaxLVLIncrease** | Increases the maximum level for infinite technologies. | 1.0.4 |

@@ -12,7 +12,7 @@ FINAL_DIR = "final"
 
 ZIP_NAME_MAP = {
     "FactoryMultiplier": "FactoryOverclock.zip",
-    "HydrogenDissolution": "Hydrogen dissolution.zip"
+    "HydrogenDissolution": "HydrogenDissolution.zip"
 }
 
 VERSION_KEY_MAP = {
@@ -99,7 +99,11 @@ def update_readme_version(file_path, new_version):
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         
-        content_new = re.sub(r"(Version[:\s]+)(\d+\.\d+\.\d+)", f"\\g<1>{new_version}", content, flags=re.IGNORECASE)
+        pattern = r"(^Version[:\s]+)(\d+\.\d+\.\d+)"
+        if re.search(pattern, content, flags=re.IGNORECASE | re.MULTILINE):
+            content_new = re.sub(pattern, f"\\g<1>{new_version}", content, flags=re.IGNORECASE | re.MULTILINE)
+        else:
+            content_new = f"Version: {new_version}\n\n{content}"
         
         if content != content_new:
             with open(file_path, "w", encoding="utf-8") as f:
@@ -169,10 +173,49 @@ def package_mod(mod_folder_name):
     
     print(f"  -> Created {zip_path}")
 
+def update_root_readme():
+    print("Updating root README.md versions...")
+    readme_path = "README.md"
+    if not os.path.exists(readme_path):
+        print("  [Warning] Root README.md not found.")
+        return
+
+    if not os.path.exists("versions.json"):
+        return
+
+    with open("versions.json", "r") as f:
+        versions = json.load(f)
+
+    try:
+        with open(readme_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        new_content = content
+        for mod_name, version in versions.items():
+            # Regex to match the table row: | **ModName** | ... | Version |
+            # strict matching for the mod name to avoid partial matches
+            pattern = r"(\| \*\*"+ re.escape(mod_name) + r"\*\* \|.*?\| )(\d+\.\d+\.\d+)( \|)"
+            
+            if re.search(pattern, new_content):
+                new_content = re.sub(pattern, f"\\g<1>{version}\\g<3>", new_content)
+            else:
+                 print(f"  [Info] Could not find table row for {mod_name} in README.md")
+
+        if content != new_content:
+            with open(readme_path, "w", encoding="utf-8") as f:
+                f.write(new_content)
+            print("  Root README.md updated.")
+        else:
+            print("  Root README.md is up to date.")
+
+    except Exception as e:
+        print(f"  [Error] Failed to update root README.md: {e}")
+
 def main():
     clean_and_create_dir(FINAL_DIR)
     
     update_versions()
+    update_root_readme()
     run_build()
 
     if os.path.exists(SRC_DIR):
