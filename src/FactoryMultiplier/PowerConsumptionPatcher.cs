@@ -16,7 +16,7 @@ namespace FactoryMultiplier
             {
                 MultiplyPowerConsumption(__instance);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Log.Warning($"Multiply power failed. {e.Message} {e.StackTrace}");
             }
@@ -25,7 +25,7 @@ namespace FactoryMultiplier
             {
                 MultiplyReceivers(__instance);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Log.Warning($"Multiply gamma exception {e.Message} {e.StackTrace}");
             }

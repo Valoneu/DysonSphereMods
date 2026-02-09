@@ -47,7 +47,7 @@ namespace FactoryMultiplier
                 }
                 else
                 {
-                    Log.Warning($"applying multipliers. Config: Asm={assembleMultiplier.Value}, Mine={miningMultiplier.Value}, Smelt={smeltMultiplier.Value}, Lab={labMultiplier}, Ejector={ejectorMultiplier}");
+                    Log.Warning($"applying multipliers. Config: Asm={assembleMultiplier.Value}, Mine={miningMultiplier.Value}, Smelt={smeltMultiplier.Value}, Lab={labMultiplier}, Ejector={ejectorMultiplier}, Sorter={inserterMultiplier}");
                     UIRealtimeTip.Popup($"Applying multipliers to factory");
                 }
 

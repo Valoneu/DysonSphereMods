@@ -115,6 +115,19 @@ namespace FactoryMultiplier
                     }
                 }
             }
+
+            for (int index = 1; index < __instance.excCursor; ++index)
+            {
+                ref PowerExchangerComponent exchangerComponent = ref __instance.excPool[index];
+
+                if (exchangerComponent.id == index)
+                {
+                    var entityData = __instance.factory.entityPool[exchangerComponent.entityId];
+                    var itemProto = LDB.items.Select(entityData.protoId);
+
+                    exchangerComponent.energyPerTick = itemProto.prefabDesc.exchangeEnergyPerTick * PluginConfig.genExchMultiplier;
+                }
+            }
         }
 
 

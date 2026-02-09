@@ -1,4 +1,4 @@
-Version: 2.0.5
+Version: 2.1.0
 
 ## Description
 This mod allow user to change speed of almost any building, when boosting it will give the building more (Quadratic) power draw.
@@ -15,6 +15,14 @@ Then just click Start modded, and the game will run with the mod installed.
 Valoneu#8617 on discord, you can dm me but i prefer if u make an issue on github please
 
 ## Changelog
+2.1.0 fix crash in bidirectional sorters and improve overclocking efficiency for all sorters
+
+2.0.9 robust fix for sorter speed using effective power multiplication
+
+2.0.8 fix for sorter speed not working by default and improving patches coverage
+
+2.0.7 fix for bidirectional inserter speed and optimization of inserter patches
+
 2.0.5 fix crash due to InserterComponent.speed removal in new game version
 
 2.0.4 fix for new patch 0.10.34.28326 hopefully

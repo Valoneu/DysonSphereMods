@@ -61,7 +61,7 @@ namespace FactoryMultiplier.Util
             _siloMultiplier = confFile.Bind("1. Factory", "siloMultiplier", 2, new ConfigDescription("Multiplies speed of silos", new AcceptableValueRange<int>(1, 100)));
             gammaMultiplier = confFile.Bind("1. Factory", "gammaMultiplier", 2, new ConfigDescription("Multiplies speed of ray recievers", new AcceptableValueRange<int>(1, 1000)));
             miningMultiplier = confFile.Bind("1. Factory", "miningMultiplier", 2, new ConfigDescription("Multiplies speed of mining machines", new AcceptableValueRange<int>(1, 20)));
-            _inserterMultiplier = confFile.Bind("1. Factory", "sorterMultiplier", 1, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4, 8)));
+            _inserterMultiplier = confFile.Bind("1. Factory", "sorterMultiplier", 2, new ConfigDescription("Multiplies speed of sorter", new AcceptableValueList<int>(1, 2, 4, 8)));
             _turretMultiplier = confFile.Bind("1. Factory", "turretMultiplier", 2, new ConfigDescription("Multiplies speed of turrets", new AcceptableValueRange<int>(1, 20)));
 
             // --- THIS IS THE FIX for the MULTIPLIER RANGE ---

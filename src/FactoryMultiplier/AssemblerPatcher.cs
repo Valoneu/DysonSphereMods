@@ -40,6 +40,7 @@ namespace FactoryMultiplier
 
         private static ConcurrentDictionary<int, int> _baseSpeedByProtoId = new();
         private static ConcurrentDictionary<int, int> _minerBaseSpeedByProtoId = new();
+        private static ConcurrentDictionary<int, int> _inserterDelayByProtoId = new();
 
         private static void MultiplyMiners(FactorySystem factorySystem)
         {
@@ -185,75 +186,66 @@ namespace FactoryMultiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdate))]
-        public static void InserterComponent_InternalUpdate_Prefix(ref InserterComponent __instance, PlanetFactory factory)
-        {
-            if (__instance.id == 0 || __instance.entityId == 0)
-                return;
-            var entityData = factory.entityPool[__instance.entityId];
-
-            ItemProto inserterProto = LDB.items.Select(entityData.protoId);
-            if (inserterProto.prefabDesc != null)
-            {
-                // __instance.speed = 10000 * PluginConfig.inserterMultiplier; // Removed because speed is now const
-                __instance.delay = inserterProto.prefabDesc.inserterDelay / PluginConfig.inserterMultiplier;
-            }
-        }
-
-        [HarmonyPrefix]
         [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdateNoAnim))]
-        public static void InserterComponent_InternalUpdateNoAnim_Prefix(ref InserterComponent __instance, PlanetFactory factory)
+        [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdate_Bidirectional))]
+        public static void InserterComponent_InternalUpdate_Prefix(ref InserterComponent __instance, ref float power, PlanetFactory factory)
         {
             if (__instance.id == 0 || __instance.entityId == 0)
                 return;
-            var entityData = factory.entityPool[__instance.entityId];
+            
+            int multi = PluginConfig.inserterMultiplier;
+            if (multi <= 1) return;
 
-            ItemProto inserterProto = LDB.items.Select(entityData.protoId);
-            if (inserterProto.prefabDesc != null)
+            // Multiply power to speed up progress and animations
+            power *= multi;
+
+            // Overclock delay (wait time at picking/inserting)
+            int protoId = factory.entityPool[__instance.entityId].protoId;
+            if (!_inserterDelayByProtoId.TryGetValue(protoId, out int baseDelay))
             {
-                // __instance.speed = 10000 * PluginConfig.inserterMultiplier; // Removed because speed is now const
-                __instance.delay = inserterProto.prefabDesc.inserterDelay / PluginConfig.inserterMultiplier;
+                ItemProto inserterProto = LDB.items.Select(protoId);
+                baseDelay = _inserterDelayByProtoId[protoId] = inserterProto?.prefabDesc?.inserterDelay ?? 0;
+            }
+            
+            if (baseDelay > 0)
+            {
+                __instance.delay = baseDelay / multi;
+            }
+
+            // Fixed progress increment in Picking stage for non-bidirectional sorters
+            if (!__instance.bidirectional && __instance.stage == EInserterStage.Picking && __instance.itemId > 0)
+            {
+                // The original code will add 10000. We want it to add multi * 10000.
+                __instance.time += 10000 * (multi - 1);
             }
         }
 
         // =================================================================
         // INSERTER TRANSPILERS
-        // Replace hardcoded '10000' and '10000.0' with multiplied values
+        // For bidirectional sorters, we need to increase transfer count per tick.
         // =================================================================
 
-        public static int GetInserterSpeed() => (int)(10000 * PluginConfig.inserterMultiplier);
-        public static double GetInserterSpeedDouble() => 10000.0 * PluginConfig.inserterMultiplier;
-
-        private static IEnumerable<CodeInstruction> InserterTranspiler(IEnumerable<CodeInstruction> instructions)
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdate_Bidirectional))]
+        public static IEnumerable<CodeInstruction> InserterComponent_InternalUpdate_TranspilerBidirectional(IEnumerable<CodeInstruction> instructions)
         {
-            foreach (var instruction in instructions)
+            var codes = new List<CodeInstruction>(instructions);
+            for (int i = 0; i < codes.Count; i++)
             {
-                if (instruction.opcode == OpCodes.Ldc_I4 && (int)instruction.operand == 10000)
+                // We target the initialization of 'num1' and 'num6' which are 'ldc.i4.1' followed by 'stloc'
+                // This is safer than replacing every '1' in the method.
+                if (codes[i].opcode == OpCodes.Ldc_I4_1 && i + 1 < codes.Count && 
+                    (codes[i + 1].opcode == OpCodes.Stloc_S || codes[i + 1].opcode == OpCodes.Stloc_0 || 
+                     codes[i + 1].opcode == OpCodes.Stloc_1 || codes[i + 1].opcode == OpCodes.Stloc_2 || 
+                     codes[i + 1].opcode == OpCodes.Stloc_3 || codes[i + 1].opcode == OpCodes.Stloc))
                 {
-                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetInserterSpeed)));
-                }
-                else if (instruction.opcode == OpCodes.Ldc_R8 && Math.Abs((double)instruction.operand - 10000.0) < 0.001)
-                {
-                    yield return new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetInserterSpeedDouble)));
-                }
-                else
-                {
-                    yield return instruction;
+                    // Preservation of labels is CRITICAL to avoid "Label not marked" crashes
+                    var newInst = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(PluginConfig), "get_inserterMultiplier"));
+                    newInst.labels = codes[i].labels;
+                    codes[i] = newInst;
                 }
             }
-        }
-
-        [HarmonyTranspiler]
-        [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdate))]
-        public static IEnumerable<CodeInstruction> InserterComponent_InternalUpdate_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            return InserterTranspiler(instructions);
-        }
-
-        [HarmonyTranspiler]
-        [HarmonyPatch(typeof(InserterComponent), nameof(InserterComponent.InternalUpdateNoAnim))]
-        public static IEnumerable<CodeInstruction> InserterComponent_InternalUpdateNoAnim_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            return InserterTranspiler(instructions);
+            return codes;
         }
     }
 }
