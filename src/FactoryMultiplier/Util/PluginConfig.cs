@@ -37,6 +37,7 @@ namespace FactoryMultiplier.Util
         public static int genExchMultiplier => multiplierEnabled.Value ? _genExchMultiplier.Value : 1;
 
         public static ConfigEntry<bool> keyTestMode;
+        public static ConfigEntry<KeyboardShortcut> toggleOverclockKey;
         public static ConfigEntry<bool> multiplierEnabled;
         public static ConfigEntry<bool> enableAssemblerPopupLogMessage;
 
@@ -78,6 +79,7 @@ namespace FactoryMultiplier.Util
             _genExchMultiplier = confFile.Bind("2. Generator", "generatorExchangerMultiplier", 2, new ConfigDescription("Multiplies speed of energy exchangers", new AcceptableValueRange<int>(1, 100)));
 
             keyTestMode = confFile.Bind("3. Advanced", "keyTestMode", false, "Uses alt+1 as keybind for scriptengine support");
+            toggleOverclockKey = confFile.Bind("3. Advanced", "toggleOverclockKey", new KeyboardShortcut(UnityEngine.KeyCode.KeypadMinus), "Key to toggle overclock");
             multiplierEnabled = confFile.Bind("3. Advanced", "multiplierEnabled", true, "Determine whether we are currently multiplying values");
             enableAssemblerPopupLogMessage = confFile.Bind("3. Advanced", "enableAssemblerPopupLogMessage", false, "Ignore - For debugging, log message when UI window is opened");
         }

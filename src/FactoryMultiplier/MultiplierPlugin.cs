@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using CommonAPI;
 using CommonAPI.Systems;
 using HarmonyLib;
@@ -36,8 +37,9 @@ namespace FactoryMultiplier
         private void Update()
         {
             var testKeyInvoked = keyTestMode.Value && VFInput.alt && Input.GetKeyDown("1");
+            var keyBind = CustomKeyBindSystem.GetKeyBind("ToggleOverclock");
 
-            if (CustomKeyBindSystem.GetKeyBind("ToggleOverclock").keyValue || testKeyInvoked)
+            if (keyBind.keyValue || testKeyInvoked)
             {
                 multiplierEnabled.Value = !multiplierEnabled.Value;
                 if (!multiplierEnabled.Value)
@@ -71,22 +73,56 @@ namespace FactoryMultiplier
         private void RefreshBeltsForFactory(PlanetFactory factory)
         {
             var traffic = factory.cargoTraffic;
+            int multi = beltMultiplier;
+            
+            // 1. Update all individual belts in the pool for station throughput and UI
+            for (int i = 1; i < traffic.beltCursor; i++)
+            {
+                if (traffic.beltPool[i].id == i)
+                {
+                    int entityId = traffic.beltPool[i].entityId;
+                    int protoId = factory.entityPool[entityId].protoId;
+                    ItemProto beltProto = LDB.items.Select(protoId);
+                    if (beltProto != null)
+                    {
+                        int s = beltProto.prefabDesc.beltSpeed * multi;
+                        if (s > 10) s = 10; // Cap at 10 (60 items/s) to prevent CargoPath.Update crash
+                        traffic.beltPool[i].speed = s;
+                    }
+                }
+            }
+
+            // 2. Update all path chunks to match the belt speeds they cover
             for (int i = 1; i < traffic.pathCursor; i++)
             {
                 var path = traffic.pathPool[i];
-                if (path != null && path.id == i && path.belts.Count > 0)
+                if (path != null && path.id == i && path.chunks != null)
                 {
-                    // Get the protoId from the first belt on the path to determine its tier
-                    int firstBeltId = path.belts[0];
-                    ItemProto beltProto = LDB.items.Select(factory.entityPool[traffic.beltPool[firstBeltId].entityId].protoId);
-
                     for (int j = 0; j < path.chunkCount; j++)
                     {
-                        // The original speed is the base speed of the belt item
-                        int originalSpeed = beltProto.prefabDesc.beltSpeed;
+                        if (j * 3 + 2 >= path.chunks.Length) break;
 
-                        // Apply our multiplier
-                        path.chunks[j * 3 + 2] = originalSpeed * beltMultiplier;
+                        int begin = path.chunks[j * 3];
+                        int speed = 1;
+                        
+                        // Find the belt that covers this chunk's start index (robust search)
+                        if (path.belts != null)
+                        {
+                            int maxSegIndex = -1;
+                            foreach (int bId in path.belts)
+                            {
+                                if (bId > 0 && bId < traffic.beltCursor)
+                                {
+                                    ref var belt = ref traffic.beltPool[bId];
+                                    if (belt.id == bId && belt.segIndex <= begin && belt.segIndex > maxSegIndex)
+                                    {
+                                        maxSegIndex = belt.segIndex;
+                                        speed = belt.speed;
+                                    }
+                                }
+                            }
+                        }
+                        path.chunks[j * 3 + 2] = speed;
                     }
                 }
             }
@@ -98,14 +134,14 @@ namespace FactoryMultiplier
             if (!CustomKeyBindSystem.HasKeyBind("ToggleOverclock"))
                 CustomKeyBindSystem.RegisterKeyBind<PressKeyBind>(new BuiltinKey
                 {
-                    id = 214,
-                    key = new CombineKey((int)KeyCode.KeypadMinus, 0, ECombineKeyAction.OnceClick, false),
+                    id = 1214, // Increased ID to avoid potential vanilla/mod conflicts
+                    key = new CombineKey((int)toggleOverclockKey.Value.MainKey, 0, ECombineKeyAction.OnceClick, false),
                     conflictGroup = 2052,
                     name = "ToggleOverclock",
                     canOverride = true
                 });
 #pragma warning disable CS0618
-            ProtoRegistry.RegisterString("KEYToggleOverClock", "Enable/disable factory OverClock");
+            ProtoRegistry.RegisterString("KEYToggleOverclock", "Enable/disable factory OverClock");
 #pragma warning restore CS0618
         }
 

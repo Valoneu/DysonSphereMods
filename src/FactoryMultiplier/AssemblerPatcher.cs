@@ -116,6 +116,7 @@ namespace FactoryMultiplier
         public static void NewBelt_Prefix(ref int speed)
         {
             speed *= PluginConfig.beltMultiplier;
+            if (speed > 10) speed = 10;
         }
 
         [HarmonyPrefix]
@@ -125,8 +126,66 @@ namespace FactoryMultiplier
             // Note: The game's UpgradeBeltComponent reads the base speed and passes it in.
             // We only need to multiply it here.
             speed *= PluginConfig.beltMultiplier;
+            if (speed > 10) speed = 10;
         }
 
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickLocal))]
+        public static void StationComponent_InternalTickLocal_Prefix(ref int droneCarries)
+        {
+            if (PluginConfig.multiplierEnabled.Value)
+            {
+                droneCarries *= PluginConfig.beltMultiplier;
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickRemote))]
+        public static void StationComponent_InternalTickRemote_Prefix(ref int shipCarries)
+        {
+            if (PluginConfig.multiplierEnabled.Value)
+            {
+                shipCarries *= PluginConfig.beltMultiplier;
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateCollection))]
+        public static void StationComponent_UpdateCollection_Prefix(ref float collectSpeedRate)
+        {
+            if (PluginConfig.multiplierEnabled.Value)
+            {
+                collectSpeedRate *= PluginConfig.miningMultiplier.Value;
+            }
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateOutputSlots))]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateInputSlots))]
+        public static IEnumerable<CodeInstruction> StationComponent_UpdateSlots_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var codes = new List<CodeInstruction>(instructions);
+            for (int i = 0; i < codes.Count; i++)
+            {
+                // Look for 'local.counter = 1' which is 'ldc.i4.1' followed by 'stfld SlotData.counter'
+                // Or since it's a ref struct, it might be more complex. 
+                // In decompiled code it looks like 'local.counter = 1;'
+                if (codes[i].opcode == OpCodes.Ldc_I4_1 && i + 1 < codes.Count && codes[i + 1].opcode == OpCodes.Stfld && 
+                    codes[i + 1].operand.ToString().Contains("counter"))
+                {
+                    // We change the assignment from 1 to 0 if multipliers are enabled.
+                    // To keep it simple and safe, we'll call a helper method that returns 0 if overclocked.
+                    codes[i] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetSlotCounterValue)));
+                }
+            }
+            return codes;
+        }
+
+        public static int GetSlotCounterValue()
+        {
+            return PluginConfig.multiplierEnabled.Value && PluginConfig.beltMultiplier > 1 ? 0 : 1;
+        }
 
         private static void MultiplyFractionators(FactorySystem factorySystem)
         {

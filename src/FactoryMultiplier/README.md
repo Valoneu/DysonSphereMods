@@ -1,4 +1,4 @@
-Version: 2.1.0
+Version: 2.1.1
 
 ## Description
 This mod allow user to change speed of almost any building, when boosting it will give the building more (Quadratic) power draw.

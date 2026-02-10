@@ -1,21 +1,10 @@
 ```ini
 Error report: Game version 0.10.34.28470 with 7 mods used.
-possible candidates: [FactoryOverclock2.0.4]
-ArgumentException: Label #4 is not marked in method `DMD<InserterComponent::InternalUpdate_Bidirectional>'
-System.Reflection.Emit.ILGenerator.label_fixup (System.Reflection.MethodBase mb); (IL_0053)
-System.Reflection.Emit.DynamicMethod.CreateDynMethod (); (IL_0056)
-System.Reflection.RuntimeMethodInfo.Invoke (object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture); (IL_006A)
-Rethrow as TargetInvocationException: Exception has been thrown by the target of an invocation.
-System.Reflection.RuntimeMethodInfo.Invoke (object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture); (IL_0083)
-...(skip the middle 15 lines)
-HarmonyLib.PatchClassProcessor.ReportException (System.Exception exception, System.Reflection.MethodBase original); (IL_0045)
-HarmonyLib.PatchClassProcessor.Patch (); (IL_0084)
-HarmonyLib.Harmony.PatchAll (System.Type type); (IL_0008)
-FactoryMultiplier.MultiplierPlugin.Awake (); (IL_006B)
-UnityEngine.GameObject:AddComponent(Type)
-BepInEx.Bootstrap.Chainloader:Start()
-UnityEngine.Application:.cctor()
-XLogHandler:Register()
-GlobalObject:Initialize()
-[== Mods on stack trace ==]: [FactoryMultiplier]
+The game errored in frame [288881] [FactoryCargoPath] task phase (At worker thread [00] ordinal 0 of 15):
+System.IndexOutOfRangeException: Index was outside the bounds of the array.
+  at CargoPath.Update () [0x003b8] ;IL_03B8 
+  at GameLogic._cargo_path_parallel (int threadOrdinal, int workBatchSize, int extraProtectedSize, int maxRedispatchChance) [0x00163] ;IL_0163 
+  at GameLogic.FactoryCargoPathGameTick_Parallel (int threadOrdinal, int threadCount) [0x0000f] ;IL_000F 
+  at GameLogic.OnGameLogicFrame (int iTask, int threadOrdinal, int threadCount) [0x00614] ;IL_0614 
+  at WorkerThread.Run () [0x000ea] ;IL_00EA 
 ```
