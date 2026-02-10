@@ -1,8 +1,6 @@
-Version: 2.1.1
-
 ## Description
 This mod allow user to change speed of almost any building, when boosting it will give the building more (Quadratic) power draw.
-Defaul keybind to turn on/off is Lshift + alt
+Default keybind to turn on/off is Keypad Minus (configurable in-game).
 ## Installation
 # With Mod Manager
 Simply open the mod manager (if you don't have it install it from here), select FactoryOverclock by Valoneu, then Download.
@@ -15,6 +13,8 @@ Then just click Start modded, and the game will run with the mod installed.
 Valoneu#8617 on discord, you can dm me but i prefer if u make an issue on github please
 
 ## Changelog
+2.1.1 Fixed station throughput bottleneck (now supports 3600/m), implemented belt speed safety cap to prevent crashes, added robust mixed-tier belt handling, and persistent keybind support (default KeypadMinus).
+
 2.1.0 fix crash in bidirectional sorters and improve overclocking efficiency for all sorters
 
 2.0.9 robust fix for sorter speed using effective power multiplication
