@@ -10,7 +10,7 @@ namespace CustomWarpSound
     [BepInDependency(CommonAPIPlugin.GUID)]
     [BepInDependency("me.xiaoye97.plugin.Dyson.LDBTool")]
     [BepInPlugin("com.Valoneu.CustomWarpSound", "CustomWarpSound", "1.0.10")]
-    public class Plugin : BaseUnityPlugin
+    public class CustomWarpSoundPlugin : BaseUnityPlugin
     {
         private const string keyword = "customwarpsound";
 
@@ -26,7 +26,7 @@ namespace CustomWarpSound
                 ProtoRegistry.EditAudio(113, $"assets/{keyword}/audio/working", 1, 1, 0, 0);
                 ProtoRegistry.EditAudio(114, $"assets/{keyword}/audio/slowdown", 1, 1, 0, 0);
             }
-            Logger.LogInfo($"Plugin com.Valoneu.CustomWarpSound is loaded!");
+            Logger.LogInfo("CustomWarpSoundPlugin is loaded!");
         }
     }
 }

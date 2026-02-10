@@ -6,56 +6,62 @@ namespace FactoryMultiplier.Util
 {
     public static class ItemUtil
     {
-        private static readonly ConcurrentDictionary<int, ERecipeType> recipeByProtoId = new();
+        private static readonly ConcurrentDictionary<int, ERecipeType> _recipeByProtoId = new();
 
         public static ERecipeType GetRecipeByProtoId(int protoId)
         {
-            if (recipeByProtoId.TryGetValue(protoId, out var type))
+            if (_recipeByProtoId.TryGetValue(protoId, out var type))
                 return type;
             
-            Log.Debug($"looking up recipe by protoid {protoId}");
             var itemProto = LDB.items.Select(protoId);
-            if (itemProto != null && itemProto.prefabDesc != null)
+            if (itemProto?.prefabDesc != null)
             {
                 type = itemProto.prefabDesc.assemblerRecipeType;
-                recipeByProtoId[protoId] = type;
+                _recipeByProtoId[protoId] = type;
                 return type;
             }
             return ERecipeType.None;
         }
 
-        private static ConcurrentDictionary<int, byte> rayPhotonReceiverProtos;
+        private static ConcurrentDictionary<int, byte> _rayPhotonReceiverProtos;
         public static bool IsPhotonRayReceiver(int protoId)
         {
-            if (rayPhotonReceiverProtos == null)
+            if (_rayPhotonReceiverProtos == null)
             {
-                rayPhotonReceiverProtos = new ConcurrentDictionary<int, byte>();
-                LDB.items.dataArray.ToList().FindAll(i => i.prefabDesc.gammaRayReceiver).ForEach(i => rayPhotonReceiverProtos[i.ID] = 0);
+                _rayPhotonReceiverProtos = new ConcurrentDictionary<int, byte>();
+                foreach (var item in LDB.items.dataArray)
+                {
+                    if (item.prefabDesc.gammaRayReceiver)
+                        _rayPhotonReceiverProtos[item.ID] = 0;
+                }
             }
-            return rayPhotonReceiverProtos.ContainsKey(protoId);
+            return _rayPhotonReceiverProtos.ContainsKey(protoId);
         }
 
         private static ItemProto _ejectorProto;
-        public static ItemProto ejectorProto
+        public static ItemProto EjectorProto
         {
             get
             {
                 if (_ejectorProto == null)
                 {
-                    _ejectorProto = LDB.items.dataArray.ToList().Find(i => i.prefabDesc.isEjector);
+                    _ejectorProto = LDB.items.dataArray.FirstOrDefault(i => i.prefabDesc.isEjector);
                 }
                 return _ejectorProto;
             }
         }
 
         private static ItemProto _siloProto;
-        public static ItemProto GetSiloProto()
+        public static ItemProto SiloProto
         {
-            if (_siloProto == null)
+            get
             {
-                _siloProto = LDB.items.dataArray.ToList().Find(i => i.prefabDesc.isSilo);
+                if (_siloProto == null)
+                {
+                    _siloProto = LDB.items.dataArray.FirstOrDefault(i => i.prefabDesc.isSilo);
+                }
+                return _siloProto;
             }
-            return _siloProto;
         }
     }
 }

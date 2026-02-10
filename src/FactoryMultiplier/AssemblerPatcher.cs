@@ -230,7 +230,7 @@ namespace FactoryMultiplier
         [HarmonyPatch(typeof(EjectorComponent), "InternalUpdate")]
         public static void EjectorComponent_InternalUpdate_Prefix(ref EjectorComponent __instance)
         {
-            var ejectorProto = ItemUtil.ejectorProto;
+            var ejectorProto = ItemUtil.EjectorProto;
             __instance.chargeSpend = ejectorProto.prefabDesc.ejectorChargeFrame * 10000 / PluginConfig.ejectorMultiplier;
             __instance.coldSpend = ejectorProto.prefabDesc.ejectorColdFrame * 10000 / PluginConfig.ejectorMultiplier;
         }
@@ -239,8 +239,9 @@ namespace FactoryMultiplier
         [HarmonyPatch(typeof(SiloComponent), "InternalUpdate")]
         public static void SiloComponent_InternalUpdate_Prefix(ref SiloComponent __instance)
         {
-            __instance.chargeSpend = ItemUtil.GetSiloProto().prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
-            __instance.coldSpend = ItemUtil.GetSiloProto().prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
+            var siloProto = ItemUtil.SiloProto;
+            __instance.chargeSpend = siloProto.prefabDesc.siloChargeFrame * 10000 / PluginConfig.siloMultiplier;
+            __instance.coldSpend = siloProto.prefabDesc.siloColdFrame * 10000 / PluginConfig.siloMultiplier;
         }
 
         [HarmonyPrefix]
