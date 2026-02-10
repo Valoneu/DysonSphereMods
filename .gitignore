@@ -48,6 +48,10 @@ temp_stage/
 *.rar
 *.7z
 *gemini*
+/.env
+/tcli_bin
+/publish
+/tmp
 
 # NuGet
 *.nuget.props

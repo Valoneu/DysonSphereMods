@@ -1,8 +1,9 @@
 {
   "CustomWarpSound": "1.0.10",
-  "FactoryOverclock": "2.1.1",
+  "FactoryOverclock": "2.1.4",
   "HydrogenDissolution": "1.0.1",
   "LessShipPower": "1.0.5",
   "MaxLVLIncrease": "1.0.4",
-  "TechHashReduce": "1.1.2"
+  "TechHashReduce": "1.1.2",
+  "DistributeWarpers": "1.0.2"
 }

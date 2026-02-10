@@ -169,13 +169,9 @@ namespace FactoryMultiplier
             for (int i = 0; i < codes.Count; i++)
             {
                 // Look for 'local.counter = 1' which is 'ldc.i4.1' followed by 'stfld SlotData.counter'
-                // Or since it's a ref struct, it might be more complex. 
-                // In decompiled code it looks like 'local.counter = 1;'
                 if (codes[i].opcode == OpCodes.Ldc_I4_1 && i + 1 < codes.Count && codes[i + 1].opcode == OpCodes.Stfld && 
                     codes[i + 1].operand.ToString().Contains("counter"))
                 {
-                    // We change the assignment from 1 to 0 if multipliers are enabled.
-                    // To keep it simple and safe, we'll call a helper method that returns 0 if overclocked.
                     codes[i] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetSlotCounterValue)));
                 }
             }
@@ -185,6 +181,133 @@ namespace FactoryMultiplier
         public static int GetSlotCounterValue()
         {
             return PluginConfig.multiplierEnabled.Value && PluginConfig.beltMultiplier > 1 ? 0 : 1;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(FractionatorComponent), nameof(FractionatorComponent.InternalUpdate))]
+        public static void FractionatorComponent_InternalUpdate_Prefix(ref FractionatorComponent __instance, PlanetFactory factory)
+        {
+            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return;
+
+            int multi = PluginConfig.beltMultiplier;
+            var traffic = factory.cargoTraffic;
+            
+            // Loop belt picking logic to fill internal buffer faster
+            for (int i = 0; i < multi - 1; i++)
+            {
+                if (__instance.fluidInputCount >= __instance.fluidInputMax) break;
+
+                if (__instance.belt1 > 0 && !__instance.isOutput1)
+                {
+                    if (__instance.fluidId > 0)
+                    {
+                        if (traffic.TryPickItemAtRear(__instance.belt1, __instance.fluidId, null, out byte stack, out byte inc) > 0)
+                        {
+                            __instance.fluidInputCount += (int)stack;
+                            __instance.fluidInputInc += (int)inc;
+                            __instance.fluidInputCargoCount += 1f;
+                        }
+                    }
+                    else
+                    {
+                        int needId = traffic.TryPickItemAtRear(__instance.belt1, 0, RecipeProto.fractionatorNeeds, out byte stack, out byte inc);
+                        if (needId > 0)
+                        {
+                            __instance.fluidInputCount += (int)stack;
+                            __instance.fluidInputInc += (int)inc;
+                            __instance.fluidInputCargoCount += 1f;
+                            __instance.SetRecipe(needId, factory.entitySignPool);
+                        }
+                    }
+                }
+                
+                if (__instance.belt2 > 0 && !__instance.isOutput2 && __instance.fluidInputCount < __instance.fluidInputMax)
+                {
+                    if (__instance.fluidId > 0)
+                    {
+                        if (traffic.TryPickItemAtRear(__instance.belt2, __instance.fluidId, null, out byte stack, out byte inc) > 0)
+                        {
+                            __instance.fluidInputCount += (int)stack;
+                            __instance.fluidInputInc += (int)inc;
+                            __instance.fluidInputCargoCount += 1f;
+                        }
+                    }
+                }
+            }
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(FractionatorComponent), nameof(FractionatorComponent.InternalUpdate))]
+        public static IEnumerable<CodeInstruction> Fractionator_InternalUpdate_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var codes = new List<CodeInstruction>(instructions);
+            for (int i = 0; i < codes.Count; i++)
+            {
+                // Look for ldc.r8 30.0 which is the hardcoded limit for fractionation speed
+                if (codes[i].opcode == OpCodes.Ldc_R8 && (double)codes[i].operand == 30.0)
+                {
+                    codes[i] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetFractionatorLimit)));
+                }
+            }
+            return codes;
+        }
+
+        public static double GetFractionatorLimit()
+        {
+            return PluginConfig.multiplierEnabled.Value ? PluginConfig.beltMultiplier * 30.0 : 30.0;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FractionatorComponent), nameof(FractionatorComponent.InternalUpdate))]
+        public static void Fractionator_InternalUpdate_Postfix(ref FractionatorComponent __instance, PlanetFactory factory)
+        {
+            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return;
+
+            var traffic = factory.cargoTraffic;
+            int multi = PluginConfig.beltMultiplier;
+
+            // Unload Deuterium faster
+            for (int i = 0; i < multi - 1; i++)
+            {
+                if (__instance.productOutputCount <= 0) break;
+                if (__instance.belt0 > 0 && __instance.isOutput0)
+                {
+                    if (traffic.TryInsertItemAtHead(__instance.belt0, __instance.productId, (byte)1, (byte)0))
+                        __instance.productOutputCount--;
+                    else break;
+                }
+                else break;
+            }
+
+            // Unload remaining Hydrogen faster
+            for (int i = 0; i < multi - 1; i++)
+            {
+                if (__instance.fluidOutputCount <= 0) break;
+                int bId = __instance.belt1 > 0 && __instance.isOutput1 ? __instance.belt1 : (__instance.belt2 > 0 && __instance.isOutput2 ? __instance.belt2 : 0);
+                if (bId == 0) break;
+
+                var cp = traffic.GetCargoPath(traffic.beltPool[bId].segPathId);
+                if (cp == null) break;
+
+                int inc = __instance.fluidOutputInc / __instance.fluidOutputCount;
+                if (cp.TryUpdateItemAtHeadAndFillBlank(__instance.fluidId, 4, (byte)1, (byte)inc))
+                {
+                    __instance.fluidOutputCount--;
+                    __instance.fluidOutputInc -= inc;
+                }
+                else break;
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PilerComponent), nameof(PilerComponent.InternalUpdate))]
+        public static void PilerComponent_InternalUpdate_Postfix(ref PilerComponent __instance)
+        {
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.beltMultiplier > 1)
+            {
+                // Force cooldown to zero after update to allow operation every tick
+                __instance.cacheCdTick = 0;
+            }
         }
 
         private static void MultiplyFractionators(FactorySystem factorySystem)

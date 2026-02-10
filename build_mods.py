@@ -99,12 +99,20 @@ def update_readme_version(file_path, new_version):
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         
-        pattern = r"(^Version[:\s]+)(\d+\.\d+\.\d+)"
-        if re.search(pattern, content, flags=re.IGNORECASE | re.MULTILINE):
-            content_new = re.sub(pattern, f"\\g<1>{new_version}", content, flags=re.IGNORECASE | re.MULTILINE)
-        else:
-            content_new = f"Version: {new_version}\n\n{content}"
+        # Match Version: x.x.x
+        pattern1 = r"(^Version[:\s]+)(\d+\.\d+\.\d+)"
+        # Match | **x.x.x** | (for our new version history tables)
+        pattern2 = r"(\| \*\*)(\d+\.\d+\.\d+)(\*\* \|)"
         
+        content_new = content
+        if re.search(pattern1, content_new, flags=re.IGNORECASE | re.MULTILINE):
+            content_new = re.sub(pattern1, f"\\g<1>{new_version}", content_new, flags=re.IGNORECASE | re.MULTILINE)
+        
+        # We update ALL matches in the version table (or just the first one if we want to be strict)
+        # For now, let's update the first occurrence in the table which is the latest version.
+        if re.search(pattern2, content_new):
+            content_new = re.sub(pattern2, f"\\g<1>{new_version}\\g<3>", content_new, count=1)
+
         if content != content_new:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content_new)
@@ -192,12 +200,12 @@ def update_root_readme():
 
         new_content = content
         for mod_name, version in versions.items():
-            # Regex to match the table row: | **ModName** | ... | Version |
-            # strict matching for the mod name to avoid partial matches
-            pattern = r"(\| \*\*"+ re.escape(mod_name) + r"\*\* \|.*?\| )(\d+\.\d+\.\d+)( \|)"
+            # Match: | **ModName** | ... | v2.1.1 |
+            # We allow an optional 'v' prefix
+            pattern = r"(\| \*\*"+ re.escape(mod_name) + r"\*\* \|.*?\| )(v?)(\d+\.\d+\.\d+)( \|)"
             
             if re.search(pattern, new_content):
-                new_content = re.sub(pattern, f"\\g<1>{version}\\g<3>", new_content)
+                new_content = re.sub(pattern, f"\\g<1>\\g<2>{version}\\g<4>", new_content)
             else:
                  print(f"  [Info] Could not find table row for {mod_name} in README.md")
 

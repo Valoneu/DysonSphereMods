@@ -1,22 +1,29 @@
-Version: 1.0.1
+# HydrogenDissolution
+**Resource Management Utility**
 
-# Description
-- Add recipe to get rid of hydrogen (Icon and name of the recipe is currently broken, its next to mass energy storage recipe)
+---
 
-# Installation
-## With Mod Manager
-1. Simply open the mod manager (if you don't have it install it from [here](https://dsp.thunderstore.io/package/ebkr/r2modman/)), select Hydrogen Dissolution by Valoneu, then Download.
+![Category](https://img.shields.io/badge/Category-Resources-blue?style=flat-square)
+![Utility](https://img.shields.io/badge/Type-Sink-cyan?style=flat-square)
 
-2. If prompted to download with dependencies, select Yes.
+Provides a specialized recipe to prevent factory stalls by safely consuming excess Hydrogen at high volumes.
 
-3. Then just click Start modded, and the game will run with the mod installed.
+---
 
-### Contact
-Valoneu#8617 on discord, im active in modding discord and in normal dyson sphere program discord
+## Features
+* **Hydrogen Sink:** Adds a Chemical Plant recipe to dissolve **100 Hydrogen** into **1 Hydrogen**.
+* **Process Stability:** Prevents oil refinery and gas giant extraction stalls caused by full storage buffers.
 
-# Changelog
+---
 
-1.0.1 Fixed recipe clash with mod AdvancedIngotRecipe (ty DlMFlRE#3002 for report)
+## Version History
 
-1.0.0 Initial release
+| Version | Description of Changes |
+| :--- | :--- |
+| **1.0.1** | Resolved recipe ID conflicts with other popular mods. |
+| **1.0.0** | Initial release. |
+
+---
+**Developer:** Valoneu#8617 on Discord
+
 

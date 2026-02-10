@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>DistributeWarpers</Description>
+    <Version>1.0.2</Version>
+    <BepInExPluginGuid>com.Valoneu.DistributeWarpers</BepInExPluginGuid>
+    <BepInExPluginName>DistributeWarpers</BepInExPluginName>
+    <BepInExPluginVersion>1.0.2</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+</Project>

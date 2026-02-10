@@ -1,18 +1,29 @@
-Version: 1.0.10
+# CustomWarpSound
+**Audio Aesthetic Replacement**
 
-# Description
-- This mod Change how warping sounds
+---
 
-# Installation
-## With Mod Manager
-1. Simply open the mod manager (if you don't have it install it from [here](https://dsp.thunderstore.io/package/ebkr/r2modman/)), select CustomWarpSound by Valoneu, then Download.
+![Category](https://img.shields.io/badge/Category-Cosmetic-blue?style=flat-square)
+![Assets](https://img.shields.io/badge/Type-Audio-purple?style=flat-square)
 
-2. If prompted to download with dependencies, select Yes.
+Replaces the default interstellar warp audio transitions with custom, high-quality sound effects for a different mecha travel experience.
 
-3. Then just click Start modded, and the game will run with the mod installed.
+---
 
-### Contact
-Valoneu#8617 on discord, im active in modding discord and in normal dyson sphere program discord
+## Features
+* **Full Replacement:** Includes custom audio for warp startup, cruising, and deceleration phases.
+* **High Quality:** Uses high-fidelity audio assets for clear in-game playback.
 
-# Changelog
-1.0.0 Initial release
+---
+
+## Version History
+
+| Version | Description of Changes |
+| :--- | :--- |
+| **1.0.10** | Improved internal resource loading and cleanup. |
+| **1.0.0** | Initial release. |
+
+---
+**Developer:** Valoneu#8617 on Discord
+
+

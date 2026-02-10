@@ -1,0 +1,9 @@
+{
+    "name": "DistributeWarpers",
+    "version_number": "1.0.2",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods",
+    "description": "Automatically distributes warpers from logistics stations to all other stations on the same planet.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}

@@ -1,67 +1,48 @@
-Version: 2.1.1
+# FactoryOverclock
+**High-Performance Production Scaling**
 
-## Description
-This mod allow user to change speed of almost any building, when boosting it will give the building more (Quadratic) power draw.
-Default keybind to turn on/off is Keypad Minus (configurable in-game).
-## Installation
-# With Mod Manager
-Simply open the mod manager (if you don't have it install it from here), select FactoryOverclock by Valoneu, then Download.
+---
 
-If prompted to download with dependencies, select Yes.
+![Category](https://img.shields.io/badge/Category-Optimization-blue?style=flat-square)
+![Complexity](https://img.shields.io/badge/Utility-Advanced-orange?style=flat-square)
 
-Then just click Start modded, and the game will run with the mod installed.
+FactoryOverclock provides tools to multiply the production speed of most buildings while maintaining game balance through adjusted power requirements.
 
-## Contact
-Valoneu#8617 on discord, you can dm me but i prefer if u make an issue on github please
+---
 
-## Changelog
-2.1.1 Fixed station throughput bottleneck (now supports 3600/m), implemented belt speed safety cap to prevent crashes, added robust mixed-tier belt handling, and persistent keybind support (default KeypadMinus).
+## Key Features
 
-2.1.0 fix crash in bidirectional sorters and improve overclocking efficiency for all sorters
+### Production & Throughput
+* **Building Overclock:** Direct speed multiplication for Assemblers, Smelters, Miners, Labs, Ejectors, and Silos.
+* **Station Buffering:** Specialized patch for logistics stations allowing up to **3600 items/minute** per slot to match overclocked belt speeds.
 
-2.0.9 robust fix for sorter speed using effective power multiplication
+### Resource Management
+* **Quadratic Power Draw:** Energy consumption increases quadratically relative to speed multipliers.
+* **Real-time Toggle:** Instant activation/deactivation via hotkey (Default: **KeypadMinus**).
 
-2.0.8 fix for sorter speed not working by default and improving patches coverage
+---
 
-2.0.7 fix for bidirectional inserter speed and optimization of inserter patches
+## Configuration
+All multipliers and hotkeys are fully customizable via the standard BepInEx configuration framework. Changes can be applied in-game using a Configuration Manager or by editing the `.cfg` file.
 
-2.0.5 fix crash due to InserterComponent.speed removal in new game version
+---
 
-2.0.4 fix for new patch 0.10.34.28326 hopefully
+## Version History
 
-2.0.2 fix for overclocking belts, fix power for battlefield analysis base
+| Version | Description of Changes |
+| :--- | :--- |
+| **2.1.4** | Added 3600/m throughput support for Fractionators and Pilers (Aggressive loading/unloading and cooldown removal). |
+| **2.1.1** | Implemented 3600/m station throughput fix, belt speed safety cap, and persistent keybind support. |
+| **2.1.0** | Resolved bidirectional sorter synchronization issues and improved overall efficiency. |
+| **2.0.9** | Implemented robust sorter speed logic using effective power multiplication. |
+| **2.0.8** | Corrected sorter default speed logic and expanded patch coverage. |
+| **2.0.5** | Addressed game updates regarding InserterComponent field changes. |
+| **2.0.0** | Major update for game multithreading compatibility. |
+| **1.1.0** | Added overclocking support for power generators. |
+| **1.0.0** | Initial release. |
 
-2.0.1 fix for stopping buildings and added belt overclock
+---
+**Developer:** Valoneu#8617 on Discord
 
-2.0.0 fix for multithreading update
 
-1.1.6 maybe minor ups gain
 
-1.1.5 fixed for game version 2.0.4.11996
-
-1.1.4 fixed lab productivity not being faster with overclock
-
-1.1.3 fixed sorter not being fast enough, added power draw multiplier
-
-1.1.2 fixed messing it up max consumption for gigastations
-
-1.1.0 - 1.1.1 added overclock for generators / changed how config file looks so you need to delete and generate it again
-
-1.0.9 decreased power draw cause it was too insane
-
-1.0.8 fixed ray receivers not multiplying
-
-1.0.7 fixed inserters copying with shift click only to lenght of 1
-
-1.0.6 fixed railsguns not showing the speed, fixed power multiplier, fixed labs in research mode to draw not multiplied power draw
-
-1.0.5 fixed labs not working, silos desc.
-
-1.0.3 - 1.0.4 Added multiplier for sorters(inserters)
-
-1.0.1 - 1.0.2 Fixed dependencies, fixed thunderstore page, inscreased powerdraw to quadratic from linear, made defaul keybind Lshift + alt from Capslock + alt
-
-1.0.0 Initial release
-
-## Credit
-I want to thank you Semar#1983 for making this mod possible and helping me so much.
