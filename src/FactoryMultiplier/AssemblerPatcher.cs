@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using FactoryMultiplier.Util;
 using HarmonyLib;
 using DysonSphereMods.Shared;
@@ -36,9 +37,11 @@ namespace FactoryMultiplier
             MultiplyAssemblers(__instance);
             MultiplyFractionators(__instance);
             MultiplyMiners(__instance);
+            MultiplyLabs(__instance);
         }
 
         private static ConcurrentDictionary<int, int> _baseSpeedByProtoId = new();
+        private static ConcurrentDictionary<int, int> _labBaseSpeedByProtoId = new();
         private static ConcurrentDictionary<int, int> _minerBaseSpeedByProtoId = new();
         private static ConcurrentDictionary<int, int> _inserterDelayByProtoId = new();
 
@@ -66,6 +69,36 @@ namespace FactoryMultiplier
                     }
 
                     miner.speed = multiplier * baseSpeed;
+                }
+            }
+        }
+
+        private static void MultiplyLabs(FactorySystem factorySystem)
+        {
+            int multiplier = PluginConfig.multiplierEnabled.Value ? PluginConfig.labMultiplier : 1;
+
+            for (int index = 1; index < factorySystem.labCursor; ++index)
+            {
+                ref var lab = ref factorySystem.labPool[index];
+                if (lab.id == index)
+                {
+                    int entityId = lab.entityId;
+                    int protoId = factorySystem.factory.entityPool[entityId].protoId;
+
+                    if (!_labBaseSpeedByProtoId.TryGetValue(protoId, out int baseSpeed))
+                    {
+                        var proto = LDB.items.Select(protoId);
+                        baseSpeed = _labBaseSpeedByProtoId[protoId] = proto.prefabDesc.labAssembleSpeed;
+                    }
+
+                    // Update speedOverride for instant effect during replication
+                    if (lab.replicating && lab.speed > 0)
+                    {
+                        double ratio = (double)lab.speedOverride / lab.speed;
+                        lab.speedOverride = (int)(ratio * multiplier * baseSpeed);
+                    }
+
+                    lab.speed = multiplier * baseSpeed;
                 }
             }
         }
@@ -243,10 +276,26 @@ namespace FactoryMultiplier
             var codes = new List<CodeInstruction>(instructions);
             for (int i = 0; i < codes.Count; i++)
             {
-                // Look for ldc.r8 30.0 which is the hardcoded limit for fractionation speed
+                // 1. Look for ldc.r8 30.0 which is the hardcoded limit for fractionation speed
                 if (codes[i].opcode == OpCodes.Ldc_R8 && (double)codes[i].operand == 30.0)
                 {
                     codes[i] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetFractionatorLimit)));
+                }
+
+                // 2. Patch Deuterium output stack size (ldc.i4.1 before TryInsertItemAtHead)
+                if (codes[i].opcode == OpCodes.Ldc_I4_1 && i + 2 < codes.Count && 
+                    codes[i + 1].opcode == OpCodes.Ldc_I4_0 && 
+                    codes[i + 2].opcode == OpCodes.Callvirt && codes[i + 2].operand.ToString().Contains("TryInsertItemAtHead"))
+                {
+                    codes[i] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetBeltMultiplier)));
+                }
+
+                // 3. Patch Hydrogen output stack size (ldc.i4.1 before TryUpdateItemAtHeadAndFillBlank)
+                // Note: It's usually ldc.i4.1 followed by a ldloc for 'inc'
+                if (codes[i].opcode == OpCodes.Ldc_I4_1 && i + 2 < codes.Count && 
+                    codes[i + 2].opcode == OpCodes.Callvirt && codes[i + 2].operand.ToString().Contains("TryUpdateItemAtHeadAndFillBlank"))
+                {
+                    codes[i] = new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetBeltMultiplier)));
                 }
             }
             return codes;
@@ -255,6 +304,11 @@ namespace FactoryMultiplier
         public static double GetFractionatorLimit()
         {
             return PluginConfig.multiplierEnabled.Value ? PluginConfig.beltMultiplier * 30.0 : 30.0;
+        }
+
+        public static int GetBeltMultiplier()
+        {
+            return PluginConfig.multiplierEnabled.Value ? PluginConfig.beltMultiplier : 1;
         }
 
         [HarmonyPostfix]
@@ -266,7 +320,8 @@ namespace FactoryMultiplier
             var traffic = factory.cargoTraffic;
             int multi = PluginConfig.beltMultiplier;
 
-            // Unload Deuterium faster
+            // Unload Deuterium faster by attempting multiple insertions if backup occurs
+            // Note: This helps if there are gaps, but for full speed we rely on stack output in the transpiler
             for (int i = 0; i < multi - 1; i++)
             {
                 if (__instance.productOutputCount <= 0) break;
@@ -299,17 +354,75 @@ namespace FactoryMultiplier
             }
         }
 
-        [HarmonyPostfix]
+        // =================================================================
+        // REVERSE PATCHES FOR SAFE LOOPING
+        // =================================================================
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(CargoTraffic), nameof(CargoTraffic.UpdateSplitter))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void CallOriginalUpdateSplitter(CargoTraffic instance, ref SplitterComponent sp)
+        {
+            // This method is replaced by Harmony with the original method IL
+            throw new NotImplementedException("It's a stub");
+        }
+
+        [HarmonyReversePatch]
         [HarmonyPatch(typeof(PilerComponent), nameof(PilerComponent.InternalUpdate))]
-        public static void PilerComponent_InternalUpdate_Postfix(ref PilerComponent __instance)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void CallOriginalPilerUpdate(ref PilerComponent instance, CargoTraffic _traffic, AnimData[] _animPool)
+        {
+            // This method is replaced by Harmony with the original method IL
+            throw new NotImplementedException("It's a stub");
+        }
+
+        // =================================================================
+        // LOOPING POSTFIXES
+        // =================================================================
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CargoTraffic), nameof(CargoTraffic.UpdateSplitter))]
+        public static void UpdateSplitter_Postfix(ref SplitterComponent sp, CargoTraffic __instance)
         {
             if (PluginConfig.multiplierEnabled.Value && PluginConfig.beltMultiplier > 1)
             {
-                // Force cooldown to zero after update to allow operation every tick
-                __instance.cacheCdTick = 0;
+                int multi = PluginConfig.beltMultiplier;
+                // Run (multi - 1) additional updates
+                for (int i = 0; i < multi - 1; i++)
+                {
+                    CallOriginalUpdateSplitter(__instance, ref sp);
+                }
             }
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PilerComponent), nameof(PilerComponent.InternalUpdate))]
+        public static void PilerComponent_InternalUpdate_Postfix(ref PilerComponent __instance, CargoTraffic _traffic, AnimData[] _animPool)
+        {
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.beltMultiplier > 1)
+            {
+                // Force cooldown to zero to allow operation
+                __instance.cacheCdTick = 0;
+
+                int multi = PluginConfig.beltMultiplier;
+                
+                // Ensure piler has enough timeSpend to operate multiple times if needed
+                // We add extra timeSpend for the additional loops
+                if (__instance.timeSpend < 10000)
+                {
+                    __instance.timeSpend = 10000;
+                }
+
+                // Run (multi - 1) additional updates
+                for (int i = 0; i < multi - 1; i++)
+                {
+                    CallOriginalPilerUpdate(ref __instance, _traffic, _animPool);
+                    // Reset cooldown between extra ticks too, just in case
+                    if (__instance.cacheCdTick > 0) __instance.cacheCdTick = 0;
+                }
+            }
+        }
+        
         private static void MultiplyFractionators(FactorySystem factorySystem)
         {
             for (int index = 1; index < factorySystem.fractionatorCursor; ++index)
@@ -319,32 +432,20 @@ namespace FactoryMultiplier
             }
         }
 
-        private static ConcurrentDictionary<int, RecipeProto> _recipeProtosById = new();
-
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(LabComponent), "InternalUpdateAssemble")]
-        private static void MultiplyLab(ref LabComponent __instance)
-        {
-            if (__instance.recipeId > 0 && PluginConfig.multiplierEnabled.Value)
-            {
-                // In 0.10.34, LabComponent uses 'speed' instead of 'timeSpend'.
-                // Base speed is usually 10000.
-                __instance.speed = 10000 * PluginConfig.labMultiplier;
-                
-                // 'extraSpeed' handles the proliferation/extra production logic.
-                // It's scaled by 10x the base speed usually (100000).
-                // We multiply the base 100000 by our multiplier.
-                __instance.extraSpeed = 100000 * PluginConfig.labMultiplier;
-            }
-        }
-
         [HarmonyPrefix]
         [HarmonyPatch(typeof(LabComponent), nameof(LabComponent.InternalUpdateResearch))]
-        private static void MultiplyLabResearch(ref float research_speed)
+        private static void MultiplyLabResearch(ref LabComponent __instance, ref float research_speed)
         {
             if (PluginConfig.multiplierEnabled.Value)
             {
-                research_speed *= PluginConfig.labMultiplier;
+                if (__instance.speed > 0)
+                {
+                    research_speed *= (float)__instance.speed / 10000f;
+                }
+                else
+                {
+                    research_speed *= PluginConfig.labMultiplier;
+                }
             }
         }
 

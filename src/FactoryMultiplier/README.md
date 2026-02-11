@@ -14,7 +14,8 @@ FactoryOverclock provides tools to multiply the production speed of most buildin
 
 ### Production & Throughput
 * **Building Overclock:** Direct speed multiplication for Assemblers, Smelters, Miners, Labs, Ejectors, and Silos.
-* **Station Buffering:** Specialized patch for logistics stations allowing up to **3600 items/minute** per slot to match overclocked belt speeds.
+* **Smart Throttling:** Specialized logic for **Splitters**, **Fractionators**, and **Pilers** to process items multiple times per tick, matching overclocked belt speeds.
+* **Station Buffering:** Specialized patch for logistics stations allowing up to **3600 items/minute** per slot.
 
 ### Resource Management
 * **Quadratic Power Draw:** Energy consumption increases quadratically relative to speed multipliers.
@@ -31,6 +32,8 @@ All multipliers and hotkeys are fully customizable via the standard BepInEx conf
 
 | Version | Description of Changes |
 | :--- | :--- |
+| **2.1.7** | Fixed Lab MK2 research speed not scaling correctly with tier and overclocking. |
+| **2.1.6** | Fixed splitter bottlenecks and resolved potential stack overflow crashes in pilers/splitters. Fractionators now output larger stacks. |
 | **2.1.4** | Added 3600/m throughput support for Fractionators and Pilers (Aggressive loading/unloading and cooldown removal). |
 | **2.1.1** | Implemented 3600/m station throughput fix, belt speed safety cap, and persistent keybind support. |
 | **2.1.0** | Resolved bidirectional sorter synchronization issues and improved overall efficiency. |
