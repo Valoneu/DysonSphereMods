@@ -8,6 +8,7 @@
     <Project Path="src/MaxLVLIncrease/MaxLVLIncrease.csproj" />
     <Project Path="src/PilerMax/PilerMax.csproj" />
     <Project Path="src/Shared/Shared.csproj" />
+    <Project Path="src/CloserStations/CloserStations.csproj" />
     <Project Path="src/TechHashReduce/TechHashReduce.csproj" />
   </Folder>
 </Solution>
