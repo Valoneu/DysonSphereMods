@@ -38,6 +38,8 @@ Multipliers are applied to station prototypes (affecting new stations and UI) an
 
 | Version | Description of Changes |
 | :--- | :--- |
+| **1.0.3** | Fixed a bug where the station storage slider was limited to vanilla values even when the mod allowed for more. |
+| **1.0.1** | Fixed orbital collector energy costs causing negative production rates. Adjusted collector power scaling for stability. |
 | **1.0.0** | Initial release. Added multipliers for drones, ships, storage, and charge power. |
 
 ---

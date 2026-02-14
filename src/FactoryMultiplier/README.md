@@ -32,7 +32,7 @@ All multipliers and hotkeys are fully customizable via the standard BepInEx conf
 
 | Version | Description of Changes |
 | :--- | :--- |
-| **2.1.7** | Fixed Lab MK2 research speed not scaling correctly with tier and overclocking. |
+| **2.1.8** | Fixed Lab MK2 research speed not scaling correctly with tier and overclocking. |
 | **2.1.6** | Fixed splitter bottlenecks and resolved potential stack overflow crashes in pilers/splitters. Fractionators now output larger stacks. |
 | **2.1.4** | Added 3600/m throughput support for Fractionators and Pilers (Aggressive loading/unloading and cooldown removal). |
 | **2.1.1** | Implemented 3600/m station throughput fix, belt speed safety cap, and persistent keybind support. |

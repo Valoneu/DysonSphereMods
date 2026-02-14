@@ -32,6 +32,7 @@ All multipliers and hotkeys are fully customizable via the standard BepInEx conf
 
 | Version | Description of Changes |
 | :--- | :--- |
+| **2.1.8** | Fixed "negative production" bug on orbital collectors by implementing a 1000 items/tick safety cap and overflow protection. |
 | **2.1.7** | Added 3600/m throughput support for Fractionators and Pilers (Aggressive loading/unloading and cooldown removal). |
 | **2.1.1** | Implemented 3600/m station throughput fix, belt speed safety cap, and persistent keybind support. |
 | **2.1.0** | Resolved bidirectional sorter synchronization issues and improved overall efficiency. |

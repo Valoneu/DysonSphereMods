@@ -15,7 +15,7 @@ SpaciousStations allows you to scale up the capabilities of your logistics stati
 ### Capacity Scaling
 * **Drone Multiplier:** Increase the maximum number of logistics drones per station.
 * **Ship Multiplier:** Scale the maximum number of logistics vessels per interstellar station.
-* **Storage Multiplier:** Multiply the maximum item capacity of each slot in the station.
+* **Storage Multiplier:** Multiply the maximum item capacity of each slot in the station. This multiplier also correctly applies to "Extra Storage" bonuses gained through research.
 
 ### Throughput & Power
 * **Charge Multiplier:** Increases both the maximum energy buffer and the charging power (workEnergyPerTick) of the station, allowing it to support more active ships and drones.
@@ -26,7 +26,7 @@ SpaciousStations allows you to scale up the capabilities of your logistics stati
 All multipliers are configurable via the BepInEx config file:
 * **DroneMultiplier:** Default `2.0`
 * **ShipMultiplier:** Default `2.0`
-* **StorageMultiplier:** Default `2.0`
+* **StorageMultiplier:** Default `2.0` (Scaling for item capacity)
 * **ChargeMultiplier:** Default `2.0` (Scaling for charging speed)
 * **EnergyMultiplier:** Default `2.0` (Scaling for max energy buffer)
 
@@ -38,7 +38,8 @@ Multipliers are applied to station prototypes (affecting new stations and UI) an
 
 | Version | Description of Changes |
 | :--- | :--- |
-| **1.0.0** | Initial release. Added multipliers for drones, ships, storage, and charge power. |
+| **1.0.3** | Fixed a crash caused by a Harmony patch conflict. Improved compatibility with research-based "Extra Storage" upgrades. |
+| **1.0.2** | Initial release. Added multipliers for drones, ships, storage, and charge power. |
 
 ---
 **Developer:** Valoneu#8617 on Discord

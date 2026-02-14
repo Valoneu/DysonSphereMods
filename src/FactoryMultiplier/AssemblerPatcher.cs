@@ -185,11 +185,43 @@ namespace FactoryMultiplier
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateCollection))]
-        public static void StationComponent_UpdateCollection_Prefix(ref float collectSpeedRate)
+        public static void StationComponent_UpdateCollection_Prefix(StationComponent __instance, ref float collectSpeedRate)
         {
             if (PluginConfig.multiplierEnabled.Value)
             {
-                collectSpeedRate *= PluginConfig.miningMultiplier.Value;
+                // Ensure the base rate isn't negative (can happen if energy costs > gas giant heat in vanilla formula)
+                float baseRate = collectSpeedRate < 0 ? 0 : collectSpeedRate;
+                
+                float multi = PluginConfig.miningMultiplier.Value;
+                float targetRate = baseRate * multi;
+
+                if (__instance.isCollector && __instance.collectionPerTick != null)
+                {
+                    float maxCollectionPerTick = 0f;
+                    for (int i = 0; i < __instance.collectionPerTick.Length; i++)
+                    {
+                        if (__instance.collectionPerTick[i] > maxCollectionPerTick) 
+                            maxCollectionPerTick = __instance.collectionPerTick[i];
+                    }
+
+                    if (maxCollectionPerTick > 0.0001f)
+                    {
+                        // Cap the rate so that we produce at most ~1000 items per tick.
+                        // This fills the station in 10-50 ticks but prevents 
+                        // statistics register overflows (negative production numbers).
+                        float limitRate = 1000f / maxCollectionPerTick;
+                        if (targetRate > limitRate)
+                        {
+                            // Never cap below the speed provided by vanilla tech
+                            targetRate = Math.Max(baseRate, limitRate);
+                        }
+                    }
+
+                    // Absolute safety cap for collectors to prevent float->int cast overflow (2.1B)
+                    if (targetRate > 1000000f) targetRate = 1000000f;
+                }
+
+                collectSpeedRate = targetRate;
             }
         }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using HarmonyLib;
 using BepInEx;
 using BepInEx.Configuration;
@@ -14,7 +15,7 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.0.0";
+        public const string MOD_VERSION = "1.0.3";
 
         public static ConfigEntry<float> DroneMultiplier;
         public static ConfigEntry<float> ShipMultiplier;
@@ -86,9 +87,48 @@ namespace SpaciousStations
                     item.prefabDesc.stationMaxShipCount = (int)(original.ShipCount * SpaciousStationsPlugin.ShipMultiplier.Value);
                     item.prefabDesc.stationMaxItemCount = (int)(original.ItemCount * SpaciousStationsPlugin.StorageMultiplier.Value);
                     item.prefabDesc.stationMaxEnergyAcc = (long)(original.EnergyMax * SpaciousStationsPlugin.EnergyMultiplier.Value);
-                    item.prefabDesc.workEnergyPerTick = (long)(original.EnergyPerTick * SpaciousStationsPlugin.ChargeMultiplier.Value);
+                    
+                    // Skip multiplying workEnergyPerTick for Orbital Collectors.
+                    // This value is used in PlanetTransport.CalcCollectorsWorkCost and then in 
+                    // the collectSpeedRate formula: (miningSpeedScale * gasTotalHeat - collectorsWorkCost) / (gasTotalHeat - collectorsWorkCost).
+                    // If collectorsWorkCost > gasTotalHeat, the rate becomes negative.
+                    if (!item.prefabDesc.isCollectStation)
+                    {
+                        item.prefabDesc.workEnergyPerTick = (long)(original.EnergyPerTick * SpaciousStationsPlugin.ChargeMultiplier.Value);
+                    }
                 }
             }
+
+            // Also patch LDB.models as some game logic (like SetStationStorage) reads from it
+            foreach (var model in LDB.models.dataArray)
+            {
+                if (model.prefabDesc != null && model.prefabDesc.isStation)
+                {
+                    // Find the corresponding item for the base values
+                    ItemProto item = null;
+                    foreach (var i in LDB.items.dataArray)
+                    {
+                        if (i.ModelIndex == model.ID)
+                        {
+                            item = i;
+                            break;
+                        }
+                    }
+
+                    if (item != null && _originalValues.TryGetValue(item.ID, out var original))
+                    {
+                        model.prefabDesc.stationMaxDroneCount = (int)(original.DroneCount * SpaciousStationsPlugin.DroneMultiplier.Value);
+                        model.prefabDesc.stationMaxShipCount = (int)(original.ShipCount * SpaciousStationsPlugin.ShipMultiplier.Value);
+                        model.prefabDesc.stationMaxItemCount = (int)(original.ItemCount * SpaciousStationsPlugin.StorageMultiplier.Value);
+                        model.prefabDesc.stationMaxEnergyAcc = (long)(original.EnergyMax * SpaciousStationsPlugin.EnergyMultiplier.Value);
+                        if (!model.prefabDesc.isCollectStation)
+                        {
+                            model.prefabDesc.workEnergyPerTick = (long)(original.EnergyPerTick * SpaciousStationsPlugin.ChargeMultiplier.Value);
+                        }
+                    }
+                }
+            }
+
             Log.Info("Applied multipliers to station prototypes.");
         }
 
@@ -111,6 +151,32 @@ namespace SpaciousStations
         public static void UIStationStorage_GetAdditionStorage_Postfix(ref int __result)
         {
             __result = (int)(__result * SpaciousStationsPlugin.StorageMultiplier.Value);
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.SetStationStorage))]
+        public static IEnumerable<CodeInstruction> PlanetTransport_SetStationStorage_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var codes = new List<CodeInstruction>(instructions);
+            for (int i = 0; i < codes.Count; i++)
+            {
+                // Look for num2 calculation which assigns unmultiplied extra storage
+                if (codes[i].opcode == OpCodes.Ldfld && codes[i].operand != null && codes[i].operand.ToString().Contains("ExtraStorage"))
+                {
+                    // Multiply the value after it is loaded
+                    codes.Insert(i + 1, new CodeInstruction(OpCodes.Conv_R4));
+                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StationPatch), nameof(StationPatch.get_StorageMultiplierValue))));
+                    codes.Insert(i + 3, new CodeInstruction(OpCodes.Mul));
+                    codes.Insert(i + 4, new CodeInstruction(OpCodes.Conv_I4));
+                    i += 4;
+                }
+            }
+            return codes;
+        }
+
+        public static float get_StorageMultiplierValue()
+        {
+            return SpaciousStationsPlugin.StorageMultiplier.Value;
         }
 
         public static void ApplyToExistingStations()
