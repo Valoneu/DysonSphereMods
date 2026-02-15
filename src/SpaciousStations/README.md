@@ -38,7 +38,8 @@ Multipliers are applied to station prototypes (affecting new stations and UI) an
 
 | Version | Description of Changes |
 | :--- | :--- |
-| **1.0.3** | Fixed a crash caused by a Harmony patch conflict. Improved compatibility with research-based "Extra Storage" upgrades. |
+| **1.0.5** | Fixed an issue where power and slot settings were not correctly saved/loaded between sessions. Added UI patches to support higher charging rates. |
+| **1.0.4** | Improved compatibility with research-based "Extra Storage" upgrades and station initialization logic. |
 | **1.0.2** | Initial release. Added multipliers for drones, ships, storage, and charge power. |
 
 ---

@@ -1,27 +1,35 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Reflection.Emit;
+using System.IO;
 using HarmonyLib;
 using BepInEx;
 using BepInEx.Configuration;
 using DysonSphereMods.Shared;
 using UnityEngine;
+using CommonAPI;
+using CommonAPI.Systems;
+using xiaoye97;
 
 namespace SpaciousStations
 {
     [BepInPlugin(MOD_GUID, MOD_NAME, MOD_VERSION)]
     [BepInProcess("DSPGAME.exe")]
+    [BepInDependency(CommonAPIPlugin.GUID)]
     public class SpaciousStationsPlugin : BaseUnityPlugin
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.0.3";
+        public const string MOD_VERSION = "1.0.5";
 
         public static ConfigEntry<float> DroneMultiplier;
         public static ConfigEntry<float> ShipMultiplier;
         public static ConfigEntry<float> StorageMultiplier;
         public static ConfigEntry<float> ChargeMultiplier;
         public static ConfigEntry<float> EnergyMultiplier;
+        public static ConfigEntry<float> InternalLastStorageMultiplier;
+        public static ConfigEntry<float> InternalLastChargeMultiplier;
 
         private void Awake()
         {
@@ -30,10 +38,14 @@ namespace SpaciousStations
             StorageMultiplier = Config.Bind("General", "StorageMultiplier", 2f, "Multiplies maximum amount of items in a station.");
             ChargeMultiplier = Config.Bind("General", "ChargeMultiplier", 2f, "Multiplies station's charge power.");
             EnergyMultiplier = Config.Bind("General", "EnergyMultiplier", 2f, "Multiplies station's max energy storage.");
+            InternalLastStorageMultiplier = Config.Bind("Internal", "LastStorageMultiplier", 1f, "Internal use only.");
+            InternalLastChargeMultiplier = Config.Bind("Internal", "LastChargeMultiplier", 1f, "Internal use only.");
 
             Log.Init(Logger);
             var harmony = new Harmony(MOD_GUID);
             harmony.PatchAll(typeof(StationPatch));
+
+            LDBTool.EditDataAction += StationPatch.OnEditData;
 
             Log.Info($"{MOD_NAME} v{MOD_VERSION} loaded!");
         }
@@ -42,6 +54,7 @@ namespace SpaciousStations
     public static class StationPatch
     {
         private static Dictionary<int, ProtoValues> _originalValues = new Dictionary<int, ProtoValues>();
+        private static bool _prototypesApplied = false;
 
         private struct ProtoValues
         {
@@ -52,98 +65,209 @@ namespace SpaciousStations
             public long EnergyPerTick;
         }
 
+        public static void OnEditData(Proto proto)
+        {
+            if (proto is ItemProto item) ApplyToItem(item);
+            if (proto is ModelProto model) ApplyToModel(model);
+        }
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(VFPreload), "InvokeOnLoadWorkEnded")]
         public static void VFPreload_InvokeOnLoadWorkEnded_Postfix()
         {
-            ApplyToPrototypes();
+            Log.Info("Performing final pass on prototypes...");
+            if (LDB.items != null) foreach (var item in LDB.items.dataArray) ApplyToItem(item);
+            if (LDB.models != null) foreach (var model in LDB.models.dataArray) ApplyToModel(model);
+            _prototypesApplied = true;
         }
 
-        public static void ApplyToPrototypes()
+        private static void ApplyToItem(ItemProto item)
         {
-            if (_originalValues.Count == 0)
+            if (item == null || item.prefabDesc == null || !item.prefabDesc.isStation) return;
+            
+            if (!_originalValues.ContainsKey(item.ID))
             {
-                foreach (var item in LDB.items.dataArray)
+                _originalValues[item.ID] = new ProtoValues
                 {
-                    if (item.prefabDesc != null && item.prefabDesc.isStation)
+                    DroneCount = item.prefabDesc.stationMaxDroneCount,
+                    ShipCount = item.prefabDesc.stationMaxShipCount,
+                    ItemCount = item.prefabDesc.stationMaxItemCount,
+                    EnergyMax = item.prefabDesc.stationMaxEnergyAcc,
+                    EnergyPerTick = item.prefabDesc.workEnergyPerTick
+                };
+            }
+            
+            ApplyToDesc(item.prefabDesc, _originalValues[item.ID]);
+        }
+
+        private static void ApplyToModel(ModelProto model)
+        {
+            if (model == null || model.prefabDesc == null || !model.prefabDesc.isStation) return;
+            
+            ItemProto item = null;
+            if (LDB.items != null)
+            {
+                foreach (var i in LDB.items.dataArray) 
+                { 
+                    if (i != null && i.ModelIndex == model.ID) { item = i; break; } 
+                }
+            }
+            
+            if (item != null)
+            {
+                if (!_originalValues.ContainsKey(item.ID))
+                {
+                    _originalValues[item.ID] = new ProtoValues
                     {
-                        _originalValues[item.ID] = new ProtoValues
-                        {
-                            DroneCount = item.prefabDesc.stationMaxDroneCount,
-                            ShipCount = item.prefabDesc.stationMaxShipCount,
-                            ItemCount = item.prefabDesc.stationMaxItemCount,
-                            EnergyMax = item.prefabDesc.stationMaxEnergyAcc,
-                            EnergyPerTick = item.prefabDesc.workEnergyPerTick
-                        };
+                        DroneCount = item.prefabDesc.stationMaxDroneCount,
+                        ShipCount = item.prefabDesc.stationMaxShipCount,
+                        ItemCount = item.prefabDesc.stationMaxItemCount,
+                        EnergyMax = item.prefabDesc.stationMaxEnergyAcc,
+                        EnergyPerTick = item.prefabDesc.workEnergyPerTick
+                    };
+                }
+                ApplyToDesc(model.prefabDesc, _originalValues[item.ID]);
+            }
+        }
+
+        private static void ApplyToDesc(PrefabDesc desc, ProtoValues original)
+        {
+            if (desc == null) return;
+            
+            desc.stationMaxDroneCount = (int)(original.DroneCount * SpaciousStationsPlugin.DroneMultiplier.Value);
+            desc.stationMaxShipCount = (int)(original.ShipCount * SpaciousStationsPlugin.ShipMultiplier.Value);
+            desc.stationMaxItemCount = (int)(original.ItemCount * SpaciousStationsPlugin.StorageMultiplier.Value);
+            desc.stationMaxEnergyAcc = (long)(original.EnergyMax * SpaciousStationsPlugin.EnergyMultiplier.Value);
+            if (!desc.isCollectStation)
+                desc.workEnergyPerTick = (long)(original.EnergyPerTick * SpaciousStationsPlugin.ChargeMultiplier.Value);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.Import))]
+        public static void StationComponent_Import_Postfix(StationComponent __instance)
+        {
+            if (__instance == null || __instance.id <= 0 || __instance.entityId <= 0 || GameMain.data == null) return;
+            
+            PlanetFactory factory = null;
+            if (GameMain.data.factories != null)
+            {
+                foreach (var f in GameMain.data.factories)
+                {
+                    if (f != null && f.planetId == __instance.planetId) { factory = f; break; }
+                }
+            }
+            if (factory == null) return;
+
+            int protoId = factory.entityPool[__instance.entityId].protoId;
+            var itemProto = LDB.items.Select(protoId);
+            if (itemProto == null || !_originalValues.TryGetValue(itemProto.ID, out var original)) return;
+
+            var desc = itemProto.prefabDesc;
+            if (desc == null) return;
+
+            __instance.PatchDroneArray(desc.stationMaxDroneCount);
+            __instance.energyMax = desc.stationMaxEnergyAcc;
+            __instance.energyPerTick = desc.workEnergyPerTick;
+
+            if (__instance.storage != null)
+            {
+                int vanillaExtra = GetVanillaAdditionStorage(__instance);
+                int vanillaMax = original.ItemCount + vanillaExtra;
+                int prevMax = (int)(vanillaMax * SpaciousStationsPlugin.InternalLastStorageMultiplier.Value);
+                int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * SpaciousStationsPlugin.StorageMultiplier.Value);
+
+                for (int i = 0; i < __instance.storage.Length; i++)
+                {
+                    if (__instance.storage[i].itemId > 0)
+                    {
+                        if (__instance.storage[i].max == vanillaMax || __instance.storage[i].max == prevMax || __instance.storage[i].max > newMax || (SpaciousStationsPlugin.InternalLastStorageMultiplier.Value != SpaciousStationsPlugin.StorageMultiplier.Value && __instance.storage[i].max == prevMax))
+                            __instance.storage[i].max = newMax;
                     }
                 }
             }
+        }
 
-            foreach (var item in LDB.items.dataArray)
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PowerSystem), nameof(PowerSystem.Import))]
+        public static void PowerSystem_Import_Postfix(PowerSystem __instance)
+        {
+            if (__instance == null || __instance.factory == null || __instance.factory.transport == null) return;
+
+            foreach (var station in __instance.factory.transport.stationPool)
             {
-                if (_originalValues.TryGetValue(item.ID, out var original))
-                {
-                    item.prefabDesc.stationMaxDroneCount = (int)(original.DroneCount * SpaciousStationsPlugin.DroneMultiplier.Value);
-                    item.prefabDesc.stationMaxShipCount = (int)(original.ShipCount * SpaciousStationsPlugin.ShipMultiplier.Value);
-                    item.prefabDesc.stationMaxItemCount = (int)(original.ItemCount * SpaciousStationsPlugin.StorageMultiplier.Value);
-                    item.prefabDesc.stationMaxEnergyAcc = (long)(original.EnergyMax * SpaciousStationsPlugin.EnergyMultiplier.Value);
-                    
-                    // Skip multiplying workEnergyPerTick for Orbital Collectors.
-                    // This value is used in PlanetTransport.CalcCollectorsWorkCost and then in 
-                    // the collectSpeedRate formula: (miningSpeedScale * gasTotalHeat - collectorsWorkCost) / (gasTotalHeat - collectorsWorkCost).
-                    // If collectorsWorkCost > gasTotalHeat, the rate becomes negative.
-                    if (!item.prefabDesc.isCollectStation)
-                    {
-                        item.prefabDesc.workEnergyPerTick = (long)(original.EnergyPerTick * SpaciousStationsPlugin.ChargeMultiplier.Value);
-                    }
-                }
+                if (station == null || station.id <= 0 || station.entityId <= 0 || station.pcId <= 0) continue;
+                if (station.pcId >= __instance.consumerCursor) continue;
+
+                int protoId = __instance.factory.entityPool[station.entityId].protoId;
+                var itemProto = LDB.items.Select(protoId);
+                if (itemProto == null || !_originalValues.TryGetValue(itemProto.ID, out var original)) continue;
+
+                var desc = itemProto.prefabDesc;
+                if (desc == null || desc.isCollectStation) continue;
+
+                long currentCharge = __instance.consumerPool[station.pcId].workEnergyPerTick;
+                long vanillaMax = original.EnergyPerTick;
+                long prevMax = (long)(vanillaMax * SpaciousStationsPlugin.InternalLastChargeMultiplier.Value);
+                long newMax = desc.workEnergyPerTick;
+
+                if (currentCharge == vanillaMax || currentCharge == prevMax || currentCharge > newMax || (SpaciousStationsPlugin.InternalLastChargeMultiplier.Value != SpaciousStationsPlugin.ChargeMultiplier.Value && currentCharge == prevMax))
+                    __instance.consumerPool[station.pcId].workEnergyPerTick = newMax;
             }
-
-            // Also patch LDB.models as some game logic (like SetStationStorage) reads from it
-            foreach (var model in LDB.models.dataArray)
-            {
-                if (model.prefabDesc != null && model.prefabDesc.isStation)
-                {
-                    // Find the corresponding item for the base values
-                    ItemProto item = null;
-                    foreach (var i in LDB.items.dataArray)
-                    {
-                        if (i.ModelIndex == model.ID)
-                        {
-                            item = i;
-                            break;
-                        }
-                    }
-
-                    if (item != null && _originalValues.TryGetValue(item.ID, out var original))
-                    {
-                        model.prefabDesc.stationMaxDroneCount = (int)(original.DroneCount * SpaciousStationsPlugin.DroneMultiplier.Value);
-                        model.prefabDesc.stationMaxShipCount = (int)(original.ShipCount * SpaciousStationsPlugin.ShipMultiplier.Value);
-                        model.prefabDesc.stationMaxItemCount = (int)(original.ItemCount * SpaciousStationsPlugin.StorageMultiplier.Value);
-                        model.prefabDesc.stationMaxEnergyAcc = (long)(original.EnergyMax * SpaciousStationsPlugin.EnergyMultiplier.Value);
-                        if (!model.prefabDesc.isCollectStation)
-                        {
-                            model.prefabDesc.workEnergyPerTick = (long)(original.EnergyPerTick * SpaciousStationsPlugin.ChargeMultiplier.Value);
-                        }
-                    }
-                }
-            }
-
-            Log.Info("Applied multipliers to station prototypes.");
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "Begin")]
         public static void GameMain_Begin_Postfix()
         {
-            ApplyToExistingStations();
+            if (LDB.items != null) foreach (var item in LDB.items.dataArray) ApplyToItem(item);
+            
+            float currStoreMul = SpaciousStationsPlugin.StorageMultiplier.Value;
+            float currChargeMul = SpaciousStationsPlugin.ChargeMultiplier.Value;
+            SpaciousStationsPlugin.InternalLastStorageMultiplier.Value = currStoreMul;
+            SpaciousStationsPlugin.InternalLastChargeMultiplier.Value = currChargeMul;
+            
+            Log.Info("GameMain.Begin: Station limits verified.");
         }
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.Init))]
-        public static void StationComponent_Init_Prefix(ref int _extraStorage)
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIStationWindow), "_OnOpen")]
+        [HarmonyPatch(typeof(UIStationWindow), "OnStationIdChange")]
+        public static void UIStationWindow_UIUpdate_Postfix(UIStationWindow __instance)
         {
-            _extraStorage = (int)(_extraStorage * SpaciousStationsPlugin.StorageMultiplier.Value);
+            if (__instance.stationId > 0 && __instance.transport != null && __instance.maxChargePowerSlider != null)
+            {
+                var station = __instance.transport.stationPool[__instance.stationId];
+                if (station != null && station.entityId > 0 && __instance.factory != null)
+                {
+                    ItemProto itemProto = LDB.items.Select(__instance.factory.entityPool[station.entityId].protoId);
+                    if (itemProto != null && itemProto.prefabDesc != null)
+                    {
+                        long maxFromProto = itemProto.prefabDesc.workEnergyPerTick * 5L;
+                        __instance.maxChargePowerSlider.maxValue = (float)(maxFromProto / 50000L);
+                    }
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIControlPanelStationInspector), "_OnOpen")]
+        [HarmonyPatch(typeof(UIControlPanelStationInspector), "OnStationIdChange")]
+        public static void UIControlPanelStationInspector_UIUpdate_Postfix(UIControlPanelStationInspector __instance)
+        {
+            if (__instance.station != null && __instance.maxChargePowerSlider != null)
+            {
+                ItemProto itemProto = null;
+                if (__instance.station.entityId > 0 && __instance.factory != null)
+                {
+                    itemProto = LDB.items.Select(__instance.factory.entityPool[__instance.station.entityId].protoId);
+                }
+
+                if (itemProto != null && itemProto.prefabDesc != null)
+                {
+                    long maxFromProto = itemProto.prefabDesc.workEnergyPerTick * 5L;
+                    __instance.maxChargePowerSlider.maxValue = (float)(maxFromProto / 50000L);
+                }
+            }
         }
 
         [HarmonyPostfix]
@@ -153,17 +277,34 @@ namespace SpaciousStations
             __result = (int)(__result * SpaciousStationsPlugin.StorageMultiplier.Value);
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIControlPanelStationStorage), nameof(UIControlPanelStationStorage.GetAdditionStorage))]
+        public static void UIControlPanelStationStorage_GetAdditionStorage_Postfix(ref int __result)
+        {
+            __result = (int)(__result * SpaciousStationsPlugin.StorageMultiplier.Value);
+        }
+
         [HarmonyTranspiler]
+        [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.NewStationComponent))]
         [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.SetStationStorage))]
-        public static IEnumerable<CodeInstruction> PlanetTransport_SetStationStorage_Transpiler(IEnumerable<CodeInstruction> instructions)
+        [HarmonyPatch(typeof(PlanetFactory), nameof(PlanetFactory.EntityFastFillIn))]
+        public static IEnumerable<CodeInstruction> ExtraStorage_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return ExtraStorage_Transpiler_Worker(instructions);
+        }
+
+        private static IEnumerable<CodeInstruction> ExtraStorage_Transpiler_Worker(IEnumerable<CodeInstruction> instructions)
         {
             var codes = new List<CodeInstruction>(instructions);
+            var localField = AccessTools.Field(typeof(GameHistoryData), nameof(GameHistoryData.localStationExtraStorage));
+            var remoteField = AccessTools.Field(typeof(GameHistoryData), nameof(GameHistoryData.remoteStationExtraStorage));
+
+            if (localField == null || remoteField == null) return codes;
+
             for (int i = 0; i < codes.Count; i++)
             {
-                // Look for num2 calculation which assigns unmultiplied extra storage
-                if (codes[i].opcode == OpCodes.Ldfld && codes[i].operand != null && codes[i].operand.ToString().Contains("ExtraStorage"))
+                if (codes[i].opcode == OpCodes.Ldfld && (codes[i].operand as FieldInfo == localField || codes[i].operand as FieldInfo == remoteField))
                 {
-                    // Multiply the value after it is loaded
                     codes.Insert(i + 1, new CodeInstruction(OpCodes.Conv_R4));
                     codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StationPatch), nameof(StationPatch.get_StorageMultiplierValue))));
                     codes.Insert(i + 3, new CodeInstruction(OpCodes.Mul));
@@ -174,94 +315,12 @@ namespace SpaciousStations
             return codes;
         }
 
-        public static float get_StorageMultiplierValue()
-        {
-            return SpaciousStationsPlugin.StorageMultiplier.Value;
-        }
+        public static float get_StorageMultiplierValue() => SpaciousStationsPlugin.StorageMultiplier.Value;
 
-        public static void ApplyToExistingStations()
-        {
-            if (GameMain.data == null) return;
-            foreach (var factory in GameMain.data.factories)
-            {
-                if (factory == null || factory.transport == null) continue;
-                foreach (var station in factory.transport.stationPool)
-                {
-                    if (station == null || station.id <= 0) continue;
-                    
-                    var itemProto = LDB.items.Select(factory.entityPool[station.entityId].protoId);
-                    if (itemProto == null) continue;
-                    
-                    var desc = itemProto.prefabDesc;
-                    
-                    // Drone arrays
-                    station.PatchDroneArray(desc.stationMaxDroneCount);
-                    
-                    // Ship arrays
-                    if (station.workShipDatas != null && station.workShipDatas.Length != desc.stationMaxShipCount)
-                    {
-                        int oldCnt = station.workShipDatas.Length;
-                        int newCnt = desc.stationMaxShipCount;
-                        
-                        station.workShipDatas = ResizeArray(station.workShipDatas, newCnt);
-                        station.workShipOrders = ResizeArray(station.workShipOrders, newCnt);
-                        station.shipRenderers = ResizeArray(station.shipRenderers, newCnt);
-                        station.shipUIRenderers = ResizeArray(station.shipUIRenderers, newCnt);
-                        station.shipDiskPos = ResizeArray(station.shipDiskPos, newCnt);
-                        station.shipDiskRot = ResizeArray(station.shipDiskRot, newCnt);
-                        
-                        if (station.isStellar && newCnt > oldCnt)
-                        {
-                            for (int index = 0; index < newCnt; ++index)
-                            {
-                                station.shipDiskRot[index] = Quaternion.Euler(0.0f, 360f / (float)newCnt * (float)index, 0.0f);
-                                station.shipDiskPos[index] = station.shipDiskRot[index] * new Vector3(0.0f, 0.0f, 11.5f);
-                            }
-                            for (int index = 0; index < newCnt; ++index)
-                            {
-                                station.shipDiskRot[index] = station.shipDockRot * station.shipDiskRot[index];
-                                station.shipDiskPos[index] = station.shipDockPos + station.shipDockRot * station.shipDiskPos[index];
-                            }
-                        }
-                    }
-                    
-                    // Energy
-                    station.energyMax = desc.stationMaxEnergyAcc;
-                    if (station.pcId > 0 && factory.powerSystem != null && station.pcId < factory.powerSystem.consumerCursor)
-                    {
-                        factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick = desc.workEnergyPerTick;
-                    }
-                    
-                    // Storage
-                    int extra = GetAdditionStorage(station);
-                    if (station.storage != null)
-                    {
-                        for (int i = 0; i < station.storage.Length; i++)
-                        {
-                            if (station.storage[i].itemId > 0)
-                            {
-                                station.storage[i].max = desc.stationMaxItemCount + extra;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private static T[] ResizeArray<T>(T[] array, int newSize)
-        {
-            if (array == null) return new T[newSize];
-            if (array.Length == newSize) return array;
-            T[] newArray = new T[newSize];
-            Array.Copy(array, newArray, Math.Min(array.Length, newSize));
-            return newArray;
-        }
-
-        private static int GetAdditionStorage(StationComponent station)
+        private static int GetVanillaAdditionStorage(StationComponent station)
         {
             if (station == null || GameMain.history == null) return 0;
-            int extra = !station.isCollector ? (!station.isVeinCollector ? (!station.isStellar ? GameMain.history.localStationExtraStorage : GameMain.history.remoteStationExtraStorage) : GameMain.history.localStationExtraStorage) : GameMain.history.localStationExtraStorage;
-            return (int)(extra * SpaciousStationsPlugin.StorageMultiplier.Value);
+            return !station.isCollector ? (!station.isVeinCollector ? (!station.isStellar ? GameMain.history.localStationExtraStorage : GameMain.history.remoteStationExtraStorage) : GameMain.history.localStationExtraStorage) : GameMain.history.localStationExtraStorage;
         }
     }
 }
