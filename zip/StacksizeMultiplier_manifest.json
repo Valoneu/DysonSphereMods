@@ -1,0 +1,9 @@
+{
+    "name": "StacksizeMultiplier",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods",
+    "description": "Multiplies the maximum stack size of all items and buildings.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}

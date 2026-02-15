@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Visualizes logistics vessel routes in the Star Map.</Description>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <BepInExPluginGuid>com.Valoneu.VesselTrails</BepInExPluginGuid>
     <BepInExPluginName>VesselTrails</BepInExPluginName>
-    <BepInExPluginVersion>1.1.0</BepInExPluginVersion>
+    <BepInExPluginVersion>1.2.0</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />

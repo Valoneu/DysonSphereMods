@@ -11,6 +11,7 @@
     <Project Path="src/CloserStations/CloserStations.csproj" />
     <Project Path="src/SpaciousStations/SpaciousStations.csproj" />
     <Project Path="src/VesselTrails/VesselTrails.csproj" />
+    <Project Path="src/StacksizeMultiplier/StacksizeMultiplier.csproj" />
     <Project Path="src/TechHashReduce/TechHashReduce.csproj" />
   </Folder>
 </Solution>

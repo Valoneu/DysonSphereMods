@@ -22,7 +22,8 @@
 | **PilerMax** | Internal logic optimization for the Automatic Piler building. | v1.0.0 |
 | **CustomWarpSound** | Audio replacement for mecha warp transitions. | v1.0.10 |
 | **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.0.3 |
-| **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.1.0 |
+| **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.2.0 |
+| **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.0.0 |
 
 ---
 

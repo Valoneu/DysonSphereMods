@@ -93,6 +93,27 @@ def update_versions():
         readmes_zip = glob.glob(readme_zip_pattern)
         for r_path in readmes_zip:
             update_readme_version(r_path, new_version)
+        
+        update_plugin_source_version(mod_path, new_version)
+
+def update_plugin_source_version(mod_path, new_version):
+    # Find the main plugin file
+    plugin_files = glob.glob(os.path.join(mod_path, "*Plugin.cs"))
+    for file_path in plugin_files:
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            
+            # Match public const string MOD_VERSION = "x.x.x";
+            pattern = r"([ \t]*public const string MOD_VERSION = \")(\d+\.\d+\.\d+)(\";)"
+            if re.search(pattern, content):
+                content_new = re.sub(pattern, f"\\g<1>{new_version}\\g<3>", content)
+                if content != content_new:
+                    with open(file_path, "w", encoding="utf-8") as f:
+                        f.write(content_new)
+                    print(f"    Updated MOD_VERSION in {os.path.basename(file_path)}")
+        except Exception as e:
+            print(f"  [Error] Failed to update source version in {file_path}: {e}")
 
 def update_readme_version(file_path, new_version):
     try:
@@ -155,7 +176,12 @@ def package_mod(mod_folder_name):
     if not found_dll:
         print(f"  [Warning] No compiled DLL found for {mod_folder_name}. Did the build succeed?")
 
-    prefix = f"{mod_folder_name}_"
+    # Derive prefix from zip filename if possible, otherwise use folder name
+    if mod_folder_name in ZIP_NAME_MAP:
+        prefix_base = ZIP_NAME_MAP[mod_folder_name].replace(".zip", "")
+        prefix = f"{prefix_base}_"
+    else:
+        prefix = f"{mod_folder_name}_"
     
     asset_pattern = os.path.join(ASSETS_DIR, f"{prefix}*")
     assets = glob.glob(asset_pattern)

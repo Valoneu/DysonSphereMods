@@ -85,8 +85,8 @@ namespace VesselTrails
                 });
 
 #pragma warning disable CS0618
-            ProtoRegistry.RegisterString("KEYToggleVesselTrailsUI", "Toggle Vessel Trails UI");
-            ProtoRegistry.RegisterString("KEYToggleVesselTrailsLines", "Toggle Vessel Trails Lines");
+            ProtoRegistry.RegisterString("ToggleVesselTrailsUI", "Toggle Vessel Trails UI");
+            ProtoRegistry.RegisterString("ToggleVesselTrailsLines", "Toggle Vessel Trails Lines");
 #pragma warning restore CS0618
         }
 
@@ -212,8 +212,12 @@ namespace VesselTrails
             {
                 if (VesselTrailsPlugin.TrailColorMode.Value == VesselTrailsPlugin.ColorMode.Heatmap)
                 {
-                    float range = max - min;
-                    float t = range < 0.1f ? 0f : Mathf.Clamp01((AverageVesselCount - min) / range);
+                    float logMax = Mathf.Log(max + 1f);
+                    float logMin = Mathf.Log(min + 1f);
+                    float logVal = Mathf.Log(AverageVesselCount + 1f);
+                    float range = logMax - logMin;
+                    float t = range < 0.01f ? 0f : Mathf.Clamp01((logVal - logMin) / range);
+                    
                     if (t < 0.5f) return Color.Lerp(Color.green, Color.yellow, t * 2f);
                     return Color.Lerp(Color.yellow, Color.red, (t - 0.5f) * 2f);
                 }
@@ -278,6 +282,9 @@ namespace VesselTrails
             if (GameMain.data == null || GameMain.data.galacticTransport == null) return;
             var transport = GameMain.data.galacticTransport;
             
+            var starmap = UIRoot.instance?.uiGame?.starmap;
+            bool starmapActive = starmap != null && starmap.active;
+
             var currentVessels = new Dictionary<(int, int, int), List<int>>();
 
             for (int i = 1; i < transport.stationCursor; i++)
@@ -317,14 +324,17 @@ namespace VesselTrails
             _globalMaxTraffic = 0f;
             _globalMinTraffic = float.MaxValue;
             
-            bool starmapActive = UIRoot.instance?.uiGame?.starmap != null && UIRoot.instance.uiGame.starmap.active;
-            Camera cam = starmapActive ? UIRoot.instance.uiGame.starmap.screenCamera : Camera.main;
+            Camera cam = starmapActive ? starmap.screenCamera : Camera.main;
+            
             _hoveredRoute = null;
             float minHoverDist = 0.05f;
             _mousePos = Input.mousePosition;
             Ray mouseRay = cam != null ? cam.ScreenPointToRay(_mousePos) : new Ray();
 
             var toRemove = new List<(int, int)>();
+            // Expanded mask: Default (0), Planet (9), PlanetUI (15), StarMapStar (24), StarMapPlanet (25), Atmosphere (31)
+            int hoverMask = (1 << 0) | (1 << 9) | (1 << 14) | (1 << 15) | (1 << 24) | (1 << 25) | (1 << 31); 
+
             foreach (var kvp in _routePaths)
             {
                 kvp.Value.CleanUp(historyMin);
@@ -344,10 +354,74 @@ namespace VesselTrails
                 {
                     Vector3 pA = GetStarVPos(kvp.Value.StarA, starmapActive);
                     Vector3 pB = GetStarVPos(kvp.Value.StarB, starmapActive);
+                    
                     float d = DistanceRayToSegment(mouseRay, pA, pB);
-                    float screenD = d / Vector3.Distance(cam.transform.position, (pA + pB) * 0.5f);
+                    float midDist = Vector3.Distance(cam.transform.position, (pA + pB) * 0.5f);
+                    float screenD = d / midDist;
+
                     if (screenD < minHoverDist)
                     {
+                        // Occlusion check: Raycast from camera to the closest point on the segment
+                        Vector3 dirSeg = pB - pA;
+                        float t_hover = Mathf.Clamp01(Vector3.Dot(mouseRay.origin + mouseRay.direction * midDist - pA, dirSeg) / Vector3.Dot(dirSeg, dirSeg));
+                        Vector3 closestPointOnSegment = pA + t_hover * dirSeg;
+                        float distToPoint = Vector3.Distance(cam.transform.position, closestPointOnSegment);
+
+                        // Raycast from camera to point to see if anything blocks the camera's view
+                        bool occluded = false;
+                        if (Physics.Raycast(cam.transform.position, (closestPointOnSegment - cam.transform.position).normalized, out RaycastHit hit, distToPoint, hoverMask))
+                        {
+                            // If hit something closer than the segment, it's occluded
+                            if (hit.distance < distToPoint * 0.99f) occluded = true;
+                        }
+
+                        // Special manual check for planets (both StarMap and Normal View)
+                        if (!occluded)
+                        {
+                            if (starmapActive)
+                            {
+                                if (starmap != null && starmap.planetUIs != null)
+                                {
+                                    foreach (var planetUI in starmap.planetUIs)
+                                    {
+                                        if (planetUI == null || !planetUI.active || planetUI.planetRenderer == null) continue;
+                                        
+                                        Vector3 pPos = planetUI.planetRenderer.transform.position;
+                                        float distToPlanet = Vector3.Distance(cam.transform.position, pPos);
+                                        
+                                        if (distToPlanet < distToPoint * 0.99f)
+                                        {
+                                            float dToRay = Vector3.Cross(mouseRay.direction, pPos - mouseRay.origin).magnitude;
+                                            float planetRadius = planetUI.planet.realRadius * 0.00025f * 2.0f;
+                                            if (dToRay < planetRadius) { occluded = true; break; }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // Normal View: Check planets in local system via simulators
+                                var uni = GameMain.universeSimulator;
+                                if (uni != null && uni.planetSimulators != null)
+                                {
+                                    foreach (var sim in uni.planetSimulators)
+                                    {
+                                        if (sim == null || sim.planetData == null) continue;
+                                        Vector3 pos = sim.transform.position;
+                                        float distToPlanet = Vector3.Distance(cam.transform.position, pos);
+                                        if (distToPlanet < distToPoint * 0.99f)
+                                        {
+                                            float dToRay = Vector3.Cross(mouseRay.direction, pos - mouseRay.origin).magnitude;
+                                            float planetRadius = sim.planetData.realRadius * 0.00025f;
+                                            if (dToRay < planetRadius * 2.0f) { occluded = true; break; }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if (occluded) continue;
+
                         minHoverDist = screenD;
                         _hoveredRoute = kvp.Value;
                     }
@@ -591,7 +665,7 @@ namespace VesselTrails
                 if (uni != null && uni.starSimulators != null && starId > 0 && starId <= uni.starSimulators.Length)
                 {
                     var sim = uni.starSimulators[starId - 1];
-                    if (sim != null) return sim.transform.localPosition;
+                    if (sim != null) return sim.transform.position;
                 }
             }
             return Vector3.zero;
@@ -600,22 +674,21 @@ namespace VesselTrails
         private void OnRenderObject()
         {
             if (!VesselTrailsPlugin.ShowTrails.Value || _routePaths.Count == 0 || GameMain.data == null) return;
+            
             Camera cam = Camera.current;
-            if (cam == null) return;
+            if (cam == null || cam.cameraType != CameraType.Game) return;
 
             var starmap = UIRoot.instance?.uiGame?.starmap;
             bool starmapActive = starmap != null && starmap.active;
-            bool isStarmapCam = cam.name.Contains("Universe") || cam.name.Contains("Starmap");
 
+            // Strict camera filtering to prevent blinking and redundant rendering
             if (starmapActive)
             {
-                if (starmap.screenCamera != null) { if (cam != starmap.screenCamera) return; }
-                else { if (!isStarmapCam || cam.name.Contains("UI") || cam.name.Contains("Overlay")) return; }
-                if (UIStarmap.isChangingToMilkyWay) return;
+                if (cam != starmap.screenCamera) return;
             }
             else
             {
-                if (cam.name != "Main Camera") return;
+                if (cam != Camera.main) return;
             }
 
             if (_trailMaterial == null)
@@ -625,32 +698,44 @@ namespace VesselTrails
                 _trailMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha); 
                 _trailMaterial.SetInt("_ZWrite", 0);
                 _trailMaterial.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.LessEqual);
-                _trailMaterial.renderQueue = 2900;
+                _trailMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
+                _trailMaterial.renderQueue = 3100;
             }
 
+            Vector3 camPos = cam.transform.position;
             GL.PushMatrix();
             GL.LoadProjectionMatrix(cam.projectionMatrix);
-            GL.modelview = cam.worldToCameraMatrix;
+            // Camera-relative rendering for float precision at large distances
+            GL.modelview = cam.worldToCameraMatrix * Matrix4x4.Translate(camPos);
             _trailMaterial.SetPass(0);
-            
+
             float baseOpacity = VesselTrailsPlugin.TrailOpacity.Value;
             float lifetime = Mathf.Max(1f, VesselTrailsPlugin.HistoryMinutes.Value * 60f);
             float thicknessMult = starmapActive ? VesselTrailsPlugin.TrailThicknessStarmap.Value : VesselTrailsPlugin.TrailThicknessNormal.Value;
-            Vector3 camPos = cam.transform.position;
 
             GL.Begin(GL.QUADS);
             foreach (var route in _routePaths.Values)
             {
-                Vector3 posA = GetStarVPos(route.StarA, starmapActive);
-                Vector3 posB = GetStarVPos(route.StarB, starmapActive);
-                if (posA == Vector3.zero || posB == Vector3.zero) continue;
+                Vector3 pA = GetStarVPos(route.StarA, starmapActive);
+                Vector3 pB = GetStarVPos(route.StarB, starmapActive);
+                if (pA == Vector3.zero || pB == Vector3.zero) continue;
 
-                Vector3 dir = (posB - posA).normalized;
-                Vector3 mid = (posA + posB) * 0.5f;
-                float distToCam = Vector3.Distance(camPos, mid);
+                Vector3 dir = (pB - pA).normalized;
+                
+                // Keep thickness stable relative to screen
+                Vector3 camToMid = (pA + pB) * 0.5f - camPos;
+                float distToCam = camToMid.magnitude;
+                
+                // Refined distance for ends to keep lines stable when near stars
+                float t_dist = Mathf.Clamp01(Vector3.Dot(camPos - pA, pB - pA) / Vector3.Dot(pB - pA, pB - pA));
+                float distToEnds = Vector3.Distance(camPos, pA + t_dist * (pB - pA));
+                distToCam = Mathf.Min(distToCam, distToEnds);
+
                 float screenFraction = starmapActive ? 0.00004f : 0.00005f;
                 float baseWidth = distToCam * screenFraction * thicknessMult;
-                baseWidth = Mathf.Clamp(baseWidth, starmapActive ? 0.0005f : 0.01f, starmapActive ? 250f : 1000f);
+                
+                // Increased minimum width to avoid disappearing when extremely close
+                baseWidth = Mathf.Max(baseWidth, starmapActive ? 0.005f : 0.05f);
 
                 Vector3 up = Vector3.Cross(dir, Vector3.up).normalized;
                 if (up.sqrMagnitude < 0.0001f) up = Vector3.Cross(dir, Vector3.right).normalized;
@@ -658,6 +743,10 @@ namespace VesselTrails
 
                 var items = route.ItemHistories.Values.ToList();
                 bool isMaterialMode = VesselTrailsPlugin.TrailColorMode.Value == VesselTrailsPlugin.ColorMode.Material;
+
+                // Vertex math uses camera-relative coordinates (Subtract camPos here, cancelled by modelview Translate)
+                Vector3 relA = pA - camPos;
+                Vector3 relB = pB - camPos;
 
                 if (isMaterialMode)
                 {
@@ -672,16 +761,11 @@ namespace VesselTrails
                         color.a = alpha;
 
                         float angle = (float)i / count * Mathf.PI * 2f;
-                        Vector3 offset = (side * Mathf.Cos(angle) + up * Mathf.Sin(angle)) * baseWidth * 1.5f;
+                        Vector3 offset = (side * Mathf.Cos(angle) + up * Mathf.Sin(angle)) * baseWidth * 1.2f;
                         if (count == 1) offset = Vector3.zero;
 
-                        Vector3 w = side * baseWidth;
-                        Vector3 h = up * baseWidth;
-                        Vector3 pA = posA + offset;
-                        Vector3 pB = posB + offset;
-
                         GL.Color(color);
-                        DrawPrism(pA, pB, w, h);
+                        DrawPrism(relA + offset, relB + offset, side * baseWidth, up * baseWidth);
                     }
                 }
                 else
@@ -691,18 +775,19 @@ namespace VesselTrails
                     float alpha = baseOpacity * maxAlpha;
                     if (alpha <= 0.001f) continue;
 
-                    float totalVessels = route.TotalVessels;
-                    float range = _globalMaxTraffic - _globalMinTraffic;
-                    float t = range < 0.1f ? 0f : Mathf.Clamp01((totalVessels - _globalMinTraffic) / range);
+                    float logMax = Mathf.Log(_globalMaxTraffic + 1f);
+                    float logMin = Mathf.Log(_globalMinTraffic + 1f);
+                    float logVal = Mathf.Log(route.TotalVessels + 1f);
+                    float range = logMax - logMin;
+                    float t = range < 0.01f ? 0f : Mathf.Clamp01((logVal - logMin) / range);
+
                     Color color;
                     if (t < 0.5f) color = Color.Lerp(Color.green, Color.yellow, t * 2f);
                     else color = Color.Lerp(Color.yellow, Color.red, (t - 0.5f) * 2f);
                     color.a = alpha;
 
-                    Vector3 w = side * baseWidth * 1.5f; 
-                    Vector3 h = up * baseWidth * 1.5f;
                     GL.Color(color);
-                    DrawPrism(posA, posB, w, h);
+                    DrawPrism(relA, relB, side * baseWidth, up * baseWidth);
                 }
             }
             GL.End();
