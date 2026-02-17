@@ -1,6 +1,6 @@
 {
     "name": "SpaciousStations",
-    "version_number": "1.0.5",
+    "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods",
     "description": "Multiplies station drone/ship counts, storage capacity and charge power.",
     "dependencies": [

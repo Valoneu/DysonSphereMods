@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.IO;
 using HarmonyLib;
 using BepInEx;
 using BepInEx.Configuration;
@@ -21,25 +20,47 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.0.5";
+        public const string MOD_VERSION = "1.1.0";
 
-        public static ConfigEntry<float> DroneMultiplier;
-        public static ConfigEntry<float> ShipMultiplier;
-        public static ConfigEntry<float> StorageMultiplier;
-        public static ConfigEntry<float> ChargeMultiplier;
-        public static ConfigEntry<float> EnergyMultiplier;
+        public static ConfigEntry<float> PLS_DroneMultiplier;
+        public static ConfigEntry<float> PLS_ShipMultiplier;
+        public static ConfigEntry<float> PLS_StorageMultiplier;
+        public static ConfigEntry<float> PLS_ChargeMultiplier;
+        public static ConfigEntry<float> PLS_EnergyMultiplier;
+
+        public static ConfigEntry<float> ILS_DroneMultiplier;
+        public static ConfigEntry<float> ILS_ShipMultiplier;
+        public static ConfigEntry<float> ILS_StorageMultiplier;
+        public static ConfigEntry<float> ILS_ChargeMultiplier;
+        public static ConfigEntry<float> ILS_EnergyMultiplier;
+
+        public static ConfigEntry<int> DroneTaskInterval;
+        public static ConfigEntry<int> ShipTaskInterval;
+        public static ConfigEntry<int> ILS_ShipReleasePerTick;
+
         public static ConfigEntry<float> InternalLastStorageMultiplier;
         public static ConfigEntry<float> InternalLastChargeMultiplier;
 
         private void Awake()
         {
-            DroneMultiplier = Config.Bind("General", "DroneMultiplier", 2f, "Multiplies max number of drones in a station.");
-            ShipMultiplier = Config.Bind("General", "ShipMultiplier", 2f, "Multiplies max number of ships in a station.");
-            StorageMultiplier = Config.Bind("General", "StorageMultiplier", 2f, "Multiplies maximum amount of items in a station.");
-            ChargeMultiplier = Config.Bind("General", "ChargeMultiplier", 2f, "Multiplies station's charge power.");
-            EnergyMultiplier = Config.Bind("General", "EnergyMultiplier", 2f, "Multiplies station's max energy storage.");
-            InternalLastStorageMultiplier = Config.Bind("Internal", "LastStorageMultiplier", 1f, "Internal use only.");
-            InternalLastChargeMultiplier = Config.Bind("Internal", "LastChargeMultiplier", 1f, "Internal use only.");
+            PLS_DroneMultiplier = Config.Bind("Planetary Logistics Station", "DroneMultiplier", 2f, "Multiplies max number of drones in a PLS.");
+            PLS_ShipMultiplier = Config.Bind("Planetary Logistics Station", "ShipMultiplier", 2f, "Multiplies max number of ships in a PLS.");
+            PLS_StorageMultiplier = Config.Bind("Planetary Logistics Station", "StorageMultiplier", 2f, "Multiplies maximum amount of items in a PLS.");
+            PLS_ChargeMultiplier = Config.Bind("Planetary Logistics Station", "ChargeMultiplier", 2f, "Multiplies station's charge power for PLS.");
+            PLS_EnergyMultiplier = Config.Bind("Planetary Logistics Station", "EnergyMultiplier", 2f, "Multiplies station's max energy storage for PLS.");
+
+            ILS_DroneMultiplier = Config.Bind("Interstellar Logistics Station", "DroneMultiplier", 2f, "Multiplies max number of drones in an ILS.");
+            ILS_ShipMultiplier = Config.Bind("Interstellar Logistics Station", "ShipMultiplier", 2f, "Multiplies max number of ships in an ILS.");
+            ILS_StorageMultiplier = Config.Bind("Interstellar Logistics Station", "StorageMultiplier", 2f, "Multiplies maximum amount of items in an ILS.");
+            ILS_ChargeMultiplier = Config.Bind("Interstellar Logistics Station", "ChargeMultiplier", 2f, "Multiplies station's charge power for ILS.");
+            ILS_EnergyMultiplier = Config.Bind("Interstellar Logistics Station", "EnergyMultiplier", 2f, "Multiplies station's max energy storage for ILS.");
+            ILS_ShipReleasePerTick = Config.Bind("Interstellar Logistics Station", "ShipReleasePerTick", 1, "Maximum number of ships that can be dispatched from a single ILS in a single tick (when it's their turn to dispatch). Vanilla is 1.");
+
+            DroneTaskInterval = Config.Bind("General", "DroneTaskInterval", 20, "The interval between drone dispatches. Lower is faster. Vanilla default is 20 (3 dispatches per second). Setting this to 1 will dispatch drones every tick (60 per second).");
+            ShipTaskInterval = Config.Bind("General", "ShipTaskInterval", 10, "The interval between vessel dispatches for high priority items. Lower is faster. Vanilla default is 10 (6 dispatches per second). Setting this to 1 will dispatch vessels every tick (60 per second). Note: other priority items use 3x and 6x this interval.");
+
+            InternalLastStorageMultiplier = Config.Bind("Internal", "LastStorageMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
+            InternalLastChargeMultiplier = Config.Bind("Internal", "LastChargeMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
 
             Log.Init(Logger);
             var harmony = new Harmony(MOD_GUID);
@@ -49,12 +70,23 @@ namespace SpaciousStations
 
             Log.Info($"{MOD_NAME} v{MOD_VERSION} loaded!");
         }
+
+        // Backward compatibility / simplified access
+        public static float GetStorageMultiplier(bool isStellar) => isStellar ? ILS_StorageMultiplier.Value : PLS_StorageMultiplier.Value;
+    }
+
+    /// <summary>
+    /// Class to control visibility in Configuration Manager
+    /// </summary>
+    public class ConfigurationManagerAttributes
+    {
+        public bool? Browsable;
+        public bool? IsAdvanced;
     }
 
     public static class StationPatch
     {
         private static Dictionary<int, ProtoValues> _originalValues = new Dictionary<int, ProtoValues>();
-        private static bool _prototypesApplied = false;
 
         private struct ProtoValues
         {
@@ -78,7 +110,6 @@ namespace SpaciousStations
             Log.Info("Performing final pass on prototypes...");
             if (LDB.items != null) foreach (var item in LDB.items.dataArray) ApplyToItem(item);
             if (LDB.models != null) foreach (var model in LDB.models.dataArray) ApplyToModel(model);
-            _prototypesApplied = true;
         }
 
         private static void ApplyToItem(ItemProto item)
@@ -134,13 +165,116 @@ namespace SpaciousStations
         {
             if (desc == null) return;
             
-            desc.stationMaxDroneCount = (int)(original.DroneCount * SpaciousStationsPlugin.DroneMultiplier.Value);
-            desc.stationMaxShipCount = (int)(original.ShipCount * SpaciousStationsPlugin.ShipMultiplier.Value);
-            desc.stationMaxItemCount = (int)(original.ItemCount * SpaciousStationsPlugin.StorageMultiplier.Value);
-            desc.stationMaxEnergyAcc = (long)(original.EnergyMax * SpaciousStationsPlugin.EnergyMultiplier.Value);
+            float droneMul = desc.isStellarStation ? SpaciousStationsPlugin.ILS_DroneMultiplier.Value : SpaciousStationsPlugin.PLS_DroneMultiplier.Value;
+            float shipMul = desc.isStellarStation ? SpaciousStationsPlugin.ILS_ShipMultiplier.Value : SpaciousStationsPlugin.PLS_ShipMultiplier.Value;
+            float storageMul = desc.isStellarStation ? SpaciousStationsPlugin.ILS_StorageMultiplier.Value : SpaciousStationsPlugin.PLS_StorageMultiplier.Value;
+            float energyMul = desc.isStellarStation ? SpaciousStationsPlugin.ILS_EnergyMultiplier.Value : SpaciousStationsPlugin.PLS_EnergyMultiplier.Value;
+            float chargeMul = desc.isStellarStation ? SpaciousStationsPlugin.ILS_ChargeMultiplier.Value : SpaciousStationsPlugin.PLS_ChargeMultiplier.Value;
+
+            desc.stationMaxDroneCount = (int)(original.DroneCount * droneMul);
+            desc.stationMaxShipCount = (int)(original.ShipCount * shipMul);
+            desc.stationMaxItemCount = (int)(original.ItemCount * storageMul);
+            desc.stationMaxEnergyAcc = (long)(original.EnergyMax * energyMul);
             if (!desc.isCollectStation)
-                desc.workEnergyPerTick = (long)(original.EnergyPerTick * SpaciousStationsPlugin.ChargeMultiplier.Value);
+                desc.workEnergyPerTick = (long)(original.EnergyPerTick * chargeMul);
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickLocal))]
+        public static void StationComponent_InternalTickLocal_Prefix(StationComponent __instance)
+        {
+            __instance.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.DetermineFramingDispatchTime))]
+        public static bool StationComponent_DetermineFramingDispatchTime_Prefix(long time, int priorityIndex, ref bool __result)
+        {
+            int interval = SpaciousStationsPlugin.ShipTaskInterval.Value;
+            if (priorityIndex == 1)
+                __result = time % (long)interval == 0L;
+            else if (priorityIndex == 2 || priorityIndex == 3)
+                __result = time % (long)(interval * 3) == 0L;
+            else
+                __result = time % (long)(interval * 6) == 0L;
+            return false;
+        }
+
+        private static int _shipsReleasedThisTick = 0;
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.DetermineDispatch))]
+        public static void StationComponent_DetermineDispatch_Prefix()
+        {
+            _shipsReleasedThisTick = 0;
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.DetermineDispatch))]
+        public static IEnumerable<CodeInstruction> DetermineDispatch_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var codes = new List<CodeInstruction>(instructions);
+            // We want to replace the 'break' (br) that exits the loop after a successful dispatch.
+            // There are two 'break' points in DetermineDispatch: one for Supply and one for Demand.
+            // Both are inside 'if (flag2)' or similar blocks.
+            
+            // The 'break' in C# corresponds to 'br' to the end of the loop.
+            // In the decompiled code, it's label_130 for some cases or just end of loop.
+            
+            // Let's look for calls to DispatchSupplyShip and DispatchDemandShip.
+            var supplyMethod = AccessTools.Method(typeof(StationComponent), "DispatchSupplyShip");
+            var demandMethod = AccessTools.Method(typeof(StationComponent), "DispatchDemandShip");
+
+            for (int i = 0; i < codes.Count; i++)
+            {
+                if (codes[i].opcode == OpCodes.Call && (codes[i].operand as MethodInfo == supplyMethod || codes[i].operand as MethodInfo == demandMethod))
+                {
+                    // Found the dispatch call. Now look for the next 'br' (the break).
+                    for (int j = i + 1; j < i + 20 && j < codes.Count; j++)
+                    {
+                        if (codes[j].opcode == OpCodes.Br)
+                        {
+                            // This is likely the break. We replace it with:
+                            // if (++_shipsReleasedThisTick >= ILS_ShipReleasePerTick) break;
+                            
+                            var label = codes[j].operand; // The break target
+                            
+                            var newInstructions = new List<CodeInstruction>
+                            {
+                                new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(StationPatch), nameof(_shipsReleasedThisTick))),
+                                new CodeInstruction(OpCodes.Ldc_I4_1),
+                                new CodeInstruction(OpCodes.Add),
+                                new CodeInstruction(OpCodes.Dup),
+                                new CodeInstruction(OpCodes.Stsfld, AccessTools.Field(typeof(StationPatch), nameof(_shipsReleasedThisTick))),
+                                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StationPatch), nameof(get_ShipReleasePerTickValue))),
+                                new CodeInstruction(OpCodes.Blt, codes[j+1].labels.Count > 0 ? codes[j+1] : codes[j]), // Jump to NEXT instruction if less than limit
+                                new CodeInstruction(OpCodes.Br, label) // Otherwise break
+                            };
+                            
+                            // Actually, simpler: replace 'br label' with a conditional break.
+                            // But we need to increment.
+                            
+                            // Let's use a helper method to keep transpiler simple.
+                            codes[j].opcode = OpCodes.Call;
+                            codes[j].operand = AccessTools.Method(typeof(StationPatch), nameof(StationPatch.ShouldBreakShipDispatch));
+                            codes.Insert(j + 1, new CodeInstruction(OpCodes.Brtrue, label));
+                            
+                            i = j + 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            return codes;
+        }
+
+        public static bool ShouldBreakShipDispatch()
+        {
+            _shipsReleasedThisTick++;
+            return _shipsReleasedThisTick >= SpaciousStationsPlugin.ILS_ShipReleasePerTick.Value;
+        }
+
+        public static int get_ShipReleasePerTickValue() => SpaciousStationsPlugin.ILS_ShipReleasePerTick.Value;
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.Import))]
@@ -168,19 +302,21 @@ namespace SpaciousStations
             __instance.PatchDroneArray(desc.stationMaxDroneCount);
             __instance.energyMax = desc.stationMaxEnergyAcc;
             __instance.energyPerTick = desc.workEnergyPerTick;
+            __instance.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
 
             if (__instance.storage != null)
             {
+                float storageMul = desc.isStellarStation ? SpaciousStationsPlugin.ILS_StorageMultiplier.Value : SpaciousStationsPlugin.PLS_StorageMultiplier.Value;
                 int vanillaExtra = GetVanillaAdditionStorage(__instance);
                 int vanillaMax = original.ItemCount + vanillaExtra;
                 int prevMax = (int)(vanillaMax * SpaciousStationsPlugin.InternalLastStorageMultiplier.Value);
-                int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * SpaciousStationsPlugin.StorageMultiplier.Value);
+                int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * storageMul);
 
                 for (int i = 0; i < __instance.storage.Length; i++)
                 {
                     if (__instance.storage[i].itemId > 0)
                     {
-                        if (__instance.storage[i].max == vanillaMax || __instance.storage[i].max == prevMax || __instance.storage[i].max > newMax || (SpaciousStationsPlugin.InternalLastStorageMultiplier.Value != SpaciousStationsPlugin.StorageMultiplier.Value && __instance.storage[i].max == prevMax))
+                        if (__instance.storage[i].max == vanillaMax || __instance.storage[i].max == prevMax || __instance.storage[i].max > newMax || (SpaciousStationsPlugin.InternalLastStorageMultiplier.Value != storageMul && __instance.storage[i].max == prevMax))
                             __instance.storage[i].max = newMax;
                     }
                 }
@@ -205,12 +341,13 @@ namespace SpaciousStations
                 var desc = itemProto.prefabDesc;
                 if (desc == null || desc.isCollectStation) continue;
 
+                float chargeMul = desc.isStellarStation ? SpaciousStationsPlugin.ILS_ChargeMultiplier.Value : SpaciousStationsPlugin.PLS_ChargeMultiplier.Value;
                 long currentCharge = __instance.consumerPool[station.pcId].workEnergyPerTick;
                 long vanillaMax = original.EnergyPerTick;
                 long prevMax = (long)(vanillaMax * SpaciousStationsPlugin.InternalLastChargeMultiplier.Value);
                 long newMax = desc.workEnergyPerTick;
 
-                if (currentCharge == vanillaMax || currentCharge == prevMax || currentCharge > newMax || (SpaciousStationsPlugin.InternalLastChargeMultiplier.Value != SpaciousStationsPlugin.ChargeMultiplier.Value && currentCharge == prevMax))
+                if (currentCharge == vanillaMax || currentCharge == prevMax || currentCharge > newMax || (SpaciousStationsPlugin.InternalLastChargeMultiplier.Value != chargeMul && currentCharge == prevMax))
                     __instance.consumerPool[station.pcId].workEnergyPerTick = newMax;
             }
         }
@@ -221,8 +358,8 @@ namespace SpaciousStations
         {
             if (LDB.items != null) foreach (var item in LDB.items.dataArray) ApplyToItem(item);
             
-            float currStoreMul = SpaciousStationsPlugin.StorageMultiplier.Value;
-            float currChargeMul = SpaciousStationsPlugin.ChargeMultiplier.Value;
+            float currStoreMul = SpaciousStationsPlugin.ILS_StorageMultiplier.Value;
+            float currChargeMul = SpaciousStationsPlugin.ILS_ChargeMultiplier.Value;
             SpaciousStationsPlugin.InternalLastStorageMultiplier.Value = currStoreMul;
             SpaciousStationsPlugin.InternalLastChargeMultiplier.Value = currChargeMul;
             
@@ -272,16 +409,32 @@ namespace SpaciousStations
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStationStorage), nameof(UIStationStorage.GetAdditionStorage))]
-        public static void UIStationStorage_GetAdditionStorage_Postfix(ref int __result)
+        public static void UIStationStorage_GetAdditionStorage_Postfix(UIStationStorage __instance, ref int __result)
         {
-            __result = (int)(__result * SpaciousStationsPlugin.StorageMultiplier.Value);
+            if (__instance.station != null)
+            {
+                float storageMul = __instance.station.isStellar ? SpaciousStationsPlugin.ILS_StorageMultiplier.Value : SpaciousStationsPlugin.PLS_StorageMultiplier.Value;
+                __result = (int)(__result * storageMul);
+            }
+            else
+            {
+                __result = (int)(__result * SpaciousStationsPlugin.ILS_StorageMultiplier.Value);
+            }
         }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIControlPanelStationStorage), nameof(UIControlPanelStationStorage.GetAdditionStorage))]
-        public static void UIControlPanelStationStorage_GetAdditionStorage_Postfix(ref int __result)
+        public static void UIControlPanelStationStorage_GetAdditionStorage_Postfix(UIControlPanelStationStorage __instance, ref int __result)
         {
-            __result = (int)(__result * SpaciousStationsPlugin.StorageMultiplier.Value);
+             if (__instance.masterInspector != null && __instance.masterInspector.station != null)
+             {
+                 float storageMul = __instance.masterInspector.station.isStellar ? SpaciousStationsPlugin.ILS_StorageMultiplier.Value : SpaciousStationsPlugin.PLS_StorageMultiplier.Value;
+                 __result = (int)(__result * storageMul);
+             }
+             else
+             {
+                 __result = (int)(__result * SpaciousStationsPlugin.ILS_StorageMultiplier.Value);
+             }
         }
 
         [HarmonyTranspiler]
@@ -303,10 +456,18 @@ namespace SpaciousStations
 
             for (int i = 0; i < codes.Count; i++)
             {
-                if (codes[i].opcode == OpCodes.Ldfld && (codes[i].operand as FieldInfo == localField || codes[i].operand as FieldInfo == remoteField))
+                if (codes[i].opcode == OpCodes.Ldfld && codes[i].operand as FieldInfo == localField)
                 {
                     codes.Insert(i + 1, new CodeInstruction(OpCodes.Conv_R4));
-                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StationPatch), nameof(StationPatch.get_StorageMultiplierValue))));
+                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StationPatch), nameof(StationPatch.get_PLS_StorageMultiplierValue))));
+                    codes.Insert(i + 3, new CodeInstruction(OpCodes.Mul));
+                    codes.Insert(i + 4, new CodeInstruction(OpCodes.Conv_I4));
+                    i += 4;
+                }
+                else if (codes[i].opcode == OpCodes.Ldfld && codes[i].operand as FieldInfo == remoteField)
+                {
+                    codes.Insert(i + 1, new CodeInstruction(OpCodes.Conv_R4));
+                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StationPatch), nameof(StationPatch.get_ILS_StorageMultiplierValue))));
                     codes.Insert(i + 3, new CodeInstruction(OpCodes.Mul));
                     codes.Insert(i + 4, new CodeInstruction(OpCodes.Conv_I4));
                     i += 4;
@@ -315,7 +476,8 @@ namespace SpaciousStations
             return codes;
         }
 
-        public static float get_StorageMultiplierValue() => SpaciousStationsPlugin.StorageMultiplier.Value;
+        public static float get_PLS_StorageMultiplierValue() => SpaciousStationsPlugin.PLS_StorageMultiplier.Value;
+        public static float get_ILS_StorageMultiplierValue() => SpaciousStationsPlugin.ILS_StorageMultiplier.Value;
 
         private static int GetVanillaAdditionStorage(StationComponent station)
         {
