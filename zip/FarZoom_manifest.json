@@ -1,0 +1,9 @@
+{
+    "name": "FarZoom",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods",
+    "description": "Allows zooming further away from the mech, planet, and in starmap.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}

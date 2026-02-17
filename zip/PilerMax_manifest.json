@@ -1,0 +1,9 @@
+{
+    "name": "PilerMax",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods",
+    "description": "Optimizes Pile Sorter cooldowns for maximum belt compression and stacking efficiency at all belt speeds.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}

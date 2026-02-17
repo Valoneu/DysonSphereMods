@@ -5,6 +5,6 @@
     "description": "This mod will allow you to overclock buildings, more speed, more power draw, Should support all mods",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.5",
-        "CommonAPI-CommonAPI-1.2.0"
+        "CommonAPI-CommonAPI-1.6.5"
     ]
 }

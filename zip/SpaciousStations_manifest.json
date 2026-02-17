@@ -4,6 +4,8 @@
     "website_url": "https://github.com/Valoneu/DysonSphereMods",
     "description": "Multiplies station drone/ship counts, storage capacity and charge power.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.5"
+        "xiaoye97-BepInEx-5.4.5",
+        "CommonAPI-CommonAPI-1.6.5",
+        "xiaoye97-LDBTool-3.0.2"
     ]
 }

@@ -24,6 +24,7 @@
 | **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.1.0 |
 | **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.2.0 |
 | **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.0.0 |
+| **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.0.0 |
 
 ---
 

@@ -4,6 +4,7 @@
     "website_url": "https://github.com/Valoneu/DysonSphereMods",
     "description": "Multiplies the maximum stack size of all items and buildings.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.5"
+        "xiaoye97-BepInEx-5.4.5",
+        "CommonAPI-CommonAPI-1.6.5"
     ]
 }

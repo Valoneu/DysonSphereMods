@@ -5,6 +5,6 @@
     "description": "having too much hydrogen? well no more",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.5",
-        "CommonAPI-CommonAPI-1.2.0"
+        "CommonAPI-CommonAPI-1.6.5"
     ]
 }

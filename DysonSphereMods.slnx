@@ -13,5 +13,6 @@
     <Project Path="src/VesselTrails/VesselTrails.csproj" />
     <Project Path="src/StacksizeMultiplier/StacksizeMultiplier.csproj" />
     <Project Path="src/TechHashReduce/TechHashReduce.csproj" />
+    <Project Path="src/FarZoom/FarZoom.csproj" />
   </Folder>
 </Solution>
