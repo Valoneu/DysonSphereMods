@@ -9,7 +9,11 @@
   "DistributeWarpers": "1.0.2",
   "CloserStations": "1.0.0",
   "SpaciousStations": "1.1.0",
-  "VesselTrails": "1.2.0",
+  "VesselTrails": "1.2.1",
   "StacksizeMultiplier": "1.0.0",
-  "FarZoom": "1.0.0"
+  "FarZoom": "1.0.1",
+  "InfinityTechnologies": "1.0.0",
+  "BottleneckUI": "1.0.0",
+  "SortByStorage": "1.0.0",
+  "PinnedNamesEverywhere": "1.0.0"
 }

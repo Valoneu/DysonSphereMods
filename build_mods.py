@@ -69,13 +69,21 @@ def update_plugin_source_version(mod_path, new_version):
             with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
             
-            pattern = r"([ \t]*public const string MOD_VERSION = \")(\d+\.\d+\.\d+)(\";)"
-            if re.search(pattern, content):
-                content_new = re.sub(pattern, f"\\g<1>{new_version}\\g<3>", content)
-                if content != content_new:
-                    with open(file_path, "w", encoding="utf-8") as f:
-                        f.write(content_new)
-                    print(f"    Updated MOD_VERSION in {os.path.basename(file_path)}")
+            # Match public const string MOD_VERSION or VERSION
+            pattern_const = r"([ \t]*public const string (?:MOD_VERSION|VERSION) = \")(\d+\.\d+\.\d+)(\";)"
+            # Match [BepInPlugin("GUID", "Name", "Version")]
+            pattern_attr = r"(\[BepInPlugin\(\".*?\", \".*?\", \")(\d+\.\d+\.\d+)(\"\)\])"
+            
+            content_new = content
+            if re.search(pattern_const, content_new):
+                content_new = re.sub(pattern_const, f"\\g<1>{new_version}\\g<3>", content_new)
+            if re.search(pattern_attr, content_new):
+                content_new = re.sub(pattern_attr, f"\\g<1>{new_version}\\g<3>", content_new)
+
+            if content != content_new:
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(content_new)
+                print(f"    Updated version in {os.path.basename(file_path)}")
         except Exception as e:
             print(f"    [Error] Failed to update source version in {file_path}: {e}")
 
@@ -190,10 +198,7 @@ def collect_dlls(mod_folder_name, stage_dir):
     return found_dll
 
 def collect_assets(mod_folder_name, stage_dir):
-    if mod_folder_name in ZIP_NAME_MAP:
-        prefix = f"{ZIP_NAME_MAP[mod_folder_name].replace('.zip', '')}_"
-    else:
-        prefix = f"{mod_folder_name}_"
+    prefix = f"{mod_folder_name}_"
     
     assets = glob.glob(os.path.join(ASSETS_DIR, f"{prefix}*"))
     for asset_path in assets:

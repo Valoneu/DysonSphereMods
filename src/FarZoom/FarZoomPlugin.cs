@@ -13,7 +13,7 @@ namespace FarZoom
     {
         public const string MOD_GUID = "com.Valoneu.FarZoom";
         public const string MOD_NAME = "FarZoom";
-        public const string MOD_VERSION = "1.0.0";
+        public const string MOD_VERSION = "1.0.1";
 
         public static BepInEx.Configuration.ConfigEntry<float> ZoomMultiplier;
         public static BepInEx.Configuration.ConfigEntry<float> ZoomSpeedMultiplier;

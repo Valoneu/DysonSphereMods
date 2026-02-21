@@ -38,7 +38,7 @@ Settings can be adjusted in the `com.Valoneu.VesselTrails.cfg` file:
 
 | Version | Description of Changes |
 | :--- | :--- |
-| **1.2.0** | Merged duplicate routes in UI, added resizable Logistics window, enhanced tooltips to show all resources per route, and added a tooltip toggle. |
+| **1.2.1** | Merged duplicate routes in UI, added resizable Logistics window, enhanced tooltips to show all resources per route, and added a tooltip toggle. |
 | **1.1.0** | Added in-game Logistics UI (Default: `Ctrl + NumPad1`), rebindable keys via CommonAPI, and hover tooltips for trails. |
 | **1.0.0** | Initial release. Implemented Star Map route tracking and GL-based line rendering. |
 

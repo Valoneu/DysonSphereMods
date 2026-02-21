@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Allows sorting by stored amount in the statistics panel.</Description>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>com.Valoneu.SortByStorage</BepInExPluginGuid>
+    <BepInExPluginName>SortByStorage</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+</Project>

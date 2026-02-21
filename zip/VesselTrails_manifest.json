@@ -1,6 +1,6 @@
 {
     "name": "VesselTrails",
-    "version_number": "1.2.0",
+    "version_number": "1.2.1",
     "website_url": "https://github.com/Valoneu/DysonSphereMods",
     "description": "Visualizes active logistics vessel routes in the Star Map, showing the flow of your galactic empire.",
     "dependencies": [

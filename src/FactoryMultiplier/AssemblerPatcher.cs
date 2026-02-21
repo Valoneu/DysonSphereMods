@@ -11,6 +11,9 @@ namespace FactoryMultiplier
 {
     public static class AssemblerPatcher
     {
+        [ThreadStatic]
+        private static bool _isLooping;
+
         [HarmonyPrefix]
         [HarmonyPatch(typeof(GameLogic), nameof(GameLogic.LogicFrame))]
         private static void GameLogic_LogicFrame_Prefix(GameLogic __instance)
@@ -163,23 +166,59 @@ namespace FactoryMultiplier
         }
 
 
-        [HarmonyPrefix]
+        [HarmonyPostfix]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickLocal))]
-        public static void StationComponent_InternalTickLocal_Prefix(ref int droneCarries)
+        public static void StationComponent_InternalTickLocal_Postfix(StationComponent __instance, PlanetFactory factory, int timeGene, float power, float droneSpeed, int droneCarries, StationComponent[] stationPool)
         {
-            if (PluginConfig.multiplierEnabled.Value)
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.stationMultiplier > 1)
             {
-                droneCarries *= PluginConfig.beltMultiplier;
+                int multi = PluginConfig.stationMultiplier;
+                for (int i = 0; i < multi - 1; i++)
+                {
+                    CallOriginalStationInternalTickLocal(__instance, factory, timeGene, power, droneSpeed, droneCarries, stationPool);
+                }
             }
         }
 
-        [HarmonyPrefix]
+        [HarmonyPostfix]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickRemote))]
-        public static void StationComponent_InternalTickRemote_Prefix(ref int shipCarries)
+        public static void StationComponent_InternalTickRemote_Postfix(StationComponent __instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, StationComponent[] stationPool)
         {
-            if (PluginConfig.multiplierEnabled.Value)
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.stationMultiplier > 1)
             {
-                shipCarries *= PluginConfig.beltMultiplier;
+                int multi = PluginConfig.stationMultiplier;
+                for (int i = 0; i < multi - 1; i++)
+                {
+                    CallOriginalStationInternalTickRemote(__instance, factory, timeGene, shipSailSpeed, shipWarpSpeed, shipCarries, stationPool);
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateOutputSlots))]
+        public static void StationComponent_UpdateOutputSlots_Postfix(StationComponent __instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
+        {
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.stationMultiplier > 1)
+            {
+                int multi = PluginConfig.stationMultiplier;
+                for (int i = 0; i < multi - 1; i++)
+                {
+                    CallOriginalStationUpdateOutputSlots(__instance, traffic, signPool, maxPilerCount, active);
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateInputSlots))]
+        public static void StationComponent_UpdateInputSlots_Postfix(StationComponent __instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
+        {
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.stationMultiplier > 1)
+            {
+                int multi = PluginConfig.stationMultiplier;
+                for (int i = 0; i < multi - 1; i++)
+                {
+                    CallOriginalStationUpdateInputSlots(__instance, traffic, signPool, maxPilerCount, active);
+                }
             }
         }
 
@@ -192,7 +231,7 @@ namespace FactoryMultiplier
                 // Ensure the base rate isn't negative (can happen if energy costs > gas giant heat in vanilla formula)
                 float baseRate = collectSpeedRate < 0 ? 0 : collectSpeedRate;
                 
-                float multi = PluginConfig.miningMultiplier.Value;
+                float multi = PluginConfig.stationMultiplier;
                 float targetRate = baseRate * multi;
 
                 if (__instance.isCollector && __instance.collectionPerTick != null)
@@ -225,6 +264,131 @@ namespace FactoryMultiplier
             }
         }
 
+        // =================================================================
+        // MORE MEGA STRUCTURES COMPATIBILITY
+        // =================================================================
+
+        [HarmonyPrefix]
+        [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "InternalTickLocal")]
+        public static bool ExchangeStation_InternalTickLocal_Prefix(object __instance, PlanetFactory factory, int timeGene, float power, float droneSpeed, int droneCarries, object stationPool)
+        {
+            if (_isLooping) return true;
+            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+
+            _isLooping = true;
+            try
+            {
+                int multi = PluginConfig.stationMultiplier;
+                var method = __instance.GetType().GetMethod("InternalTickLocal");
+                if (method != null)
+                {
+                    object[] args = new object[] { factory, timeGene, power, droneSpeed, droneCarries, stationPool };
+                    for (int i = 0; i < multi; i++)
+                    {
+                        method.Invoke(__instance, args);
+                    }
+                }
+            }
+            finally
+            {
+                _isLooping = false;
+            }
+            return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "InternalTickRemote")]
+        public static bool ExchangeStation_InternalTickRemote_Prefix(object __instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, object stationPool)
+        {
+            if (_isLooping) return true;
+            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+
+            _isLooping = true;
+            try
+            {
+                int multi = PluginConfig.stationMultiplier;
+                var method = __instance.GetType().GetMethod("InternalTickRemote");
+                if (method != null)
+                {
+                    object[] args = new object[] { factory, timeGene, shipSailSpeed, shipWarpSpeed, shipCarries, stationPool };
+                    for (int i = 0; i < multi; i++)
+                    {
+                        method.Invoke(__instance, args);
+                    }
+                }
+            }
+            finally
+            {
+                _isLooping = false;
+            }
+            return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateOutputSlots")]
+        public static bool ExchangeStation_UpdateOutputSlots_Prefix(object __instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
+        {
+            if (_isLooping) return true;
+            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+
+            _isLooping = true;
+            try
+            {
+                int multi = PluginConfig.stationMultiplier;
+                var method = __instance.GetType().GetMethod("UpdateOutputSlots");
+                if (method != null)
+                {
+                    object[] args = new object[] { traffic, signPool, maxPilerCount, active };
+                    for (int i = 0; i < multi; i++)
+                    {
+                        method.Invoke(__instance, args);
+                    }
+                }
+            }
+            finally
+            {
+                _isLooping = false;
+            }
+            return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateInputSlots")]
+        public static bool ExchangeStation_UpdateInputSlots_Prefix(object __instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
+        {
+            if (_isLooping) return true;
+            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+
+            _isLooping = true;
+            try
+            {
+                int multi = PluginConfig.stationMultiplier;
+                var method = __instance.GetType().GetMethod("UpdateInputSlots");
+                if (method != null)
+                {
+                    object[] args = new object[] { traffic, signPool, maxPilerCount, active };
+                    for (int i = 0; i < multi; i++)
+                    {
+                        method.Invoke(__instance, args);
+                    }
+                }
+            }
+            finally
+            {
+                _isLooping = false;
+            }
+            return false;
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateOutputSlots")]
+        [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateInputSlots")]
+        [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateSlots")]
+        public static IEnumerable<CodeInstruction> MoreMegaStructure_UpdateSlots_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            return StationComponent_UpdateSlots_Transpiler(instructions);
+        }
+
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateOutputSlots))]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateInputSlots))]
@@ -245,7 +409,99 @@ namespace FactoryMultiplier
 
         public static int GetSlotCounterValue()
         {
-            return PluginConfig.multiplierEnabled.Value && PluginConfig.beltMultiplier > 1 ? 0 : 1;
+            return PluginConfig.multiplierEnabled.Value && PluginConfig.stationMultiplier > 1 ? 0 : 1;
+        }
+
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(UIStationStorage), "RefreshValues")]
+        public static IEnumerable<CodeInstruction> UIStationStorage_RefreshValues_Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var codes = new List<CodeInstruction>(instructions);
+            // We want to change how num4 is calculated or how maxValue is set.
+            // num4 = num3 / 100; where num3 = itemProto2.prefabDesc.stationMaxItemCount + additionStorage;
+            
+            // A simpler way is to patch the line: this.maxSlider.maxValue = (float) num4;
+            // and replace num4 with Math.Max(num4, stationStore.max / 100)
+            
+            for (int i = 0; i < codes.Count; i++)
+            {
+                // Find stfld UnityEngine.UI.Slider::maxValue
+                if (codes[i].opcode == OpCodes.Callvirt && codes[i].operand.ToString().Contains("set_maxValue"))
+                {
+                    // The value (float num4) is on stack.
+                    // We want to inject: ldarg.0, ldfld station, ldfld storage, ... etc to get current max.
+                    // Actually, a helper method is much easier.
+                    codes.Insert(i, new CodeInstruction(OpCodes.Ldarg_0));
+                    codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(AssemblerPatcher), nameof(GetAdjustedSliderMax))));
+                    i += 2;
+                }
+            }
+            return codes;
+        }
+
+        public static float GetAdjustedSliderMax(float vanillaMax, UIStationStorage instance)
+        {
+            if (instance.station != null && instance.index < instance.station.storage.Length)
+            {
+                // We use the ACTUAL maximum of the slot, divided by 100 (which is the UI unit)
+                int currentMax = instance.station.storage[instance.index].max;
+                float currentSliderMax = (float)(currentMax / 100);
+                // Return the larger of the two to ensure modded/multiplied storage is never truncated by the UI
+                if (currentSliderMax > vanillaMax) return currentSliderMax;
+            }
+            return vanillaMax;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.Import))]
+        public static void StationComponent_Import_Prefix(StationComponent __instance)
+        {
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.stationStorageMultiplier > 1)
+            {
+                // Note: Import happens before the station is fully initialized from proto sometimes?
+                // Actually, StationComponent.Import reads from save stream.
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.Import))]
+        public static void StationComponent_Import_Postfix(StationComponent __instance)
+        {
+            if (PluginConfig.multiplierEnabled.Value && PluginConfig.stationStorageMultiplier > 1 && __instance.storage != null)
+            {
+                // We don't have easy access to the factory here, but we can search for the station in GameMain.data
+                if (GameMain.data == null) return;
+                
+                int protoId = 0;
+                foreach (var factory in GameMain.data.factories)
+                {
+                    if (factory != null && factory.planetId == __instance.planetId)
+                    {
+                        protoId = factory.entityPool[__instance.entityId].protoId;
+                        break;
+                    }
+                }
+
+                if (protoId > 0)
+                {
+                    var item = LDB.items.Select(protoId);
+                    if (item != null && item.prefabDesc != null)
+                    {
+                        int newMaxBase = item.prefabDesc.stationMaxItemCount;
+                        int techBonus = !__instance.isCollector ? (!__instance.isVeinCollector ? (!__instance.isStellar ? GameMain.history.localStationExtraStorage : GameMain.history.remoteStationExtraStorage) : GameMain.history.localStationExtraStorage) : GameMain.history.localStationExtraStorage;
+                        int totalMax = newMaxBase + techBonus;
+
+                        for (int i = 0; i < __instance.storage.Length; i++)
+                        {
+                            if (__instance.storage[i].itemId > 0)
+                            {
+                                // Sync to the current multiplied limit from prototype
+                                __instance.storage[i].max = totalMax;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         [HarmonyPrefix]
@@ -405,6 +661,38 @@ namespace FactoryMultiplier
         public static void CallOriginalPilerUpdate(ref PilerComponent instance, CargoTraffic _traffic, AnimData[] _animPool)
         {
             // This method is replaced by Harmony with the original method IL
+            throw new NotImplementedException("It's a stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickLocal))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void CallOriginalStationInternalTickLocal(StationComponent instance, PlanetFactory factory, int timeGene, float power, float droneSpeed, int droneCarries, StationComponent[] stationPool)
+        {
+            throw new NotImplementedException("It's a stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickRemote))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void CallOriginalStationInternalTickRemote(StationComponent instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, StationComponent[] stationPool)
+        {
+            throw new NotImplementedException("It's a stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateOutputSlots))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void CallOriginalStationUpdateOutputSlots(StationComponent instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
+        {
+            throw new NotImplementedException("It's a stub");
+        }
+
+        [HarmonyReversePatch]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateInputSlots))]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void CallOriginalStationUpdateInputSlots(StationComponent instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
+        {
             throw new NotImplementedException("It's a stub");
         }
 

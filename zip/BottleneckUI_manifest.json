@@ -1,0 +1,10 @@
+{
+    "name": "BottleneckUI",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods",
+    "description": "Shows a UI listing all crafting machines that lack input items or power.",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.21",
+        "CommonAPI-CommonAPI-1.6.5"
+    ]
+}

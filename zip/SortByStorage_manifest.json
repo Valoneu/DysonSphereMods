@@ -1,0 +1,10 @@
+{
+    "name": "SortByStorage",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods",
+    "description": "Allows sorting by stored amount in the statistics panel.",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.21",
+        "CommonAPI-CommonAPI-1.6.5"
+    ]
+}

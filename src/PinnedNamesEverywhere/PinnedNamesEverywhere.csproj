@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges.</Description>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>com.Valoneu.PinnedNamesEverywhere</BepInExPluginGuid>
+    <BepInExPluginName>PinnedNamesEverywhere</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+</Project>

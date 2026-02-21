@@ -11,7 +11,7 @@ using static FactoryMultiplier.Util.PluginConfig;
 
 namespace FactoryMultiplier
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
     [BepInProcess("DSPGAME.exe")]
     [BepInDependency(CommonAPIPlugin.GUID)]
     [CommonAPISubmoduleDependency(nameof(ProtoRegistry), nameof(CustomKeyBindSystem))]
@@ -25,13 +25,13 @@ namespace FactoryMultiplier
             InitConfig(this.Config);
             InitKeyBinds();
             Log.Init(Logger);
-            _harmony = new Harmony(PluginInfo.PLUGIN_GUID);
+            _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             _harmony.PatchAll(typeof(PowerConsumptionPatcher));
             _harmony.PatchAll(typeof(PowerGenerationPatcher));
             _harmony.PatchAll(typeof(MultiplierPlugin));
             _harmony.PatchAll(typeof(AssemblerPatcher));
             _harmony.PatchAll(typeof(TurretPatcher));
-            Logger.LogInfo($"Plugin: {PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} is loaded!");
+            Logger.LogInfo($"Plugin: {MyPluginInfo.PLUGIN_GUID} {MyPluginInfo.PLUGIN_VERSION} is loaded!");
         }
 
         private void Update()
@@ -54,6 +54,7 @@ namespace FactoryMultiplier
                 }
 
                 RefreshAllBeltsInGame();
+                RefreshAllStationsInGame();
             }
         }
 
@@ -66,6 +67,71 @@ namespace FactoryMultiplier
                 if (factory?.cargoTraffic != null)
                 {
                     RefreshBeltsForFactory(factory);
+                }
+            }
+        }
+
+        private static System.Collections.Generic.Dictionary<int, int> _originalStationMaxItemCount = new System.Collections.Generic.Dictionary<int, int>();
+
+        public void ApplyStationMultipliers()
+        {
+            if (LDB.items == null) return;
+            
+            int multi = stationStorageMultiplier;
+            foreach (var item in LDB.items.dataArray)
+            {
+                if (item != null && item.prefabDesc != null && item.prefabDesc.isStation)
+                {
+                    if (!_originalStationMaxItemCount.ContainsKey(item.ID))
+                    {
+                        _originalStationMaxItemCount[item.ID] = item.prefabDesc.stationMaxItemCount;
+                    }
+                    item.prefabDesc.stationMaxItemCount = _originalStationMaxItemCount[item.ID] * multi;
+                }
+            }
+        }
+
+        public void RefreshAllStationsInGame()
+        {
+            ApplyStationMultipliers();
+            if (GameMain.data?.factories == null) return;
+
+            Log.Info("Refreshing all stations in game...");
+            foreach (var factory in GameMain.data.factories)
+            {
+                if (factory?.transport?.stationPool != null)
+                {
+                    foreach (var station in factory.transport.stationPool)
+                    {
+                        if (station == null || station.id <= 0 || station.entityId <= 0) continue;
+                        
+                        int protoId = factory.entityPool[station.entityId].protoId;
+                        var item = LDB.items.Select(protoId);
+                        if (item == null || item.prefabDesc == null) continue;
+
+                        int newMax = item.prefabDesc.stationMaxItemCount;
+                        // Addition storage from tech is handled separately by the game, 
+                        // but station.storage[i].max is the total limit.
+                        // We should probably only update if it was at the previous limit or if we are increasing it.
+                        
+                        if (station.storage != null)
+                        {
+                            for (int i = 0; i < station.storage.Length; i++)
+                            {
+                                if (station.storage[i].itemId > 0)
+                                {
+                                    // Set to the new multiplied base + tech bonus (game handles tech bonus in GetAdditionStorage)
+                                    // For simplicity, we match what UIStationStorage does.
+                                    int techBonus = 0;
+                                    if (GameMain.history != null)
+                                    {
+                                        techBonus = !station.isCollector ? (!station.isVeinCollector ? (!station.isStellar ? GameMain.history.localStationExtraStorage : GameMain.history.remoteStationExtraStorage) : GameMain.history.localStationExtraStorage) : GameMain.history.localStationExtraStorage;
+                                    }
+                                    station.storage[i].max = newMax + techBonus;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -156,6 +222,7 @@ namespace FactoryMultiplier
         {
             var pluginInstance = (MultiplierPlugin)FindObjectOfType(typeof(MultiplierPlugin));
             pluginInstance?.RefreshAllBeltsInGame();
+            pluginInstance?.RefreshAllStationsInGame();
         }
     }
 }

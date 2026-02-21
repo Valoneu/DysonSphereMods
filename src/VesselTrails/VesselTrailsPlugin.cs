@@ -19,7 +19,7 @@ namespace VesselTrails
     {
         public const string MOD_GUID = "com.Valoneu.VesselTrails";
         public const string MOD_NAME = "VesselTrails";
-        public const string MOD_VERSION = "1.2.0";
+        public const string MOD_VERSION = "1.2.1";
 
         public static ConfigEntry<bool> ShowTrails;
         public static ConfigEntry<bool> ShowHoverTooltips;
@@ -138,6 +138,7 @@ namespace VesselTrails
             public int StarB;
             public Dictionary<int, ItemHistory> ItemHistories = new Dictionary<int, ItemHistory>();
             public float TotalVessels => ItemHistories.Values.Sum(h => h.AverageVesselCount);
+            public int GetTotalTrips(float hMin) => ItemHistories.Values.Sum(h => h.GetTotalTrips(hMin));
 
             public void UpdateItem(int itemId, List<int> shipKeys, float historyMinutes)
             {
@@ -310,6 +311,7 @@ namespace VesselTrails
             }
 
             float historyMin = VesselTrailsPlugin.HistoryMinutes.Value;
+            var seenThisFrame = new HashSet<(int, int, int)>();
             foreach (var kvp in currentVessels)
             {
                 var key = (kvp.Key.Item1, kvp.Key.Item2);
@@ -319,6 +321,19 @@ namespace VesselTrails
                     _routePaths[key] = path;
                 }
                 path.UpdateItem(kvp.Key.Item3, kvp.Value, historyMin);
+                seenThisFrame.Add(kvp.Key);
+            }
+
+            // Trend inactive routes/items to zero
+            foreach (var path in _routePaths.Values)
+            {
+                foreach (var itemId in path.ItemHistories.Keys)
+                {
+                    if (!seenThisFrame.Contains((path.StarA, path.StarB, itemId)))
+                    {
+                        path.ItemHistories[itemId].RecordSample(new List<int>(), Time.deltaTime, historyMin);
+                    }
+                }
             }
 
             _globalMaxTraffic = 0f;
@@ -595,6 +610,29 @@ namespace VesselTrails
             GUILayout.Space(15);
             float hMin = VesselTrailsPlugin.HistoryMinutes.Value;
             string hStr = hMin <= 0 ? "REAL-TIME" : $"LAST {hMin:F1}m";
+
+            // Calculate Cluster Totals
+            int clusterTotalTrips = 0;
+            float clusterTotalLoad = 0f;
+            foreach (var route in _routePaths.Values)
+            {
+                foreach (var hist in route.ItemHistories.Values)
+                {
+                    clusterTotalTrips += hist.GetTotalTrips(hMin);
+                    clusterTotalLoad += hist.AverageVesselCount;
+                }
+            }
+            float clusterTripsPerMin = clusterTotalTrips / Mathf.Max(1f, hMin);
+
+            GUILayout.Label("CLUSTER TOTALS", headerStyle);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("All Logistics Vessels", labelStyle, GUILayout.Width(_windowRect.width - 240));
+            GUILayout.Label($"<b>{clusterTotalTrips}</b>", labelStyle, GUILayout.Width(50));
+            GUILayout.Label($"<b>{clusterTripsPerMin:F1}</b>", labelStyle, GUILayout.Width(50));
+            GUILayout.Label($"<b>{clusterTotalLoad:F1}</b>", labelStyle, GUILayout.Width(50));
+            GUILayout.EndHorizontal();
+            GUILayout.Space(10);
+
             GUILayout.Label($"ACTIVE ROUTES ({hStr})", headerStyle);
 
             GUILayout.BeginHorizontal();
@@ -605,7 +643,7 @@ namespace VesselTrails
             GUILayout.EndHorizontal();
 
             _scrollPos = GUILayout.BeginScrollView(_scrollPos);
-            var sortedRoutes = _routePaths.Values.OrderByDescending(r => r.TotalVessels).ToList();
+            var sortedRoutes = _routePaths.Values.OrderByDescending(r => r.GetTotalTrips(hMin)).ToList();
             GUIStyle rowStyle = new GUIStyle(GUI.skin.box);
             rowStyle.normal.background = Texture2D.whiteTexture;
             rowStyle.padding = new RectOffset(5, 5, 5, 5);
@@ -617,7 +655,7 @@ namespace VesselTrails
                 GUI.backgroundColor = new Color(0.2f, 0.3f, 0.4f, 0.2f);
                 GUILayout.BeginVertical(rowStyle);
                 GUILayout.Label($"<b>{starAName} -> {starBName}</b>", labelStyle);
-                var sortedItems = route.ItemHistories.Values.OrderByDescending(h => h.AverageVesselCount).ToList();
+                var sortedItems = route.ItemHistories.Values.OrderByDescending(h => h.GetTotalTrips(hMin)).ToList();
                 foreach (var hist in sortedItems)
                 {
                     string itemName = LDB.items.Select(hist.ItemId)?.name ?? "Unknown";

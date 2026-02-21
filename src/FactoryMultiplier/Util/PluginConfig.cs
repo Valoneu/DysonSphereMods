@@ -18,6 +18,8 @@ namespace FactoryMultiplier.Util
         private static ConfigEntry<int> _inserterMultiplier;
         private static ConfigEntry<int> _turretMultiplier;
         private static ConfigEntry<int> _beltMultiplier;
+        private static ConfigEntry<int> _stationMultiplier;
+        private static ConfigEntry<int> _stationStorageMultiplier;
         public static ConfigEntry<double> drawMultiplier;
 
         private static ConfigEntry<int> _genWindMultiplier;
@@ -44,6 +46,8 @@ namespace FactoryMultiplier.Util
         public static int siloMultiplier => multiplierEnabled.Value ? _siloMultiplier.Value : 1;
         public static int inserterMultiplier => multiplierEnabled.Value ? _inserterMultiplier.Value : 1;
         public static int beltMultiplier => multiplierEnabled.Value ? _beltMultiplier.Value : 1;
+        public static int stationMultiplier => multiplierEnabled.Value ? _stationMultiplier.Value : 1;
+        public static int stationStorageMultiplier => multiplierEnabled.Value ? _stationStorageMultiplier.Value : 1;
         public static int ejectorMultiplier => multiplierEnabled.Value ? _ejectorMultiplier.Value : 1;
         public static int fractionatorMultiplier => multiplierEnabled.Value ? _fractionatorMultiplier.Value : 1;
         public static int labMultiplier => multiplierEnabled.Value ? _labMultiplier.Value : 1;
@@ -67,6 +71,8 @@ namespace FactoryMultiplier.Util
 
             // --- THIS IS THE FIX for the MULTIPLIER RANGE ---
             _beltMultiplier = confFile.Bind("1. Factory", "beltMultiplier", 1, new ConfigDescription("Multiplies speed of belts (max 2x)", new AcceptableValueRange<int>(1, 2)));
+            _stationMultiplier = confFile.Bind("1. Factory", "stationMultiplier", 2, new ConfigDescription("Multiplies throughput of stations", new AcceptableValueRange<int>(1, 100)));
+            _stationStorageMultiplier = confFile.Bind("1. Factory", "stationStorageMultiplier", 1, new ConfigDescription("Multiplies storage capacity of stations", new AcceptableValueRange<int>(1, 100)));
 
             drawMultiplier = confFile.Bind("1. Factory", "drawMultipler", 1.0, new ConfigDescription("Multiplies how much your factory will draw on top of your normal overclock", new AcceptableValueRange<double>(0.1, 10)));
 

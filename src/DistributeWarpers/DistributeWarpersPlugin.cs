@@ -10,7 +10,7 @@ namespace DistributeWarpers
     {
         public const string GUID = "com.Valoneu.DistributeWarpers";
         public const string NAME = "DistributeWarpers";
-        public const string VERSION = "1.0.0";
+        public const string VERSION = "1.0.2";
 
         public static BepInEx.Configuration.ConfigEntry<bool> ModEnabled;
         public static BepInEx.Configuration.ConfigEntry<int> TargetWarperCount;

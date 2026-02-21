@@ -48,7 +48,7 @@ Settings can be adjusted in the `com.Valoneu.VesselTrails.cfg` file or via the i
 
 | Version | Description of Changes |
 | :--- | :--- |
-| **1.2.0** | **UI & Stats Overhaul.** Added persistent Logistics Window with trip tracking (/min, Load, Total). Implemented "Bundle" rendering for multi-material routes. DSP-themed UI. |
+| **1.2.1** | **UI & Stats Overhaul.** Added persistent Logistics Window with trip tracking (/min, Load, Total). Implemented "Bundle" rendering for multi-material routes. DSP-themed UI. |
 | **1.1.0** | Initial release. Implemented Star Map route tracking and GL-based line rendering. |
 
 ---

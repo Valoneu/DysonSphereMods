@@ -1,0 +1,9 @@
+{
+    "name": "PinnedNamesEverywhere",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods",
+    "description": "Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.5"
+    ]
+}

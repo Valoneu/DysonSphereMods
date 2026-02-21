@@ -22,9 +22,13 @@
 | **PilerMax** | Internal logic optimization for the Automatic Piler building. | v1.0.0 |
 | **CustomWarpSound** | Audio replacement for mecha warp transitions. | v1.0.10 |
 | **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.1.0 |
-| **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.2.0 |
+| **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.2.1 |
 | **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.0.0 |
-| **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.0.0 |
+| **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.0.1 |
+| **PinnedNamesEverywhere** | Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges. | v1.0.0 |
+| **BottleneckUI** | Shows a UI listing all crafting machines that lack input items or power. | v1.0.0 |
+| **InfinityTechnologies** | Allows for more granular control over infinite research levels. | v1.0.0 |
+| **SortByStorage** | Adds a "Storage" sort option to the Production Statistics panel to sort by total stored quantity. | v1.0.0 |
 
 ---
 

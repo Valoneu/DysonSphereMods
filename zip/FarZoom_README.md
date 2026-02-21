@@ -1,10 +1,8 @@
 # FarZoom
-
-Allows zooming further away from the mech, planet, and in starmap.
+Allows zooming further away from the mech and changing FOV with shift + scroll.
 
 ## Features
-- Increases the maximum zoom distance for RTS mode, Planet mode, and Starmap.
-- Customizable via BepInEx configuration (default is 2x vanilla).
+- Allows zooming further away from the mech and changing FOV with shift + scroll.
 
 ## Configuration
 You can find the configuration file in `BepInEx/config/com.Valoneu.FarZoom.cfg` after the first run.
