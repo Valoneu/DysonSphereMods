@@ -1,9 +1,9 @@
 {
     "name": "CloserStations",
-    "version_number": "1.0.0",
-    "website_url": "https://github.com/Valoneu/DysonSphereMods",
-    "description": "Allows placing logistics stations closer together by reducing the minimum required distance.",
+    "version_number": "1.1.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/CloserStations",
+    "description": "Reduced minimum distance for logistics stations placement.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.5"
+        "xiaoye97-BepInEx-5.4.17"
     ]
 }

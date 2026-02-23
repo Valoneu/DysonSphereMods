@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>PlanetMinerFast</Description>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>com.Valoneu.PlanetMinerFast</BepInExPluginGuid>
+    <BepInExPluginName>PlanetMinerFast</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+</Project>

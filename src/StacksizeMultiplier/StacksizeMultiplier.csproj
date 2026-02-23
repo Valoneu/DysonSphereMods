@@ -1,11 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>StacksizeMultiplier</AssemblyName>
-    <Description>Multiplies the maximum stack size of all items.</Description>
-    <Version>1.0.0</Version>
+    <Description>Multiplies the maximum stack size of all items and buildings.</Description>
+    <Version>1.1.0</Version>
     <BepInExPluginGuid>com.Valoneu.StacksizeMultiplier</BepInExPluginGuid>
     <BepInExPluginName>StacksizeMultiplier</BepInExPluginName>
-    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+    <BepInExPluginVersion>1.1.0</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />

@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>TechHashReduce</Description>
-    <Version>1.1.2</Version>
+    <Version>1.2.0</Version>
+    <BepInExPluginGuid>com.Valoneu.TechHashReduce</BepInExPluginGuid>
+    <BepInExPluginName>TechHashReduce</BepInExPluginName>
+    <BepInExPluginVersion>1.2.0</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />

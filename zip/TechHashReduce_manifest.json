@@ -1,9 +1,9 @@
 {
     "name": "TechHashReduce",
-    "version_number": "1.1.2",
+    "version_number": "1.2.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/TechHashReduce",
-    "description": "Allows the user to change how much hashes is need for science and upgrades - kinda cheats, Dont install while researching technology",
+    "description": "Dynamic scaling of technology research costs.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.11"
+        "xiaoye97-BepInEx-5.4.17"
     ]
 }

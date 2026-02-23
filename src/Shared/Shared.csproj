@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>Shared utilities for Dyson Sphere Program mods</Description>
-    <RootNamespace>DysonSphereMods.Shared</RootNamespace>
+    <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
 </Project>

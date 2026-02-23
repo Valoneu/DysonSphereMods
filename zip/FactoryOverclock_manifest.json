@@ -1,0 +1,10 @@
+{
+    "name": "FactoryOverclock",
+    "version_number": "3.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/FactoryOverclock",
+    "description": "Production speed multiplication and 3600/m station throughput.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.17",
+        "CommonAPI-CommonAPI-1.6.5"
+    ]
+}

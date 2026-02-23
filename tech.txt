@@ -1,0 +1,242 @@
+# DYSON SPHERE PROGRAM MOD COLLECTION - COMPREHENSIVE TECHNICAL MANIFEST
+
+This document provides a complete, line-by-line technical breakdown of all 18 mods in the collection. It is intended for developers and maintainers to understand exactly how each mod interacts with the game engine, what classes are patched, and where technical debt exists.
+
+---
+
+## 1. UNIFIED ARCHITECTURE & CONVENTIONS
+
+### Plugin Structure
+- **Framework**: BepInEx 5.4.21 with `BaseUnityPlugin`.
+- **Dependencies**: `CommonAPI` is standard for AssetBundles, Keybinds, and ProtoRegistry.
+- **Config**: BepInEx `ConfigFile` used for all settings. Complex mods use `AcceptableValueRange`.
+- **Logging**: Shared `DysonSphereMods.Shared.Log` wrapper around `ManualLogSource` with `LogOnce` protection.
+
+### Standardized patterns
+- **Patching**: `Harmony.PatchAll(typeof(MyPatchClass))` in `Awake()`.
+- **UI**: Unity `OnGUI` (Immediate Mode) with `GUILayout.Window`.
+- **Data**: `LDB.items.Select()` usage is common, often cached in `ConcurrentDictionary`.
+- **Safety**: `[BepInProcess("DSPGAME.exe")]` checks on all plugins.
+
+---
+
+## 2. DETAILED MOD BREAKDOWN (18 MODS)
+
+### 1. BottleneckUI
+**Core Function**: Real-time factory diagnostics to find idle/starved machines.
+*   **Files**: `BottleneckUIPlugin.cs`
+*   **Logic**:
+    *   **Scanner**: `ScanBottlenecks()` iterates through `factorySystem.assemblerPool`, `labPool`, `fractionatorPool`, `minerPool`, `ejectorPool`, and `siloPool` across **all** `GameMain.data.factories`.
+    *   **Heuristics**: Checks `!replicating`, `!isWorking`, and `PowerSystem.consumerPool` serve ratios to determine if a machine is "Bottlenecked".
+    *   **UI**: Renders a scrollable list in `OnGUI`. Clicking a machine name moves the camera using `Camera.main.transform.position`.
+*   **Key Patches**: None (Purely additive logic via `Update` and `OnGUI`).
+*   **Technical Debt**:
+    *   **O(N) Complexity**: Scanning every machine on every planet is expensive.
+    *   **Polling**: Scans blindly every 1 second, even if the user isn't looking at the UI.
+    *   **Memory**: Allocates new `BottleneckInfo` objects every scan.
+
+### 2. CloserStations
+**Core Function**: Allows Logistics Stations to be placed closer together.
+*   **Files**: `CloserStationsPlugin.cs`
+*   **Logic**:
+    *   **Transpiler**: Instead of changing logic, it rewrites the IL code of the build tool.
+*   **Key Patches**:
+    *   `BuildTool_Click.CheckBuildConditions`: Transpiles magic floats (`225f` -> `15*15`, `625f` -> `25*25`) by multiplying them with `DistanceMultiplier^2`.
+    *   `BuildTool_BlueprintPaste.CheckBuildConditions`: Same transpiler logic for blueprints.
+*   **Technical Debt**:
+    *   **Fragile Transpiler**: Relies on specific hardcoded float values (`225f`, `625f`, `841f`, `14297f`). If the game updates these constants, the mod breaks silently.
+
+### 3. DistributeWarpers
+**Core Function**: Automated balancing of Space Warpers across a planet.
+*   **Files**: `DistributeWarpersPlugin.cs`, `DistributeWarpersPatcher.cs`, `Util/PluginConfig.cs`
+*   **Logic**:
+    *   **Throttled Tick**: Subscribes to `TickManager.OnSlowTick` (1s).
+    *   **Global Distribution**: Iterates all factories. For each factory, scans `transport.stationPool`.
+        1.  Sum all warpers in *Cargo* slots.
+        2.  Distribute to *Internal* slots of stations with `< TargetCount`.
+*   **Key Patches**: `TickManager` hooks `GameHistoryData.GameTick`.
+*   **Technical Debt**: Resolved. Now uses a throttled manager and has no ID dependencies.
+
+### 4. FactoryMultiplier
+**Core Function**: Global overclocking for all factory buildings.
+*   **Files**: `MultiplierPlugin.cs`, `*Patcher.cs`, `Util/*`
+*   **Logic**:
+    *   **Speed Scaling**: Multiplies `speed`, `timeSpend`, or production counts in `InternalUpdate` methods.
+    *   **Belt Physics**: Modifies `CargoTraffic.beltPool.speed` and re-calculates `CargoPath` chunks to ensure visual item speed matches logical speed.
+    *   **Power Sync**: Recalculates `PowerGeneratorComponent.capacity` to match new speeds.
+*   **Key Patches**:
+    *   `AssemblerComponent.InternalUpdate`: Prefix/Postfix mix.
+    *   `MinerComponent.InternalUpdate`: Speed multiplication.
+    *   `PowerSystem.GameTick`: Energy consumption scaling.
+*   **Technical Debt**:
+    *   **Refresh Stutter**: `RefreshAllBeltsInGame` iterates everything causing frame drops on toggle.
+    *   **Compatibility**: Manual checks for `MoreMegaStructure`.
+
+### 5. FarZoom
+**Core Function**: Extended camera zoom and dynamic FOV control.
+*   **Files**: `FarZoomPlugin.cs`, `FarZoomPatcher.cs`
+*   **Logic**:
+    *   **FOV Control**: Intercepts `GameCamera.Logic` to detect `Shift + Scroll`. Modifies `CurrentFovMultiplier` and uses transpilers to block zoom input.
+    *   **Poser Patches**: Modifies `normalFov` in `RTSPoser`, `PlanetPoser`, `GraticulePoser`.
+*   **Key Patches**:
+    *   `GameCamera.Logic`: Transpiler to increase collision distance limit (`58f`).
+    *   `RTSPoser.Calculate`: Transpilers to inject `ZoomSpeedMultiplier` and block zoom when Shift is held.
+    *   `PlanetPoser.Calculate`: Transpiler to block zoom when Shift is held.
+*   **Technical Debt**: None. (Refactored to avoid global `VFInput.mouseWheel` consumption).
+
+### 6. HydrogenDissolution
+**Core Function**: Adds a chemical recipe to delete excess Hydrogen.
+*   **Files**: `HydrogenDissolutionPlugin.cs`, `assets/`
+*   **Logic**:
+    *   **Content Injection**: Uses `ProtoRegistry` to add a new recipe (`ID 650`) that consumes 10 Hydrogen and produces nothing (or trace energy).
+*   **Key Patches**: None (Pure `ProtoRegistry` usage).
+*   **Technical Debt**: Minimal. Relies on external assets (`icon.png`).
+
+### 7. InfinityTechnologies
+**Core Function**: Extends the tech tree with new infinite researches.
+*   **Files**: `InfinityTechnologiesPlugin.cs`
+*   **Logic**:
+    *   **Dynamic Techs**: Registers `TechProto` entries in the 9000+ range using `ProtoRegistry`.
+    *   **Modifier Engine**: `RecalculateModifiers()` iterates `GameMain.history.techStates` to calculate multipliers (e.g., `FuelEfficiencyMultiplier`).
+    *   **Application**: Patches getters like `Mecha.reactorPowerGenEnhanced` to apply these multipliers.
+*   **Key Patches**:
+    *   `GameHistoryData.UnlockTechFunction`: Triggers recalculation.
+    *   `Mecha.GenerateEnergy`: Hacks `__instance.reactorEnergy` to simulate higher fuel efficiency.
+*   **Technical Debt**:
+    *   **Hacky Energy**: Manually refunding energy in `GenerateEnergy` is prone to simulation errors.
+
+### 8. LessShipPower
+**Core Function**: Reduces energy cost for logistics vessels.
+*   **Files**: `LessShipPowerPlugin.cs`
+*   **Logic**:
+    *   **Simple Math**: Multiplies the result of energy cost calculations by a config value (`0.25f`).
+*   **Key Patches**:
+    *   `StationComponent.CalcTripEnergyCost`: Postfix on the return value.
+*   **Technical Debt**: None. Very clean and targeted.
+
+### 9. MaxLVLIncrease
+**Core Function**: Raises hard caps for vanilla infinite techs.
+*   **Files**: `MaxLVLIncreasePlugin.cs`
+*   **Logic**:
+    *   **LDBTool**: Subscribes to `EditDataAction`. Iterates `LDB.techs` finding any tech with `MaxLevel >= 1000` and bumps it to `50,000`.
+    *   **Save Fix**: Patches `GameHistoryData.Import` to fix save files where the level cap was previously lower.
+*   **Key Patches**: `GameHistoryData.Import`.
+*   **Technical Debt**:
+    *   **LDBTool Dependency**: Hard dependency on an external library for data editing.
+
+### 10. PilerMax
+**Core Function**: Improves Automatic Piler throughput.
+*   **Files**: `PilerMaxPlugin.cs`
+*   **Logic**:
+    *   **Cooldown Reset**: Forces `cacheCdTick` to 2 if `cacheItemId1 != 0`. This effectively allows the piler to operate every 2 ticks instead of waiting for full animations.
+*   **Key Patches**: `PilerComponent.InternalUpdate` (Prefix).
+*   **Technical Debt**:
+    *   **Animation Sync**: Might cause visual jitter as logical throughput exceeds animation speed.
+
+### 11. PinnedNamesEverywhere
+**Core Function**: Forces visibility of celestial names.
+*   **Files**: `PinnedNamesEverywherePlugin.cs`
+*   **Logic**:
+    *   **Late Update**: Hooks `UISpaceGuideEntry._OnLateUpdate`.
+    *   **Force Render**: Checks `history.GetStarPin` / `GetPlanetPin`. If pinned, forces `nameText.enabled = true` and overrides `color.a` (Alpha) to ensure visibility.
+*   **Key Patches**: `UISpaceGuideEntry._OnLateUpdate` (Postfix).
+*   **Technical Debt**:
+    *   **UI Overhead**: `_OnLateUpdate` runs every frame for every visible marker. Modifying materials/colors every frame is not performant.
+
+### 12. PlanetMinerFast
+**Core Function**: Speeds up the Advanced Mining Machine (Planet Miner).
+*   **Files**: `PlanetMinerFastPlugin.cs`
+*   **Logic**:
+    *   **Caching**: Uses `ConditionalWeakTable` to cache vein indices per planet (`PlanetVeinCache`). Rebuilds cache every 3600 ticks or on `RemoveVein`.
+    *   **Custom Tick**: Hooks `FactorySystem.GameTick`. Every 60 ticks (1s), it manually consumes energy and adds items to the station's storage, bypassing the standard miner logic.
+*   **Key Patches**: `FactorySystem.GameTick`.
+*   **Technical Debt**:
+    *   **Logic Duplication**: Re-implements mining logic (energy consumption, vein decrement) instead of speeding up the native component.
+    *   **Weaver Check**: Uses reflection to check for "DSP_Weaver" mod presence.
+
+### 13. SortByStorage
+**Core Function**: Adds sorting to storage containers.
+*   **Files**: `SortByStoragePlugin.cs`
+*   **Logic**:
+    *   **UI Injection**: Adds "Storage (Asc/Desc)" options to `UIStatisticsWindow.productSortBox`.
+    *   **Custom Sort**: Implements a dedicated Quicksort (`QuickSortByStorageDesc`) to sort `UIProductEntryData` arrays based on `storageCount`.
+    *   **Transpiler**: Injects `storageCount` capture into `DetermineProductEntryList`.
+*   **Key Patches**: `UIStatisticsWindow.DetermineProductEntryList` (Transpiler + Postfix).
+*   **Technical Debt**:
+    *   **Complex Transpiler**: Scans for `Ldloc` indices which is fragile.
+
+### 14. SpaceTargetEverything
+**Core Function**: Allows clicking/targeting any celestial body.
+*   **Files**: `SpaceTargetEverythingPlugin.cs`
+*   **Logic**:
+    *   **Auto-Targeting**: Iterates `combatSpaceSystem.fleets`. If a fleet has `TargetType.None` but is orbiting a planet with enemies, it auto-assigns the target to the first enemy unit found.
+*   **Key Patches**: `SpaceSector.GameTick` (Postfix).
+*   **Technical Debt**:
+    *   **Misleading Name**: The code actually implements *Fleet Auto-Targeting*, not "Click to Target". The name suggests a UI mod, but the logic is AI/Combat.
+
+### 15. SpaciousStations
+**Core Function**: Increases Logistics Station storage and throughput.
+*   **Files**: `SpaciousStationsPlugin.cs`
+*   **Logic**:
+    *   **Deep Integration**: Configures Drones, Ships, Storage, Charge, and Energy limits separately for PLS and ILS.
+    *   **State Tracking**: Tracks `InternalLastStorageMultiplier` to detect config changes and apply them dynamically to existing stations.
+    *   **UI Sliders**: Updates `UIStationWindow` slider maximums to reflect new caps.
+*   **Key Patches**:
+    *   `PlanetTransport.NewStationComponent`: Applies stats on creation.
+    *   `GameMain.Begin`: Verifies limits on load.
+    *   `ExtraStorage_Transpiler`: Patches `GameHistoryData` storage calculation.
+*   **Technical Debt**:
+    *   **Complex Sync**: Keeping `UI`, `Component`, and `History` data in sync requires massive postfix/transpiler coverage.
+
+### 16. StacksizeMultiplier
+**Core Function**: Global multiplier for item stack sizes.
+*   **Files**: `StacksizeMultiplierPlugin.cs`
+*   **Logic**:
+    *   **Iterative Apply**: `ApplyMultiplier()` iterates `LDB.items`. Calculates new stack size based on `GlobalItemMultiplier` or `GlobalBuildingMultiplier`.
+    *   **Overrides**: Supports per-item overrides via a Dictionary/Config string.
+    *   **Inventory Sync**: Forces `GameMain.mainPlayer.package.NotifyStorageChange()` to update existing items.
+*   **Key Patches**: `VFPreload.InvokeOnLoadWorkEnded`.
+*   **Technical Debt**:
+    *   **Immediate Mode GUI**: Custom `OnGUI` window for overrides is functional but stylistically distinct from the game.
+
+### 17. TechHashReduce
+**Core Function**: Reduces research costs.
+*   **Files**: `TechHashReducePlugin.cs`
+*   **Logic**:
+    *   **Hash Scaling**: Patches `TechProto.GetHashNeeded` to multiply the requirement by `HashrateScale` (e.g., 0.5x).
+    *   **Save Fix**: On `GameHistoryData.Import`, checks if `hashUploaded >= hashNeeded` (due to reduced cap) and clamps it to prevent overflow bugs.
+*   **Key Patches**: `TechProto.GetHashNeeded` (Postfix).
+*   **Technical Debt**: None.
+
+### 18. VesselTrails
+**Core Function**: Renders 3D trails for logistics vessels.
+*   **Files**: `VesselTrailsPlugin.cs`
+*   **Logic**:
+    *   **Data Collection**: `LateUpdate` scans `workShipDatas`. Builds `RoutePath` objects.
+    *   **Rendering**: `OnRenderObject` draws lines using `GL.QUADS`.
+    *   **Math**: Uses `cam.worldToCameraMatrix` to render relative to the camera, avoiding floating-point jitter at large coordinates.
+*   **Key Patches**: `GameMain.Begin` (to spawn the Renderer GameObject).
+*   **Technical Debt**:
+    *   **Performance**: Immediate mode GL rendering is CPU bound. Should use `DrawMeshInstanced`.
+
+---
+
+## 3. PROPOSAL: DYSONMODS.CORE (SHARED LIBRARY)
+
+The analysis reveals significant code duplication and common patterns that should be centralized.
+
+### 1. Unified UI Framework (DysonUI)
+- **Problem**: StacksizeMultiplier, BottleneckUI, and VesselTrails all re-implement draggable windows and resizing logic.
+- **Solution**: A shared `WindowBase` class that handles input, layout, skins, and persistence.
+
+### 2. Multiplier Registry
+- **Problem**: FactoryMultiplier, SpaciousStations, and PlanetMinerFast all implement their own scaling logic and re-application loops.
+- **Solution**: A `MultiplierService` where mods register multipliers. Components query this service, and the service handles "Dirty" states to trigger efficient batch updates.
+
+### 3. Throttled Update Service
+- **Problem**: DistributeWarpers, SpaceTargetEverything, and BottleneckUI run heavy logic in `GameTick` or `Update`.
+- **Solution**: A `TickManager` providing `OnSlowTick` (1s) and `OnLazyTick` (10s) events to spread CPU load.
+
+### 4. Cached Data Access
+- **Problem**: Multiple mods iterate `LDB.items` or `LDB.techs` repeatedly.
+- **Solution**: Pre-built indices (e.g., `ItemsByProtoID`, `VeinsByPlanet`) in the Core library.

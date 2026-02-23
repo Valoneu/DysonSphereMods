@@ -6,6 +6,9 @@
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
+    <BepInExPluginGuid>com.Valoneu.InfinityTechnologies</BepInExPluginGuid>
+    <BepInExPluginName>InfinityTechnologies</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
   </PropertyGroup>
 
   <ItemGroup>

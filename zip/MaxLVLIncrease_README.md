@@ -1,32 +1,19 @@
 # MaxLVLIncrease
-**Endgame Research Extension**
+
+Strips out the arbitrary level caps injected by late-game infinite research technologies, allowing all repeating tech (like Vein Utilization and Drone Speed) to scale literally forever.
 
 ---
 
-![Category](https://img.shields.io/badge/Category-Research-blue?style=flat-square)
-![Scope](https://img.shields.io/badge/Scale-Endgame-green?style=flat-square)
+## Technical Information
 
-Breaks the default level restrictions on infinite research technologies to allow for extended endgame progression.
+### Mechanics and Configuration
+- `MaxLevel`: Default `99999` (or infinite). Standard configuration cap variable.
 
----
+### Deep Technical Details
+Overwrites the game's native tech-tree maximum definitions during initialization by patching the proto database immediately after the localized dictionary load sequence.
 
-## Specifications
-* **Level Extension:** Raises the maximum research cap from the vanilla 10,000 to **50,000**.
-* **Flexibility:** Maximum level is fully configurable via the BepInEx configuration file.
-* **Compatibility:** Safely integrates with existing save files.
-
----
-
-## Version History
-
-| Version | Description of Changes |
-| :--- | :--- |
-| **1.0.4** | Corrected config application logic for existing saves. |
-| **1.0.3** | Implemented configuration file support. |
-| **1.0.0** | Initial release. |
+### Dependencies
+* **BepInEx**
 
 ---
-**Developer:** Valoneu#8617 on Discord
-
-
-
+**Developer:** Valoneu

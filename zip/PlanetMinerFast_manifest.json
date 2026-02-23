@@ -1,0 +1,9 @@
+{
+    "name": "PlanetMinerFast",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/PlanetMinerFast",
+    "description": "Optimized version of PlanetMiner. Mines veins directly into stations set to Local Demand. Low UPS impact.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.21"
+    ]
+}

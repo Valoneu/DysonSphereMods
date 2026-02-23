@@ -1,0 +1,21 @@
+```ini
+Error report: Game version 0.10.34.28470 with 50 mods used.
+possible candidates: [FactoryOverclock2.1.9]
+InvalidProgramException: Invalid IL code in (wrapper dynamic-method) FactoryMultiplier.AssemblerPatcher:DMD<FactoryMultiplier.AssemblerPatcher::CallOriginalStationInternalTickRemote> (StationComponent,PlanetFactory,int,single,single,int,StationComponent[],AstroData[],VectorLF3&,UnityEngine.Quaternion&,single,single,int,bool): IL_265b: ldelema   0x000006f9
+System.RuntimeMethodHandle.GetFunctionPointer (); (IL_0000)
+MonoMod.RuntimeDetour.Platforms.DetourRuntimeILPlatform.GetFunctionPointer (System.Reflection.MethodBase method, System.RuntimeMethodHandle handle); (IL_0000)
+MonoMod.RuntimeDetour.Platforms.DetourRuntimeILPlatform.GetNativeStart (System.Reflection.MethodBase method); (IL_004D)
+MonoMod.RuntimeDetour.DetourHelper.GetNativeStart (System.Reflection.MethodBase method); (IL_0005)
+MonoMod.RuntimeDetour.Detour._TopApply (); (IL_0025)
+...(skip the middle 9 lines)
+HarmonyLib.PatchClassProcessor.ReportException (System.Exception exception, System.Reflection.MethodBase original); (IL_0045)
+HarmonyLib.PatchClassProcessor.Patch (); (IL_0084)
+HarmonyLib.Harmony.PatchAll (System.Type type); (IL_0008)
+FactoryMultiplier.MultiplierPlugin.Awake (); (IL_006B)
+UnityEngine.GameObject:AddComponent(Type)
+BepInEx.Bootstrap.Chainloader:Start()
+UnityEngine.Application:.cctor()
+XLogHandler:Register()
+GlobalObject:Initialize()
+[== Mods on stack trace ==]: [FactoryMultiplier]
+```

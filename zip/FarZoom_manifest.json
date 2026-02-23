@@ -1,9 +1,9 @@
 {
     "name": "FarZoom",
-    "version_number": "1.0.1",
-    "website_url": "https://github.com/Valoneu/DysonSphereMods",
-    "description": "Allows zooming further away from the mech and changing FOV with shift + scroll",
+    "version_number": "1.1.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/FarZoom",
+    "description": "Allows zooming further away from the mech, planet, and in starmap.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.5"
+        "xiaoye97-BepInEx-5.4.17"
     ]
 }

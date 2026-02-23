@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>SpaciousStations</AssemblyName>
     <Description>Multiplies station drone/ship counts, storage capacity and charge power.</Description>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <BepInExPluginGuid>com.Valoneu.SpaciousStations</BepInExPluginGuid>
     <BepInExPluginName>SpaciousStations</BepInExPluginName>
-    <BepInExPluginVersion>1.1.0</BepInExPluginVersion>
+    <BepInExPluginVersion>1.2.0</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />

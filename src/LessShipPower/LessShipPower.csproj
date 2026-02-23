@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>LessShipPower</Description>
+    <Version>1.1.0</Version>
+    <AssemblyName>com.Valoneu.LessShipPower</AssemblyName>
+    <BepInExPluginGuid>com.Valoneu.LessShipPower</BepInExPluginGuid>
+    <BepInExPluginName>LessShipPower</BepInExPluginName>
+    <BepInExPluginVersion>1.1.0</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
+  </ItemGroup>
+</Project>

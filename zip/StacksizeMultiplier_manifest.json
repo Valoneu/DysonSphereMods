@@ -1,10 +1,10 @@
 {
     "name": "StacksizeMultiplier",
-    "version_number": "1.0.0",
-    "website_url": "https://github.com/Valoneu/DysonSphereMods",
-    "description": "Multiplies the maximum stack size of all items and buildings.",
+    "version_number": "1.1.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/StacksizeMultiplier",
+    "description": "Scalable item stack size multiplier for all game items.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.5",
+        "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5"
     ]
 }

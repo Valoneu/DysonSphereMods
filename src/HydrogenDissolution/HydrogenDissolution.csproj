@@ -1,10 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>HydrogenDissolution</Description>
-    <Version>1.0.1</Version>
+    <Description>Adds a chemical recipe to dissolve excess Hydrogen.</Description>
+    <Version>1.1.0</Version>
+    <AssemblyName>com.Valoneu.HydrogenDissolution</AssemblyName>
     <BepInExPluginGuid>com.Valoneu.HydrogenDissolution</BepInExPluginGuid>
     <BepInExPluginName>HydrogenDissolution</BepInExPluginName>
-    <BepInExPluginVersion>1.0.1</BepInExPluginVersion>
+    <BepInExPluginVersion>1.1.0</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />

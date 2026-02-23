@@ -1,34 +1,19 @@
 # DistributeWarpers
-**Automated Logistics Synchronization**
+
+Automates the balancing of Space Warpers across an entire planet. Instead of manually belting warpers to every station, this mod aggregates warpers and automatically inserts them into the internal warper slots of any station requesting them.
 
 ---
 
-![Category](https://img.shields.io/badge/Category-Automation-blue?style=flat-square)
-![Scope](https://img.shields.io/badge/Scope-Planetwide-green?style=flat-square)
+## Technical Information
 
-Streamlines interstellar logistics by automating the distribution of Space Warpers between stations on a single planet.
+### Mechanics and Configuration
+- `TargetCount`: Default `50`. The number of warpers to maintain in a station's internal slot.
 
----
+### Deep Technical Details
+Subscribes to `TickManager`'s slow-tick event (every 60 frames) to scan planetary logistics pools and silently transfer items without triggering expensive physics updates in the main game loop.
 
-## Features
-
-### Distribution Engine
-* **Automated Refills:** Automatically extracts Space Warpers from station cargo slots and populates the dedicated internal warper slot of every station on the planet.
-* **Inventory Management:** Maintains a target threshold (Default: **50**) per station to ensure consistent interstellar availability.
-
-### Efficiency
-* **Configuration:** Eliminates the need to manually configure warper request slots on every individual ILS.
+### Dependencies
+* **BepInEx**
 
 ---
-
-## Version History
-
-| Version | Description of Changes |
-| :--- | :--- |
-| **1.0.2** | Initial release. Automated warper distribution logic. |
-
----
-**Developer:** Valoneu#8617 on Discord
-
-
-
+**Developer:** Valoneu

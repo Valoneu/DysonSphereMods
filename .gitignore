@@ -52,6 +52,7 @@ temp_stage/
 /tcli_bin
 /publish
 /tmp
+/oldsrc
 
 # NuGet
 *.nuget.props

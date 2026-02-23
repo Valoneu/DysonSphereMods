@@ -1,15 +1,20 @@
 # PinnedNamesEverywhere
 
-Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges.
+Forces pinned star and planet names alongside their distances to remain globally visible on your screen, even when you are lightyears away on the opposite side of the cluster.
 
-## Features
-- Pinned objects (stars, planets, hives, etc.) always show their name label.
-- Labels remain visible even when they are at the edge of the screen (no more need to hover over the arrow icon).
-- Labels remain clearly visible even at long distances (configurable minimum opacity).
-- Configurable option to also always show distances for pinned objects.
+---
 
-## Configuration
-All settings can be adjusted via the standard BepInEx configuration framework.
-- `AlwaysShowPinnedNames`: Enable or disable the core feature.
-- `AlwaysShowPinnedDistances`: Whether to also always show distances for pinned objects.
-- `PinnedNamesMinimumAlpha`: Minimum opacity for pinned labels (default: 0.8).
+## Technical Information
+
+### Mechanics and Configuration
+- `Alpha`: Configuration for GUI text transparency levels.
+- `Visibility`: Toggle distance culling bounds.
+
+### Deep Technical Details
+Replaces logic inside `UIStarmap` and localized GUI renderers. Uses an optimized cache mechanism to limit string allocations while rendering external 3D space text onto the 2D UI plane.
+
+### Dependencies
+* **BepInEx**
+
+---
+**Developer:** Valoneu

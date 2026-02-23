@@ -1,0 +1,1 @@
+planetminer lagging the game, optimisations for factory multiplier, make sure that bottleneckUI and infinite tech and pinnednames and spacetargetevrything and sortbystorage works

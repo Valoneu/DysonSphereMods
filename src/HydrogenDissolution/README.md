@@ -1,29 +1,19 @@
 # HydrogenDissolution
-**Resource Management Utility**
+
+Adds a new, highly-efficient chemical plant recipe designed exclusively to destroy excess Hydrogen. Perfect for late-game refining layouts or antimatter setups that stall due to trapped hydrogen backups.
 
 ---
 
-![Category](https://img.shields.io/badge/Category-Resources-blue?style=flat-square)
-![Utility](https://img.shields.io/badge/Type-Sink-cyan?style=flat-square)
+## Technical Information
 
-Provides a specialized recipe to prevent factory stalls by safely consuming excess Hydrogen at high volumes.
+### Mechanics and Configuration
+- No direct configuration required. The recipe is automatically injected into the central game registry.
 
----
+### Deep Technical Details
+Uses BepInEx to execute Harmony patches alongside CommonAPI's `ProtoRegistry` to safely inject `ERecipeType.Chemical` (ID 650) directly into the item database at runtime.
 
-## Features
-* **Hydrogen Sink:** Adds a Chemical Plant recipe to dissolve **100 Hydrogen** into **1 Hydrogen**.
-* **Process Stability:** Prevents oil refinery and gas giant extraction stalls caused by full storage buffers.
-
----
-
-## Version History
-
-| Version | Description of Changes |
-| :--- | :--- |
-| **1.0.1** | Resolved recipe ID conflicts with other popular mods. |
-| **1.0.0** | Initial release. |
+### Dependencies
+* **BepInEx, CommonAPI**
 
 ---
-**Developer:** Valoneu#8617 on Discord
-
-
+**Developer:** Valoneu

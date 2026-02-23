@@ -1,10 +1,10 @@
 {
     "name": "SortByStorage",
     "version_number": "1.0.0",
-    "website_url": "https://github.com/Valoneu/DysonSphereMods",
-    "description": "Allows sorting by stored amount in the statistics panel.",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/SortByStorage",
+    "description": "Adds a \"Storage\" sort option to the Production Statistics panel to sort by total stored quantity.",
     "dependencies": [
-        "BepInEx-BepInExPack-5.4.21",
+        "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5"
     ]
 }

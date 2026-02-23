@@ -1,22 +1,22 @@
 <Solution>
   <Folder Name="/src/">
-    <Project Path="src/CustomWarpSound/CustomWarpSound.csproj" />
-    <Project Path="src/DistributeWarpers/DistributeWarpers.csproj" />
-    <Project Path="src/FactoryMultiplier/FactoryMultiplier.csproj" />
     <Project Path="src/BottleneckUI/BottleneckUI.csproj" />
-    <Project Path="src/HydrogenDissolution/HydrogenDissolution.csproj" />
-    <Project Path="src/LessVesselPower/LessVesselPower.csproj" />
-    <Project Path="src/MaxLVLIncrease/MaxLVLIncrease.csproj" />
-    <Project Path="src/PilerMax/PilerMax.csproj" />
-    <Project Path="src/Shared/Shared.csproj" />
     <Project Path="src/CloserStations/CloserStations.csproj" />
+    <Project Path="src/DistributeWarpers/DistributeWarpers.csproj" />
+    <Project Path="src/FactoryOverclock/FactoryOverclock.csproj" />
+    <Project Path="src/FarZoom/FarZoom.csproj" />
+    <Project Path="src/HydrogenDissolution/HydrogenDissolution.csproj" />
+    <Project Path="src/InfinityTechnologies/InfinityTechnologies.csproj" />
+    <Project Path="src/LessShipPower/LessShipPower.csproj" />
+    <Project Path="src/MaxLVLIncrease/MaxLVLIncrease.csproj" />
+    <Project Path="src/PinnedNamesEverywhere/PinnedNamesEverywhere.csproj" />
+    <Project Path="src/PlanetMinerFast/PlanetMinerFast.csproj" />
+    <Project Path="src/Shared/Shared.csproj" />
+    <Project Path="src/SortByStorage/SortByStorage.csproj" />
+    <Project Path="src/SpaceTargetEverything/SpaceTargetEverything.csproj" />
     <Project Path="src/SpaciousStations/SpaciousStations.csproj" />
-    <Project Path="src/VesselTrails/VesselTrails.csproj" />
     <Project Path="src/StacksizeMultiplier/StacksizeMultiplier.csproj" />
     <Project Path="src/TechHashReduce/TechHashReduce.csproj" />
-    <Project Path="src/FarZoom/FarZoom.csproj" />
-    <Project Path="src/InfinityTechnologies/InfinityTechnologies.csproj" />
-    <Project Path="src/SortByStorage/SortByStorage.csproj" />
-    <Project Path="src/PinnedNamesEverywhere/PinnedNamesEverywhere.csproj" />
+    <Project Path="src/VesselTrails/VesselTrails.csproj" />
   </Folder>
 </Solution>

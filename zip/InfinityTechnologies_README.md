@@ -1,22 +1,19 @@
-# Infinity Technologies
+# InfinityTechnologies
 
-Adds new infinite technologies to Dyson Sphere Program.
+Allows for more granular, balanced control over the infinite research levels by recalculating tech requirements, ensuring late-game research paths scale infinitely efficiently.
 
-## Features
+---
 
-### Normal Price Techs
-- **Infinite Inventory**: Increases player inventory capacity.
-- **Wireless Power Boost**: Increases mecha charging speed from power towers.
-- **Ray Receiver Overclock**: Increases max power output of Ray Receivers.
-- **Accumulator Optimization**: Increases charge/discharge speed of Accumulators.
-- **Auto-Repair Efficiency**: Increases structural repair speed.
+## Technical Information
 
-### Giga Price Techs (Requires White Science)
-- **Dyson Sphere Efficiency**: Increases total power output of the Dyson Sphere.
-- **Proliferator Enhancement**: Strengthens proliferation effects (up to 25%).
-- **Advanced Fuel Consumption**: Increases energy yield from mecha fuel.
-- **Logistics Combat Optimization**: Increases shooting speed of turrets, drones and vessels.
-- **Research Productivity**: Increases research hashes produced per matrix consumed.
+### Mechanics and Configuration
+- Customizable technology multipliers and toggle overrides via BepInEx config manager.
 
-## Installation
-Requires BepInEx and CommonAPI.
+### Deep Technical Details
+Utilizes fast MSIL Delegates (`AccessTools.FieldRefAccess`) to bypass standard reflection overhead during Dyson Sphere power updates and technology node recalculations to ensure high UPS.
+
+### Dependencies
+* **BepInEx**
+
+---
+**Developer:** Valoneu

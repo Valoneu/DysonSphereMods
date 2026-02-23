@@ -1,10 +1,10 @@
 {
     "name": "MaxLVLIncrease",
-    "version_number": "1.0.4",
+    "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/MaxLVLIncrease",
-    "description": "are you maxed on lvl 10k well now you are not",
+    "description": "Extension of the infinite research level cap.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.5",
+        "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5",
         "xiaoye97-LDBTool-3.0.2"
     ]

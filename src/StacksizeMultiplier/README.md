@@ -1,12 +1,21 @@
 # StacksizeMultiplier
-**Configurable Item Stack Density**
 
-StacksizeMultiplier allows you to scale up the maximum stack size of all items and buildings in Dyson Sphere Program, reducing the footprint of your storage buffers and making inventory management much easier.
-
-## Features
-* **Global Multiplier:** Scales every item in the game database.
-* **Highly Compatible:** Works by modifying item prototypes at load-time, compatible with most other mods.
-* **Safe Caps:** Automatically clamps values to prevent overflow or game instability.
+Provides a massive, globally customizable stack size multiplier to all game items, saving massive amounts of inventory and storage space. Includes a dedicated UI panel for live fine-tuning.
 
 ---
-**Developer:** Valoneu#8617 on Discord
+
+## Technical Information
+
+### Mechanics and Configuration
+- `Hotkey`: Default `LeftAlt + S` to open the Stack Size adjustment UI panel in-game.
+- `GlobalMultiplier`: Multiplies all items globally on load.
+- Contains unique save states for individual custom item overrides.
+
+### Deep Technical Details
+Implements a custom `StacksizeMultiplierWindow` completely inheriting from native `WindowBase` to ensure seamless scrolling/interaction with the native Canvas DSP pipeline.
+
+### Dependencies
+* **BepInEx, CommonAPI**
+
+---
+**Developer:** Valoneu

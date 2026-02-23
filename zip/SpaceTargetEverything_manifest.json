@@ -1,0 +1,10 @@
+{
+    "name": "SpaceTargetEverything",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/SpaceTargetEverything",
+    "description": "Allows space vessels to target everything on the ground by finding alternative ground targets when idle.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.17",
+        "CommonAPI-CommonAPI-1.6.5"
+    ]
+}

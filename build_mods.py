@@ -12,16 +12,7 @@ ASSETS_DIR = "zip"
 FINAL_DIR = "final"
 TEMP_STAGE = "temp_stage"
 
-ZIP_NAME_MAP = {
-    "FactoryMultiplier": "FactoryOverclock.zip",
-    "HydrogenDissolution": "HydrogenDissolution.zip"
-}
 
-VERSION_KEY_MAP = {
-    "FactoryMultiplier": "FactoryOverclock",
-    "DSPFactorySpaceStations": "FactorySpaceStation",
-    "LessVesselPower": "LessShipPower"
-}
 
 EXCLUDE_DLLS = {
     "bepinex.dll", "0harmony.dll", "unityengine.dll", "unityengine.coremodule.dll", 
@@ -117,12 +108,11 @@ def update_mod_versions(versions):
         if not os.path.isdir(mod_path) or mod_folder == "Shared":
             continue
 
-        version_key = VERSION_KEY_MAP.get(mod_folder, mod_folder)
-        if version_key not in versions:
-            print(f"  [Info] No version found for {mod_folder} (key: {version_key}) in versions.json.")
+        if mod_folder not in versions:
+            print(f"  [Info] No version found for {mod_folder} in versions.json.")
             continue
         
-        new_version = versions[version_key]
+        new_version = versions[mod_folder]
         print(f"  Updating {mod_folder} to {new_version}...")
 
         # Update .csproj
@@ -224,7 +214,7 @@ def package_mod(mod_folder_name):
         return
 
     print(f"Packaging {mod_folder_name}...")
-    zip_filename = ZIP_NAME_MAP.get(mod_folder_name, f"{mod_folder_name}.zip")
+    zip_filename = f"{mod_folder_name}.zip"
     zip_path = os.path.join(FINAL_DIR, zip_filename)
     stage_dir = os.path.join(TEMP_STAGE, mod_folder_name)
     
