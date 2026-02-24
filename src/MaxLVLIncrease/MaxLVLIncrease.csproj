@@ -7,6 +7,6 @@
     <BepInExPluginVersion>1.1.0</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />
   </ItemGroup>
 </Project>

@@ -19,7 +19,7 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.1.0";
+        public const string MOD_VERSION = "1.2.0";
 
         public static ConfigEntry<float> PLS_DroneMultiplier;
         public static ConfigEntry<float> PLS_ShipMultiplier;
@@ -363,12 +363,79 @@ namespace SpaciousStations
         {
             if (LDB.items != null) foreach (var item in LDB.items.dataArray) ApplyToItem(item);
             
+            // Fix all existing stations - Import postfix may have missed them because
+            // _originalValues wasn't populated yet when Import ran during load.
+            if (GameMain.data?.factories != null)
+            {
+                foreach (var factory in GameMain.data.factories)
+                {
+                    if (factory?.transport?.stationPool == null) continue;
+                    foreach (var station in factory.transport.stationPool)
+                    {
+                        if (station == null || station.id <= 0 || station.entityId <= 0) continue;
+
+                        int protoId = factory.entityPool[station.entityId].protoId;
+                        var itemProto = LDB.items.Select(protoId);
+                        if (itemProto?.prefabDesc == null || !_originalValues.TryGetValue(itemProto.ID, out var original)) continue;
+
+                        var desc = itemProto.prefabDesc;
+
+                        // Fix drone array and energy
+                        station.PatchDroneArray(desc.stationMaxDroneCount);
+                        station.energyMax = desc.stationMaxEnergyAcc;
+                        station.energyPerTick = desc.workEnergyPerTick;
+                        station.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
+
+                        // Fix storage limits - scale proportionally to preserve slider positions
+                        if (station.storage != null)
+                        {
+                            float storageMul = desc.isStellarStation
+                                ? MultiplierService.GetMultiplier("Station_ILS_Storage")
+                                : MultiplierService.GetMultiplier("Station_PLS_Storage");
+                            int vanillaExtra = GetVanillaAdditionStorage(station);
+                            int vanillaMax = original.ItemCount + vanillaExtra;
+                            int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * storageMul);
+
+                            for (int i = 0; i < station.storage.Length; i++)
+                            {
+                                if (station.storage[i].itemId > 0 && station.storage[i].max < newMax)
+                                {
+                                    int currentMax = station.storage[i].max;
+                                    if (vanillaMax > 0 && currentMax <= vanillaMax)
+                                    {
+                                        // Scale proportionally: if player had slider at 50% of old max, keep 50% of new max
+                                        station.storage[i].max = (int)((float)currentMax / vanillaMax * newMax);
+                                    }
+                                    // If current max is between vanillaMax and newMax, it was from a previous
+                                    // multiplier session — leave as-is (player already had a custom value)
+                                }
+                            }
+                        }
+
+                        // Fix charge power on consumer - scale proportionally
+                        if (!desc.isCollectStation && station.pcId > 0 && factory.powerSystem != null
+                            && station.pcId < factory.powerSystem.consumerCursor)
+                        {
+                            long currentCharge = factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick;
+                            long vanillaCharge = original.EnergyPerTick;
+                            long newCharge = desc.workEnergyPerTick;
+                            if (currentCharge < newCharge && vanillaCharge > 0)
+                            {
+                                // Scale proportionally: preserve slider position relative to old max
+                                factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick =
+                                    (long)((double)currentCharge / vanillaCharge * newCharge);
+                            }
+                        }
+                    }
+                }
+            }
+
             float currStoreMul = MultiplierService.GetMultiplier("Station_ILS_Storage");
             float currChargeMul = MultiplierService.GetMultiplier("Station_ILS_Charge");
             SpaciousStationsPlugin.InternalLastStorageMultiplier.Value = currStoreMul;
             SpaciousStationsPlugin.InternalLastChargeMultiplier.Value = currChargeMul;
             
-            Log.Info("GameMain.Begin: Station limits verified.");
+            Log.Info("GameMain.Begin: All station limits synced.");
         }
 
         [HarmonyPostfix]
@@ -488,6 +555,51 @@ namespace SpaciousStations
         {
             if (station == null || GameMain.history == null) return 0;
             return !station.isCollector ? (!station.isVeinCollector ? (!station.isStellar ? GameMain.history.localStationExtraStorage : GameMain.history.remoteStationExtraStorage) : GameMain.history.localStationExtraStorage) : GameMain.history.localStationExtraStorage;
+        }
+
+        // --- Closest Drone Dispatch: sort localPairs by distance after they are built ---
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.RematchLocalPairs))]
+        public static void RematchLocalPairs_Postfix(StationComponent __instance, StationComponent[] stationPool)
+        {
+            if (__instance.localPairs == null || __instance.localPairCount <= 1) return;
+
+            var dock = __instance.droneDock;
+            Array.Sort(__instance.localPairs, 0, __instance.localPairCount, new LocalPairDistanceComparer(__instance.id, dock, stationPool));
+        }
+
+        private struct LocalPairDistanceComparer : IComparer<SupplyDemandPair>
+        {
+            private readonly int _myId;
+            private readonly Vector3 _myDock;
+            private readonly StationComponent[] _pool;
+
+            public LocalPairDistanceComparer(int myId, Vector3 myDock, StationComponent[] pool)
+            {
+                _myId = myId;
+                _myDock = myDock;
+                _pool = pool;
+            }
+
+            public int Compare(SupplyDemandPair a, SupplyDemandPair b)
+            {
+                float distA = GetDistSq(a);
+                float distB = GetDistSq(b);
+                return distA.CompareTo(distB);
+            }
+
+            private float GetDistSq(SupplyDemandPair pair)
+            {
+                int otherId = pair.supplyId == _myId ? pair.demandId : pair.supplyId;
+                if (otherId <= 0 || otherId >= _pool.Length || _pool[otherId] == null)
+                    return float.MaxValue;
+
+                var otherDock = _pool[otherId].droneDock;
+                float dx = _myDock.x - otherDock.x;
+                float dy = _myDock.y - otherDock.y;
+                float dz = _myDock.z - otherDock.z;
+                return dx * dx + dy * dy + dz * dz;
+            }
         }
     }
 }

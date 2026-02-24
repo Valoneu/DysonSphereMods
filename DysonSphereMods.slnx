@@ -11,7 +11,7 @@
     <Project Path="src/MaxLVLIncrease/MaxLVLIncrease.csproj" />
     <Project Path="src/PinnedNamesEverywhere/PinnedNamesEverywhere.csproj" />
     <Project Path="src/PlanetMinerFast/PlanetMinerFast.csproj" />
-    <Project Path="src/Shared/Shared.csproj" />
+
     <Project Path="src/SortByStorage/SortByStorage.csproj" />
     <Project Path="src/SpaceTargetEverything/SpaceTargetEverything.csproj" />
     <Project Path="src/SpaciousStations/SpaciousStations.csproj" />

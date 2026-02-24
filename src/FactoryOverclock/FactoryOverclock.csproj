@@ -7,7 +7,7 @@
     <BepInExPluginVersion>3.0.0</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj" />
+    <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />
     <PackageReference Include="DysonSphereProgram.Modding.DSPModSave" Version="1.2.0" />
     <PackageReference Include="DysonSphereProgram.Modding.LDBTool" Version="3.0.0" />
     <PackageReference Include="DysonSphereProgram.Modding.NebulaMultiplayerModApi" Version="2.0.0" />

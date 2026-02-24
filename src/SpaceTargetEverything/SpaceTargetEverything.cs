@@ -11,7 +11,7 @@ namespace SpaceTargetEverything
     {
         public const string MOD_GUID = "com.Valoneu.SpaceTargetEverything";
         public const string MOD_NAME = "SpaceTargetEverything";
-        public const string MOD_VERSION = "1.0.1";
+        public const string MOD_VERSION = "1.0.0";
 
         private void Awake()
         {

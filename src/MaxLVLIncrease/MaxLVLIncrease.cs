@@ -12,7 +12,7 @@ namespace MaxLVLIncrease
     {
         public const string GUID = "com.Valoneu.MaxLVLIncrease";
         public const string NAME = "MaxLVLIncrease";
-        public const string VERSION = "1.0.4";
+        public const string VERSION = "1.1.0";
 
         private static ConfigEntry<int> _maxLevelConfig;
 

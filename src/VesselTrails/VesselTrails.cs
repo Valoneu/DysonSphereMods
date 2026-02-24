@@ -19,7 +19,7 @@ namespace VesselTrails
     {
         public const string MOD_GUID = "com.Valoneu.VesselTrails";
         public const string MOD_NAME = "VesselTrails";
-        public const string MOD_VERSION = "1.2.1";
+        public const string MOD_VERSION = "1.3.0";
 
         public static ConfigEntry<bool> ShowTrails;
         public static ConfigEntry<bool> ShowHoverTooltips;

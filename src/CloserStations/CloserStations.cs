@@ -13,7 +13,7 @@ namespace CloserStations
     {
         public const string GUID = "com.Valoneu.CloserStations";
         public const string NAME = "CloserStations";
-        public const string VERSION = "1.0.0";
+        public const string VERSION = "1.1.0";
 
         public static ConfigEntry<float> DistanceMultiplier;
 

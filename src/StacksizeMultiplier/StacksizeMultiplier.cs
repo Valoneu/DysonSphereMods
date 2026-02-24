@@ -19,7 +19,7 @@ namespace StacksizeMultiplier
     {
         public const string MOD_GUID = "com.Valoneu.StacksizeMultiplier";
         public const string MOD_NAME = "StacksizeMultiplier";
-        public const string MOD_VERSION = "1.0.0";
+        public const string MOD_VERSION = "1.1.0";
 
         public static ConfigEntry<float> GlobalItemMultiplier;
         public static ConfigEntry<float> GlobalBuildingMultiplier;

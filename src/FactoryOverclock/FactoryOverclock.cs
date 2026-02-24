@@ -23,7 +23,7 @@ namespace FactoryOverclock
     {
         public const string GUID = "com.Valoneu.FactoryOverclock";
         public const string NAME = "FactoryOverclock";
-        public const string VERSION = "2.1.9";
+        public const string VERSION = "3.0.0";
 
         private Harmony _harmony;
         public static int BattlefieldAnalysisBaseProtoId = 3009;
@@ -50,19 +50,7 @@ namespace FactoryOverclock
                 _harmony.PatchAll(typeof(StationPatcher.MoreMegaStructureCompat));
             }
 
-            SyncConfigToService();
-            
             Log.Info($"{NAME} {VERSION} loaded.");
-        }
-
-        private void SyncConfigToService()
-        {
-            MultiplierService.SetMultiplier("Assemble", PluginConfig.multiplierEnabled.Value ? PluginConfig.assembleMultiplier.Value : 1f);
-            MultiplierService.SetMultiplier("Mining", PluginConfig.multiplierEnabled.Value ? PluginConfig.miningMultiplier.Value : 1f);
-            MultiplierService.SetMultiplier("Smelt", PluginConfig.multiplierEnabled.Value ? PluginConfig.smeltMultiplier.Value : 1f);
-            MultiplierService.SetMultiplier("Belt", PluginConfig.multiplierEnabled.Value ? (float)PluginConfig.beltMultiplier : 1f);
-            MultiplierService.SetMultiplier("Station", PluginConfig.multiplierEnabled.Value ? (float)PluginConfig.stationMultiplier : 1f);
-            MultiplierService.CommitChanges();
         }
 
         private void Update()
@@ -84,7 +72,6 @@ namespace FactoryOverclock
                     UIRealtimeTip.Popup("Applying multipliers to factory");
                 }
 
-                SyncConfigToService();
                 RefreshAllSystems();
             }
         }
@@ -94,7 +81,7 @@ namespace FactoryOverclock
             if (GameMain.data?.factories == null) return;
             
             Log.Info("Refreshing all factory systems...");
-            StationPatcher.ApplyStationBaseMultipliers();
+
 
             foreach (var factory in GameMain.data.factories)
             {
@@ -116,10 +103,7 @@ namespace FactoryOverclock
                     BeltPatcher.SyncBelts(factory);
                 }
 
-                if (factory.transport != null)
-                {
-                    StationPatcher.SyncStations(factory);
-                }
+
             }
         }
 
@@ -164,8 +148,8 @@ namespace FactoryOverclock
         private static ConfigEntry<int> _inserterMultiplier;
         private static ConfigEntry<int> _turretMultiplier;
         private static ConfigEntry<int> _beltMultiplier;
-        private static ConfigEntry<int> _stationMultiplier;
-        private static ConfigEntry<int> _stationStorageMultiplier;
+
+
         public static ConfigEntry<double> drawMultiplier;
 
         private static ConfigEntry<int> _genWindMultiplier;
@@ -192,8 +176,8 @@ namespace FactoryOverclock
         public static int siloMultiplier => multiplierEnabled.Value ? _siloMultiplier.Value : 1;
         public static int inserterMultiplier => multiplierEnabled.Value ? _inserterMultiplier.Value : 1;
         public static int beltMultiplier => multiplierEnabled.Value ? _beltMultiplier.Value : 1;
-        public static int stationMultiplier => multiplierEnabled.Value ? _stationMultiplier.Value : 1;
-        public static int stationStorageMultiplier => multiplierEnabled.Value ? _stationStorageMultiplier.Value : 1;
+
+
         public static int ejectorMultiplier => multiplierEnabled.Value ? _ejectorMultiplier.Value : 1;
         public static int fractionatorMultiplier => multiplierEnabled.Value ? _fractionatorMultiplier.Value : 1;
         public static int labMultiplier => multiplierEnabled.Value ? _labMultiplier.Value : 1;
@@ -216,8 +200,8 @@ namespace FactoryOverclock
             _turretMultiplier = confFile.Bind("1. Factory", "turretMultiplier", 2, new ConfigDescription("Multiplies speed of turrets", new AcceptableValueRange<int>(1, 20)));
 
             _beltMultiplier = confFile.Bind("1. Factory", "beltMultiplier", 1, new ConfigDescription("Multiplies speed of belts (max 2x)", new AcceptableValueRange<int>(1, 2)));
-            _stationMultiplier = confFile.Bind("1. Factory", "stationMultiplier", 2, new ConfigDescription("Multiplies throughput of stations", new AcceptableValueRange<int>(1, 100)));
-            _stationStorageMultiplier = confFile.Bind("1. Factory", "stationStorageMultiplier", 1, new ConfigDescription("Multiplies storage capacity of stations", new AcceptableValueRange<int>(1, 100)));
+
+
 
             drawMultiplier = confFile.Bind("1. Factory", "drawMultipler", 1.0, new ConfigDescription("Multiplies how much your factory will draw on top of your normal overclock", new AcceptableValueRange<double>(0.1, 10)));
 
@@ -729,13 +713,24 @@ namespace FactoryOverclock
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(PlanetFactory), nameof(PlanetFactory.AddEntityDataWithComponents))]
-        private static void PlanetFactory_AddEntityData_Postfix(PlanetFactory __instance, int entityId)
+        [HarmonyPatch(typeof(FactorySystem), nameof(FactorySystem.NewAssemblerComponent))]
+        public static void NewAssemblerComponent_Postfix(FactorySystem __instance, int __result)
         {
-            ref var entity = ref __instance.entityPool[entityId];
-            if (entity.assemblerId > 0) SyncAssembler(ref __instance.factorySystem.assemblerPool[entity.assemblerId], __instance);
-            if (entity.labId > 0) SyncLab(ref __instance.factorySystem.labPool[entity.labId], __instance);
-            if (entity.minerId > 0) SyncMiner(ref __instance.factorySystem.minerPool[entity.minerId], __instance);
+            if (__result > 0) SyncAssembler(ref __instance.assemblerPool[__result], __instance.factory);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FactorySystem), nameof(FactorySystem.NewLabComponent))]
+        public static void NewLabComponent_Postfix(FactorySystem __instance, int __result)
+        {
+            if (__result > 0) SyncLab(ref __instance.labPool[__result], __instance.factory);
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(FactorySystem), nameof(FactorySystem.NewMinerComponent))]
+        public static void NewMinerComponent_Postfix(FactorySystem __instance, int __result)
+        {
+            if (__result > 0) SyncMiner(ref __instance.minerPool[__result], __instance.factory);
         }
 
         [HarmonyPrefix]
@@ -872,12 +867,12 @@ namespace FactoryOverclock
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickLocal))]
         public static bool InternalTickLocal_Prefix(StationComponent __instance, PlanetFactory factory, int timeGene, float power, float droneSpeed, int droneCarries, StationComponent[] stationPool)
         {
-            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
             
             _isLooping = true;
             try
             {
-                int multi = PluginConfig.stationMultiplier;
+                int multi = PluginConfig.beltMultiplier;
                 for (int i = 0; i < multi; i++)
                 {
                     __instance.InternalTickLocal(factory, timeGene, power, droneSpeed, droneCarries, stationPool);
@@ -891,12 +886,12 @@ namespace FactoryOverclock
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickRemote))]
         public static bool InternalTickRemote_Prefix(StationComponent __instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, StationComponent[] gStationPool, AstroData[] astroPoses, ref VectorLF3 relativePos, ref Quaternion relativeRot, bool starmap, int[] consumeRegister)
         {
-            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
             
             _isLooping = true;
             try
             {
-                int multi = PluginConfig.stationMultiplier;
+                int multi = PluginConfig.beltMultiplier;
                 for (int i = 0; i < multi; i++)
                 {
                     __instance.InternalTickRemote(factory, timeGene, shipSailSpeed, shipWarpSpeed, shipCarries, gStationPool, astroPoses, ref relativePos, ref relativeRot, starmap, consumeRegister);
@@ -910,12 +905,12 @@ namespace FactoryOverclock
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateOutputSlots))]
         public static bool UpdateOutputSlots_Prefix(StationComponent __instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
         {
-            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
             
             _isLooping = true;
             try
             {
-                int multi = PluginConfig.stationMultiplier;
+                int multi = PluginConfig.beltMultiplier;
                 for (int i = 0; i < multi; i++)
                 {
                     __instance.UpdateOutputSlots(traffic, signPool, maxPilerCount, active);
@@ -928,21 +923,17 @@ namespace FactoryOverclock
         // --- Station UpdateInputSlots: multi-call for input throughput ---
         [HarmonyPostfix]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateInputSlots))]
-        public static void UpdateInputSlots_Postfix(StationComponent __instance, object[] __args)
+        public static void UpdateInputSlots_Postfix(StationComponent __instance, CargoTraffic traffic, SignData[] signPool, bool active)
         {
             if (_isLooping) return;
-            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return;
+            if (!PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return;
 
             _isLooping = true;
             try
             {
-                int multi = PluginConfig.stationMultiplier;
-                var method = typeof(StationComponent).GetMethod(nameof(StationComponent.UpdateInputSlots));
-                if (method != null)
-                {
-                    for (int i = 0; i < multi - 1; i++)
-                        method.Invoke(__instance, __args);
-                }
+                int multi = PluginConfig.beltMultiplier;
+                for (int i = 0; i < multi - 1; i++)
+                    __instance.UpdateInputSlots(traffic, signPool, active);
             }
             finally { _isLooping = false; }
         }
@@ -968,39 +959,10 @@ namespace FactoryOverclock
 
         public static int GetSlotCounterValue()
         {
-            return PluginConfig.multiplierEnabled.Value && PluginConfig.stationMultiplier > 1 ? 0 : 1;
+            return PluginConfig.multiplierEnabled.Value && PluginConfig.beltMultiplier > 1 ? 0 : 1;
         }
 
-        // --- UIStationStorage.RefreshValues transpiler: adjusts slider max for extended storage ---
-        [HarmonyTranspiler]
-        [HarmonyPatch(typeof(UIStationStorage), "RefreshValues")]
-        public static IEnumerable<CodeInstruction> UIStationStorage_RefreshValues_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var codes = new List<CodeInstruction>(instructions);
-            for (int i = 0; i < codes.Count; i++)
-            {
-                if (codes[i].opcode == OpCodes.Callvirt && codes[i].operand.ToString().Contains("set_maxValue"))
-                {
-                    var ldarg = new CodeInstruction(OpCodes.Ldarg_0);
-                    codes[i].MoveLabelsTo(ldarg);
-                    codes.Insert(i, ldarg);
-                    codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(StationPatcher), nameof(GetAdjustedSliderMax))));
-                    i += 2;
-                }
-            }
-            return codes;
-        }
 
-        public static float GetAdjustedSliderMax(float vanillaMax, UIStationStorage instance)
-        {
-            if (instance.station != null && instance.index < instance.station.storage.Length)
-            {
-                int currentMax = instance.station.storage[instance.index].max;
-                float currentSliderMax = (float)(currentMax / 100);
-                if (currentSliderMax > vanillaMax) return currentSliderMax;
-            }
-            return vanillaMax;
-        }
 
         // --- Station UpdateCollection: improved collector safety limits ---
         [HarmonyPrefix]
@@ -1010,7 +972,7 @@ namespace FactoryOverclock
             if (PluginConfig.multiplierEnabled.Value)
             {
                 float baseRate = collectSpeedRate < 0 ? 0 : collectSpeedRate;
-                float multi = PluginConfig.stationMultiplier;
+                float multi = PluginConfig.beltMultiplier;
                 float targetRate = baseRate * multi;
 
                 if (__instance.isCollector && __instance.collectionPerTick != null)
@@ -1037,55 +999,7 @@ namespace FactoryOverclock
             }
         }
 
-        private static Dictionary<int, int> _originalStationMaxItemCount = new();
 
-        public static void ApplyStationBaseMultipliers()
-        {
-            if (LDB.items == null) return;
-            
-            int multi = PluginConfig.stationStorageMultiplier;
-            foreach (var item in LDB.items.dataArray)
-            {
-                if (item?.prefabDesc != null && item.prefabDesc.isStation)
-                {
-                    if (!_originalStationMaxItemCount.ContainsKey(item.ID))
-                        _originalStationMaxItemCount[item.ID] = item.prefabDesc.stationMaxItemCount;
-                    
-                    item.prefabDesc.stationMaxItemCount = _originalStationMaxItemCount[item.ID] * multi;
-                }
-            }
-        }
-
-        public static void SyncStations(PlanetFactory factory)
-        {
-            if (factory.transport?.stationPool == null) return;
-
-            foreach (var station in factory.transport.stationPool)
-            {
-                if (station == null || station.id <= 0 || station.entityId <= 0) continue;
-                
-                int protoId = factory.entityPool[station.entityId].protoId;
-                var item = LDB.items.Select(protoId);
-                if (item?.prefabDesc == null) continue;
-
-                int newMax = item.prefabDesc.stationMaxItemCount;
-                if (station.storage != null)
-                {
-                    for (int i = 0; i < station.storage.Length; i++)
-                    {
-                        if (station.storage[i].itemId > 0)
-                        {
-                            int techBonus = 0;
-                            if (GameMain.history != null)
-                            {
-                                techBonus = !station.isCollector ? (!station.isVeinCollector ? (!station.isStellar ? GameMain.history.localStationExtraStorage : GameMain.history.remoteStationExtraStorage) : GameMain.history.localStationExtraStorage) : GameMain.history.localStationExtraStorage;
-                            }
-                            station.storage[i].max = newMax + techBonus;
-                        }
-                    }
-                }
-            }
-        }
 
         public static class MoreMegaStructureCompat
         {
@@ -1114,7 +1028,7 @@ namespace FactoryOverclock
             [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "InternalTickLocal")]
             public static bool ExchangeStation_InternalTickLocal_Prefix(object __instance, PlanetFactory factory, int timeGene, float power, float droneSpeed, int droneCarries, object stationPool)
             {
-                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
                 _isLooping = true;
                 InitHandlers(__instance);
                 try
@@ -1122,7 +1036,7 @@ namespace FactoryOverclock
                     if (_internalTickLocalHandler != null)
                     {
                         var args = new object[] { factory, timeGene, power, droneSpeed, droneCarries, stationPool };
-                        for (int i = 0; i < PluginConfig.stationMultiplier; i++) _internalTickLocalHandler(__instance, args);
+                        for (int i = 0; i < PluginConfig.beltMultiplier; i++) _internalTickLocalHandler(__instance, args);
                     }
                 }
                 finally { _isLooping = false; }
@@ -1133,7 +1047,7 @@ namespace FactoryOverclock
             [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "InternalTickRemote")]
             public static bool ExchangeStation_InternalTickRemote_Prefix(object __instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, object stationPool)
             {
-                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
                 _isLooping = true;
                 InitHandlers(__instance);
                 try
@@ -1141,7 +1055,7 @@ namespace FactoryOverclock
                     if (_internalTickRemoteHandler != null)
                     {
                         var args = new object[] { factory, timeGene, shipSailSpeed, shipWarpSpeed, shipCarries, stationPool };
-                        for (int i = 0; i < PluginConfig.stationMultiplier; i++) _internalTickRemoteHandler(__instance, args);
+                        for (int i = 0; i < PluginConfig.beltMultiplier; i++) _internalTickRemoteHandler(__instance, args);
                     }
                 }
                 finally { _isLooping = false; }
@@ -1152,7 +1066,7 @@ namespace FactoryOverclock
             [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateOutputSlots")]
             public static bool ExchangeStation_UpdateOutputSlots_Prefix(object __instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
             {
-                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
                 _isLooping = true;
                 InitHandlers(__instance);
                 try
@@ -1160,18 +1074,19 @@ namespace FactoryOverclock
                     if (_updateOutputSlotsHandler != null)
                     {
                         var args = new object[] { traffic, signPool, maxPilerCount, active };
-                        for (int i = 0; i < PluginConfig.stationMultiplier; i++) _updateOutputSlotsHandler(__instance, args);
+                        for (int i = 0; i < PluginConfig.beltMultiplier; i++) _updateOutputSlotsHandler(__instance, args);
                     }
                 }
                 finally { _isLooping = false; }
                 return false;
             }
 
+            // --- Station UpdateInputSlots: multi-call for input throughput ---
             [HarmonyPrefix]
             [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateInputSlots")]
             public static bool ExchangeStation_UpdateInputSlots_Prefix(object __instance, CargoTraffic traffic, SignData[] signPool, int maxPilerCount, bool active)
             {
-                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.stationMultiplier <= 1) return true;
+                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
                 _isLooping = true;
                 InitHandlers(__instance);
                 try
@@ -1179,7 +1094,7 @@ namespace FactoryOverclock
                     if (_updateInputSlotsHandler != null)
                     {
                         var args = new object[] { traffic, signPool, maxPilerCount, active };
-                        for (int i = 0; i < PluginConfig.stationMultiplier; i++) _updateInputSlotsHandler(__instance, args);
+                        for (int i = 0; i < PluginConfig.beltMultiplier; i++) _updateInputSlotsHandler(__instance, args);
                     }
                 }
                 finally { _isLooping = false; }

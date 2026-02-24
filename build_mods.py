@@ -33,8 +33,8 @@ def update_csproj_version(csproj_path, new_version):
         with open(csproj_path, "r", encoding="utf-8") as f:
             content = f.read()
         
-        content = re.sub(r"<Version>.*?</Version>", f"<Version>{new_version}</Version>", content)
-        content = re.sub(r"<BepInExPluginVersion>.*?</BepInExPluginVersion>", f"<BepInExPluginVersion>{new_version}</BepInExPluginVersion>", content)
+        content = re.sub(r"<Version>[^<]*</Version>", f"<Version>{new_version}</Version>", content)
+        content = re.sub(r"<BepInExPluginVersion>[^<]*</BepInExPluginVersion>", f"<BepInExPluginVersion>{new_version}</BepInExPluginVersion>", content)
 
         with open(csproj_path, "w", encoding="utf-8") as f:
             f.write(content)
@@ -54,16 +54,16 @@ def update_manifest_version(manifest_path, new_version):
         print(f"    [Error] Failed to update manifest {manifest_path}: {e}")
 
 def update_plugin_source_version(mod_path, new_version):
-    plugin_files = glob.glob(os.path.join(mod_path, "*Plugin.cs"))
+    plugin_files = glob.glob(os.path.join(mod_path, "*.cs"))
     for file_path in plugin_files:
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 content = f.read()
             
             # Match public const string MOD_VERSION or VERSION
-            pattern_const = r"([ \t]*public const string (?:MOD_VERSION|VERSION) = \")(\d+\.\d+\.\d+)(\";)"
-            # Match [BepInPlugin("GUID", "Name", "Version")]
-            pattern_attr = r"(\[BepInPlugin\(\".*?\", \".*?\", \")(\d+\.\d+\.\d+)(\"\)\])"
+            pattern_const = r"([ \t]*public const string (?:MOD_VERSION|VERSION) = \")([^\"\\]+)(\";)"
+            # Match [BepInPlugin("GUID", "Name", "Version")] when the version is hardcoded
+            pattern_attr = r"(\[BepInPlugin\(\".*?\", \".*?\", \")([^\"\\]+)(\"\)\])"
             
             content_new = content
             if re.search(pattern_const, content_new):
@@ -85,8 +85,8 @@ def update_readme_version(file_path, new_version):
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
         
-        pattern1 = r"(^Version[:\s]+)(\d+\.\d+\.\d+)"
-        pattern2 = r"(\| \*\*)(\d+\.\d+\.\d+)(\*\* \|)"
+        pattern1 = r"(^Version[:\s]+)(\S+)"
+        pattern2 = r"(\| \*\*)(\S+)(\*\* \|)"
         
         content_new = content
         if re.search(pattern1, content_new, flags=re.IGNORECASE | re.MULTILINE):
@@ -149,7 +149,7 @@ def update_root_readme(versions):
 
         new_content = content
         for mod_name, version in versions.items():
-            pattern = r"(\| \*\*"+ re.escape(mod_name) + r"\*\* \|.*?\| )(v?)(\d+\.\d+\.\d+)( \|)"
+            pattern = r"(\| \*\*"+ re.escape(mod_name) + r"\*\* \|.*?\| )(v?)([^\s|]+)( \|)"
             if re.search(pattern, new_content):
                 new_content = re.sub(pattern, f"\\g<1>\\g<2>{version}\\g<4>", new_content)
             else:
