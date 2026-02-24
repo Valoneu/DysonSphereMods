@@ -53,6 +53,7 @@ temp_stage/
 /publish
 /tmp
 /oldsrc
+/externalModDefinitions
 
 # NuGet
 *.nuget.props

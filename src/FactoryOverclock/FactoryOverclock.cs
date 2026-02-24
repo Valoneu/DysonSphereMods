@@ -863,43 +863,14 @@ namespace FactoryOverclock
         [ThreadStatic]
         private static bool _isLooping;
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickLocal))]
-        public static bool InternalTickLocal_Prefix(StationComponent __instance, PlanetFactory factory, int timeGene, float power, float droneSpeed, int droneCarries, StationComponent[] stationPool)
-        {
-            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
-            
-            _isLooping = true;
-            try
-            {
-                int multi = PluginConfig.beltMultiplier;
-                for (int i = 0; i < multi; i++)
-                {
-                    __instance.InternalTickLocal(factory, timeGene, power, droneSpeed, droneCarries, stationPool);
-                }
-            }
-            finally { _isLooping = false; }
-            return false;
-        }
+        // InternalTickLocal drives drone dispatch and movement state machines.
+        // It must run exactly once per tick — looping it caused drones to skip states.
+        // Belt throughput is handled by UpdateInputSlots/UpdateOutputSlots patches.
 
-        [HarmonyPrefix]
-        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickRemote))]
-        public static bool InternalTickRemote_Prefix(StationComponent __instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, StationComponent[] gStationPool, AstroData[] astroPoses, ref VectorLF3 relativePos, ref Quaternion relativeRot, bool starmap, int[] consumeRegister)
-        {
-            if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
-            
-            _isLooping = true;
-            try
-            {
-                int multi = PluginConfig.beltMultiplier;
-                for (int i = 0; i < multi; i++)
-                {
-                    __instance.InternalTickRemote(factory, timeGene, shipSailSpeed, shipWarpSpeed, shipCarries, gStationPool, astroPoses, ref relativePos, ref relativeRot, starmap, consumeRegister);
-                }
-            }
-            finally { _isLooping = false; }
-            return false;
-        }
+        // InternalTickRemote drives vessel movement and landing state machines.
+        // It must run exactly once per tick — looping it caused vessels to overshoot
+        // their dock positions and get stuck floating in the air.
+        // Belt throughput is handled by UpdateInputSlots/UpdateOutputSlots patches.
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.UpdateOutputSlots))]
@@ -1003,8 +974,6 @@ namespace FactoryOverclock
 
         public static class MoreMegaStructureCompat
         {
-            private static FastInvokeHandler _internalTickLocalHandler;
-            private static FastInvokeHandler _internalTickRemoteHandler;
             private static FastInvokeHandler _updateOutputSlotsHandler;
             private static FastInvokeHandler _updateInputSlotsHandler;
             private static bool _handlersInitialized = false;
@@ -1013,10 +982,6 @@ namespace FactoryOverclock
             {
                 if (_handlersInitialized) return;
                 var type = instance.GetType();
-                var m1 = type.GetMethod("InternalTickLocal");
-                if (m1 != null) _internalTickLocalHandler = MethodInvoker.GetHandler(m1);
-                var m2 = type.GetMethod("InternalTickRemote");
-                if (m2 != null) _internalTickRemoteHandler = MethodInvoker.GetHandler(m2);
                 var m3 = type.GetMethod("UpdateOutputSlots");
                 if (m3 != null) _updateOutputSlotsHandler = MethodInvoker.GetHandler(m3);
                 var m4 = type.GetMethod("UpdateInputSlots");
@@ -1024,43 +989,10 @@ namespace FactoryOverclock
                 _handlersInitialized = true;
             }
 
-            [HarmonyPrefix]
-            [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "InternalTickLocal")]
-            public static bool ExchangeStation_InternalTickLocal_Prefix(object __instance, PlanetFactory factory, int timeGene, float power, float droneSpeed, int droneCarries, object stationPool)
-            {
-                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
-                _isLooping = true;
-                InitHandlers(__instance);
-                try
-                {
-                    if (_internalTickLocalHandler != null)
-                    {
-                        var args = new object[] { factory, timeGene, power, droneSpeed, droneCarries, stationPool };
-                        for (int i = 0; i < PluginConfig.beltMultiplier; i++) _internalTickLocalHandler(__instance, args);
-                    }
-                }
-                finally { _isLooping = false; }
-                return false;
-            }
+            // InternalTickLocal and InternalTickRemote for MoreMegaStructure exchange stations
+            // are no longer looped — same fix as vanilla stations to prevent vessel/drone state
+            // machine issues. Belt throughput is handled by UpdateOutputSlots/UpdateInputSlots.
 
-            [HarmonyPrefix]
-            [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "InternalTickRemote")]
-            public static bool ExchangeStation_InternalTickRemote_Prefix(object __instance, PlanetFactory factory, int timeGene, float shipSailSpeed, float shipWarpSpeed, int shipCarries, object stationPool)
-            {
-                if (_isLooping || !PluginConfig.multiplierEnabled.Value || PluginConfig.beltMultiplier <= 1) return true;
-                _isLooping = true;
-                InitHandlers(__instance);
-                try
-                {
-                    if (_internalTickRemoteHandler != null)
-                    {
-                        var args = new object[] { factory, timeGene, shipSailSpeed, shipWarpSpeed, shipCarries, stationPool };
-                        for (int i = 0; i < PluginConfig.beltMultiplier; i++) _internalTickRemoteHandler(__instance, args);
-                    }
-                }
-                finally { _isLooping = false; }
-                return false;
-            }
 
             [HarmonyPrefix]
             [HarmonyPatch("MoreMegaStructure.ExchangeStationComponent", "UpdateOutputSlots")]

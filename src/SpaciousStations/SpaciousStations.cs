@@ -306,56 +306,10 @@ namespace SpaciousStations
 
             __instance.PatchDroneArray(desc.stationMaxDroneCount);
             __instance.energyMax = desc.stationMaxEnergyAcc;
-            __instance.energyPerTick = desc.workEnergyPerTick;
             __instance.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
-
-            if (__instance.storage != null)
-            {
-                float storageMul = desc.isStellarStation ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
-                int vanillaExtra = GetVanillaAdditionStorage(__instance);
-                int vanillaMax = original.ItemCount + vanillaExtra;
-                int prevMax = (int)(vanillaMax * SpaciousStationsPlugin.InternalLastStorageMultiplier.Value);
-                int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * storageMul);
-
-                for (int i = 0; i < __instance.storage.Length; i++)
-                {
-                    if (__instance.storage[i].itemId > 0)
-                    {
-                        if (__instance.storage[i].max == vanillaMax || __instance.storage[i].max == prevMax || __instance.storage[i].max > newMax || (SpaciousStationsPlugin.InternalLastStorageMultiplier.Value != storageMul && __instance.storage[i].max == prevMax))
-                            __instance.storage[i].max = newMax;
-                    }
-                }
-            }
         }
 
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(PowerSystem), nameof(PowerSystem.Import))]
-        public static void PowerSystem_Import_Postfix(PowerSystem __instance)
-        {
-            if (__instance == null || __instance.factory == null || __instance.factory.transport == null) return;
 
-            foreach (var station in __instance.factory.transport.stationPool)
-            {
-                if (station == null || station.id <= 0 || station.entityId <= 0 || station.pcId <= 0) continue;
-                if (station.pcId >= __instance.consumerCursor) continue;
-
-                int protoId = __instance.factory.entityPool[station.entityId].protoId;
-                var itemProto = LDB.items.Select(protoId);
-                if (itemProto == null || !_originalValues.TryGetValue(itemProto.ID, out var original)) continue;
-
-                var desc = itemProto.prefabDesc;
-                if (desc == null || desc.isCollectStation) continue;
-
-                float chargeMul = desc.isStellarStation ? MultiplierService.GetMultiplier("Station_ILS_Charge") : MultiplierService.GetMultiplier("Station_PLS_Charge");
-                long currentCharge = __instance.consumerPool[station.pcId].workEnergyPerTick;
-                long vanillaMax = original.EnergyPerTick;
-                long prevMax = (long)(vanillaMax * SpaciousStationsPlugin.InternalLastChargeMultiplier.Value);
-                long newMax = desc.workEnergyPerTick;
-
-                if (currentCharge == vanillaMax || currentCharge == prevMax || currentCharge > newMax || (SpaciousStationsPlugin.InternalLastChargeMultiplier.Value != chargeMul && currentCharge == prevMax))
-                    __instance.consumerPool[station.pcId].workEnergyPerTick = newMax;
-            }
-        }
 
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameMain), "Begin")]
@@ -383,48 +337,66 @@ namespace SpaciousStations
                         // Fix drone array and energy
                         station.PatchDroneArray(desc.stationMaxDroneCount);
                         station.energyMax = desc.stationMaxEnergyAcc;
-                        station.energyPerTick = desc.workEnergyPerTick;
                         station.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
 
-                        // Fix storage limits - scale proportionally to preserve slider positions
+                        // Fix storage limits — only rescale if multiplier changed
                         if (station.storage != null)
                         {
                             float storageMul = desc.isStellarStation
                                 ? MultiplierService.GetMultiplier("Station_ILS_Storage")
                                 : MultiplierService.GetMultiplier("Station_PLS_Storage");
+                            float lastMul = SpaciousStationsPlugin.InternalLastStorageMultiplier.Value;
                             int vanillaExtra = GetVanillaAdditionStorage(station);
                             int vanillaMax = original.ItemCount + vanillaExtra;
                             int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * storageMul);
+                            bool multiplierChanged = Math.Abs(lastMul - storageMul) > 0.001f;
 
                             for (int i = 0; i < station.storage.Length; i++)
                             {
-                                if (station.storage[i].itemId > 0 && station.storage[i].max < newMax)
+                                if (station.storage[i].itemId > 0)
                                 {
-                                    int currentMax = station.storage[i].max;
-                                    if (vanillaMax > 0 && currentMax <= vanillaMax)
+                                    if (multiplierChanged)
                                     {
-                                        // Scale proportionally: if player had slider at 50% of old max, keep 50% of new max
-                                        station.storage[i].max = (int)((float)currentMax / vanillaMax * newMax);
+                                        int oldMax = (int)(vanillaMax * lastMul);
+                                        if (oldMax > 0)
+                                            station.storage[i].max = Math.Max(1, (int)((float)station.storage[i].max / oldMax * newMax));
+                                        else
+                                            station.storage[i].max = newMax;
                                     }
-                                    // If current max is between vanillaMax and newMax, it was from a previous
-                                    // multiplier session — leave as-is (player already had a custom value)
+                                    else if (station.storage[i].max > newMax)
+                                    {
+                                        station.storage[i].max = newMax;
+                                    }
                                 }
                             }
                         }
 
-                        // Fix charge power on consumer - scale proportionally
+                        // Fix charge power — only rescale if multiplier changed
                         if (!desc.isCollectStation && station.pcId > 0 && factory.powerSystem != null
                             && station.pcId < factory.powerSystem.consumerCursor)
                         {
-                            long currentCharge = factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick;
-                            long vanillaCharge = original.EnergyPerTick;
-                            long newCharge = desc.workEnergyPerTick;
-                            if (currentCharge < newCharge && vanillaCharge > 0)
+                            float chargeMul = desc.isStellarStation
+                                ? MultiplierService.GetMultiplier("Station_ILS_Charge")
+                                : MultiplierService.GetMultiplier("Station_PLS_Charge");
+                            float lastChgMul = SpaciousStationsPlugin.InternalLastChargeMultiplier.Value;
+                            bool chargeChanged = Math.Abs(lastChgMul - chargeMul) > 0.001f;
+
+                            long currentChargePwr = factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick;
+                            long currentChargeStn = station.energyPerTick;
+                            long maxAllowed = desc.workEnergyPerTick * 5L;
+
+                            if (chargeChanged && lastChgMul > 0.001f)
                             {
-                                // Scale proportionally: preserve slider position relative to old max
-                                factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick =
-                                    (long)((double)currentCharge / vanillaCharge * newCharge);
+                                float ratio = chargeMul / lastChgMul;
+                                factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick = Math.Max(1L, (long)(currentChargePwr * ratio));
+                                station.energyPerTick = Math.Max(1L, (long)(currentChargeStn * ratio));
                             }
+                            
+                            if (factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick > maxAllowed)
+                                factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick = maxAllowed;
+                                
+                            if (station.energyPerTick > maxAllowed)
+                                station.energyPerTick = maxAllowed;
                         }
                     }
                 }
