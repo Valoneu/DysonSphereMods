@@ -141,6 +141,10 @@ namespace DysonSphereMods.Shared
             WindowRect.y = Mathf.Clamp(WindowRect.y, -20, Screen.height - 50);
         }
 
+        private bool _isResizing;
+        private Rect _resizeRect = new Rect(0, 0, 15, 15);
+        public Vector2 MinSize = new Vector2(300, 200);
+
         private void DrawWindowInternal(int id)
         {
             DrawWindowHeader();
@@ -148,6 +152,40 @@ namespace DysonSphereMods.Shared
             DrawWindowContent();
             GUILayout.EndScrollView();
             DrawWindowFooter();
+
+            _resizeRect.x = WindowRect.width - 20;
+            _resizeRect.y = WindowRect.height - 20;
+            _resizeRect.width = 20;
+            _resizeRect.height = 20;
+
+            GUI.Label(_resizeRect, "↘", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 20, normal = new GUIStyleState() { textColor = new Color(0.6f, 0.6f, 0.6f, 0.8f) } });
+
+            Event e = Event.current;
+            bool clickedResize = false;
+            if (e.type == EventType.MouseDown && _resizeRect.Contains(e.mousePosition))
+            {
+                _isResizing = true;
+                clickedResize = true;
+                e.Use();
+            }
+            else if (e.type == EventType.MouseUp)
+            {
+                _isResizing = false;
+            }
+            else if (e.type == EventType.MouseDrag && _isResizing)
+            {
+                WindowRect.width += e.delta.x;
+                WindowRect.height += e.delta.y;
+                WindowRect.width = Mathf.Max(MinSize.x, WindowRect.width);
+                WindowRect.height = Mathf.Max(MinSize.y, WindowRect.height);
+                e.Use();
+            }
+
+            if (e.type == EventType.MouseDown && !clickedResize)
+            {
+                GUIUtility.keyboardControl = 0; // Clear WASD eating focus safely
+            }
+
             GUI.DragWindow();
         }
 

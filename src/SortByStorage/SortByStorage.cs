@@ -38,12 +38,12 @@ namespace SortByStorage
 
                 if (!foundDesc)
                 {
-                    __instance.productSortBox.Items.Add("Storage (Desc)".Translate());
+                    __instance.productSortBox.Items.Add("Stored Descending".Translate());
                     __instance.productSortBox.ItemsData.Add(SORT_STORAGE_DESC);
                 }
                 if (!foundAsc)
                 {
-                    __instance.productSortBox.Items.Add("Storage (Asc)".Translate());
+                    __instance.productSortBox.Items.Add("Stored Ascending".Translate());
                     __instance.productSortBox.ItemsData.Add(SORT_STORAGE_ASC);
                 }
 
@@ -65,80 +65,35 @@ namespace SortByStorage
         }
 
         [HarmonyPatch(typeof(UIStatisticsWindow), nameof(UIStatisticsWindow.DetermineProductEntryList))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> UIStatisticsWindow_DetermineProductEntryList_Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var matcher = new CodeMatcher(instructions);
-            var addMethod = AccessTools.Method(typeof(UIProductEntryList), nameof(UIProductEntryList.Add), new[] { typeof(int), typeof(long), typeof(long) });
-            var addWithAccMethod = AccessTools.Method(typeof(UIProductEntryList), nameof(UIProductEntryList.Add), new[] { typeof(int), typeof(long), typeof(long), typeof(long) });
-
-            if (addMethod == null || addWithAccMethod == null)
-            {
-                Log.Warning("Could not find UIProductEntryList.Add methods.");
-                return instructions;
-            }
-
-            matcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, addMethod));
-
-            while (matcher.IsValid)
-            {
-                var callPos = matcher.Pos;
-                var productStatIdx = -1;
-                object productStatOperand = null;
-
-                for (int i = callPos - 1; i >= 0; i--)
-                {
-                    var instr = matcher.InstructionAt(i);
-                    if (instr.opcode == OpCodes.Ldfld && ((System.Reflection.FieldInfo)instr.operand).Name == "itemId")
-                    {
-                        var prevInstr = matcher.InstructionAt(i - 1);
-                        if (prevInstr.IsLdloc())
-                        {
-                            productStatIdx = ExtractLocalIndex(prevInstr);
-                            productStatOperand = prevInstr.operand;
-                            break;
-                        }
-                    }
-                }
-
-                if (productStatIdx != -1)
-                {
-                    matcher.InsertAndAdvance(
-                        new CodeInstruction(OpCodes.Ldloc, productStatOperand ?? productStatIdx),
-                        new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(ProductStat), nameof(ProductStat.storageCount)))
-                    );
-                    
-                    matcher.SetOperandAndAdvance(addWithAccMethod);
-                }
-                else
-                {
-                    matcher.Advance(1);
-                }
-
-                matcher.MatchForward(false, new CodeMatch(OpCodes.Callvirt, addMethod));
-            }
-
-            return matcher.InstructionEnumeration();
-        }
-
-        private static int ExtractLocalIndex(CodeInstruction instruction)
-        {
-            if (instruction.opcode == OpCodes.Ldloc_0) return 0;
-            if (instruction.opcode == OpCodes.Ldloc_1) return 1;
-            if (instruction.opcode == OpCodes.Ldloc_2) return 2;
-            if (instruction.opcode == OpCodes.Ldloc_3) return 3;
-            if (instruction.opcode == OpCodes.Ldloc_S || instruction.opcode == OpCodes.Ldloc)
-            {
-                return Convert.ToInt32(instruction.operand);
-            }
-            return -1;
-        }
-
-        [HarmonyPatch(typeof(UIStatisticsWindow), nameof(UIStatisticsWindow.DetermineProductEntryList))]
         [HarmonyPostfix]
         public static void UIStatisticsWindow_DetermineProductEntryList_Postfix(UIStatisticsWindow __instance)
         {
             if (!__instance.isProductionTab) return;
+
+            // Compute the real storage count because vanilla UIProductEntryList.Add ignores it.
+            for (int i = 0; i < __instance.productEntryList.entryDatasCursor; i++)
+            {
+                var entry = __instance.productEntryList.entryDatas[i];
+                if (entry == null) continue;
+
+                long storageCount = 0;
+                for (int j = 0; j < __instance.statGroupCursor; ++j)
+                {
+                    var uiStatGroup = __instance.statGroup[j];
+                    if (uiStatGroup.productPool == null || uiStatGroup.itemIndices == null) continue;
+
+                    int poolIndex = uiStatGroup.itemIndices[entry.itemId];
+                    if (poolIndex > 0 && poolIndex < uiStatGroup.poolCursor && poolIndex < uiStatGroup.productPool.Length)
+                    {
+                        var stat = uiStatGroup.productPool[poolIndex];
+                        if (stat != null)
+                        {
+                            storageCount += stat.storageCount;
+                        }
+                    }
+                }
+                entry.accumulated = storageCount;
+            }
 
             if (__instance.sortMethod == SORT_STORAGE_DESC)
             {

@@ -13,7 +13,6 @@
     <Project Path="src/PlanetMinerFast/PlanetMinerFast.csproj" />
 
     <Project Path="src/SortByStorage/SortByStorage.csproj" />
-    <Project Path="src/SpaceTargetEverything/SpaceTargetEverything.csproj" />
     <Project Path="src/SpaciousStations/SpaciousStations.csproj" />
     <Project Path="src/StacksizeMultiplier/StacksizeMultiplier.csproj" />
     <Project Path="src/TechHashReduce/TechHashReduce.csproj" />

@@ -1,2 +1,6 @@
 FactoryOverclock
 SpaciousStations
+SortByStorage
+PinnedNamesEverywhere
+PlanetMinerFast
+BottleneckUI

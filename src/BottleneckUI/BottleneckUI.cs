@@ -16,6 +16,12 @@ namespace BottleneckUI
     public class BottleneckUIPlugin : BaseUnityPlugin
     {
         public static ConfigEntry<KeyboardShortcut> toggleKey;
+        public static ConfigEntry<float> WindowX;
+        public static ConfigEntry<float> WindowY;
+        public static ConfigEntry<float> WindowW;
+        public static ConfigEntry<float> WindowH;
+        
+        public static BottleneckNaviLine navi = new BottleneckNaviLine();
         
         private BottleneckScanner _scanner;
         private BottleneckWindow _window;
@@ -25,6 +31,11 @@ namespace BottleneckUI
         {
             Log.Init(Logger);
             toggleKey = Config.Bind("General", "ToggleKey", new KeyboardShortcut(KeyCode.Keypad4, KeyCode.LeftControl), "Key to toggle the Bottleneck UI");
+            
+            WindowX = Config.Bind("UI", "WindowX", 200f, "Window X Position");
+            WindowY = Config.Bind("UI", "WindowY", 200f, "Window Y Position");
+            WindowW = Config.Bind("UI", "WindowW", 500f, "Window Width");
+            WindowH = Config.Bind("UI", "WindowH", 600f, "Window Height");
             
             _scanner = new BottleneckScanner();
             _window = new BottleneckWindow(_scanner);
@@ -43,6 +54,13 @@ namespace BottleneckUI
         {
             TickManager.OnSlowTick -= OnSlowTick;
             _harmony?.UnpatchSelf();
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerControlGizmo), "GameTick")]
+        public static void PlayerControlGizmo_GameTick_Postfix()
+        {
+            BottleneckUIPlugin.navi?.GameTick();
         }
 
         private void InitKeyBinds()
@@ -73,6 +91,7 @@ namespace BottleneckUI
                     _scanner.Scan();
                 }
             }
+            _window?.Update();
         }
 
         private void OnSlowTick()
@@ -128,7 +147,7 @@ namespace BottleneckUI
                 if (!assembler.replicating)
                 {
                     string status = BottleneckHeuristics.GetAssemblerStatus(ref assembler, factory);
-                    if (status != "Working")
+                    if (status != null && status != "Working" && status != "Idle" && !status.Contains("Output Full"))
                     {
                         Bottlenecks.Add(new BottleneckInfo
                         {
@@ -136,7 +155,8 @@ namespace BottleneckUI
                             machineName = BottleneckHeuristics.GetMachineName(factory, assembler.entityId),
                             factory = factory,
                             entityId = assembler.entityId,
-                            status = status
+                            status = status,
+                            protoId = factory.entityPool[assembler.entityId].protoId
                         });
                     }
                 }
@@ -156,7 +176,7 @@ namespace BottleneckUI
                 if (!lab.replicating)
                 {
                     string status = BottleneckHeuristics.GetLabStatus(ref lab, factory);
-                    if (status != "Working")
+                    if (status != null && status != "Working" && status != "Idle" && !status.Contains("Output Full"))
                     {
                         Bottlenecks.Add(new BottleneckInfo
                         {
@@ -164,7 +184,8 @@ namespace BottleneckUI
                             machineName = BottleneckHeuristics.GetMachineName(factory, lab.entityId),
                             factory = factory,
                             entityId = lab.entityId,
-                            status = status
+                            status = status,
+                            protoId = factory.entityPool[lab.entityId].protoId
                         });
                     }
                 }
@@ -183,7 +204,7 @@ namespace BottleneckUI
                 if (!frac.isWorking)
                 {
                     string status = BottleneckHeuristics.GetFracStatus(ref frac, factory);
-                    if (status != "Working")
+                    if (status != null && status != "Working" && status != "Idle" && !status.Contains("Output Full"))
                     {
                         Bottlenecks.Add(new BottleneckInfo
                         {
@@ -191,7 +212,8 @@ namespace BottleneckUI
                             machineName = BottleneckHeuristics.GetMachineName(factory, frac.entityId),
                             factory = factory,
                             entityId = frac.entityId,
-                            status = status
+                            status = status,
+                            protoId = factory.entityPool[frac.entityId].protoId
                         });
                     }
                 }
@@ -208,7 +230,7 @@ namespace BottleneckUI
                 TotalScanned++;
 
                 string status = BottleneckHeuristics.GetMinerStatus(ref miner, factory);
-                if (status != "Working")
+                if (status != null && status != "Working" && status != "Idle" && !status.Contains("Output Full") && !status.Contains("No Node"))
                 {
                     Bottlenecks.Add(new BottleneckInfo
                     {
@@ -216,7 +238,8 @@ namespace BottleneckUI
                         machineName = BottleneckHeuristics.GetMachineName(factory, miner.entityId),
                         factory = factory,
                         entityId = miner.entityId,
-                        status = status
+                        status = status,
+                        protoId = factory.entityPool[miner.entityId].protoId
                     });
                 }
             }
@@ -232,7 +255,7 @@ namespace BottleneckUI
                 TotalScanned++;
 
                 string status = BottleneckHeuristics.GetEjectorStatus(ref ejector, factory);
-                if (status != null && status != "Working")
+                if (status != null && status != "Working" && status != "Idle" && !status.Contains("Output Full") && status != "No Orbit Set" && !status.Contains("No Node"))
                 {
                     Bottlenecks.Add(new BottleneckInfo
                     {
@@ -240,7 +263,8 @@ namespace BottleneckUI
                         machineName = BottleneckHeuristics.GetMachineName(factory, ejector.entityId),
                         factory = factory,
                         entityId = ejector.entityId,
-                        status = status
+                        status = status,
+                        protoId = factory.entityPool[ejector.entityId].protoId
                     });
                 }
             }
@@ -256,7 +280,7 @@ namespace BottleneckUI
                 TotalScanned++;
 
                 string status = BottleneckHeuristics.GetSiloStatus(ref silo, factory);
-                if (status != "Working")
+                if (status != null && status != "Working" && status != "Idle" && !status.Contains("Output Full") && !status.Contains("No Node"))
                 {
                     Bottlenecks.Add(new BottleneckInfo
                     {
@@ -264,7 +288,8 @@ namespace BottleneckUI
                         machineName = BottleneckHeuristics.GetMachineName(factory, silo.entityId),
                         factory = factory,
                         entityId = silo.entityId,
-                        status = status
+                        status = status,
+                        protoId = factory.entityPool[silo.entityId].protoId
                     });
                 }
             }
@@ -278,6 +303,7 @@ namespace BottleneckUI
         public PlanetFactory factory;
         public int entityId;
         public string status;
+        public int protoId;
     }
 
     public static class BottleneckHeuristics
@@ -457,7 +483,7 @@ namespace BottleneckUI
         private readonly BottleneckScanner _scanner;
         
         public BottleneckWindow(BottleneckScanner scanner) 
-            : base(1215, "Bottleneck UI (Galactic)", new Rect(200, 200, 500, 600))
+            : base(1215, "Bottleneck UI (Galactic)", new Rect(BottleneckUIPlugin.WindowX.Value, BottleneckUIPlugin.WindowY.Value, BottleneckUIPlugin.WindowW.Value, BottleneckUIPlugin.WindowH.Value))
         {
             _scanner = scanner;
         }
@@ -472,42 +498,88 @@ namespace BottleneckUI
             GUILayout.Label($"Total Machines (All Planets): {_scanner.TotalScanned} | Bottlenecks: {_scanner.Bottlenecks.Count}");
         }
 
+        private Dictionary<string, bool> _planetFolds = new Dictionary<string, bool>();
+        private Dictionary<string, Dictionary<int, bool>> _protoFolds = new Dictionary<string, Dictionary<int, bool>>();
+
         protected override void DrawWindowContent()
         {
             if (_scanner.Bottlenecks.Count == 0)
             {
-                GUILayout.Label("All machines across all planets are working normally!");
+                GUILayout.Label("All machines across all planets are working normally!", new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, margin = new RectOffset(0, 0, 20, 0) });
             }
             else
             {
-                string currentPlanet = "";
-                foreach (var info in _scanner.Bottlenecks)
+                var groupedByPlanet = System.Linq.Enumerable.GroupBy(_scanner.Bottlenecks, b => b.planetName);
+                
+                foreach (var planetGroup in groupedByPlanet)
                 {
-                    if (currentPlanet != info.planetName)
-                    {
-                        currentPlanet = info.planetName;
-                        GUILayout.Space(10);
-                        GUILayout.Label($"--- {currentPlanet} ---", GUI.skin.box);
-                    }
+                    if (!_planetFolds.ContainsKey(planetGroup.Key)) _planetFolds[planetGroup.Key] = false;
+                    if (!_protoFolds.ContainsKey(planetGroup.Key)) _protoFolds[planetGroup.Key] = new Dictionary<int, bool>();
 
-                    GUILayout.BeginHorizontal();
-                    if (GUILayout.Button(info.machineName, new GUIStyle(GUI.skin.label) { richText = true }, GUILayout.Width(180)))
+                    GUILayout.Space(5);
+                    GUILayout.BeginHorizontal(GUI.skin.box);
+                    if (GUILayout.Button(_planetFolds[planetGroup.Key] ? "▼" : "▶", new GUIStyle(GUI.skin.label) { fixedWidth = 20 }))
                     {
-                        FocusOnBuilding(info.factory, info.entityId);
+                        _planetFolds[planetGroup.Key] = !_planetFolds[planetGroup.Key];
                     }
-                    
-                    Color originalColor = GUI.contentColor;
-                    if (info.status.Contains("No Power") || info.status.Contains("Missing") || info.status.Contains("No Veins"))
-                        GUI.contentColor = Color.red;
-                    else if (info.status.Contains("Low Power") || info.status.Contains("No Recipe") || info.status.Contains("No Orbit") || info.status.Contains("No Node"))
-                        GUI.contentColor = Color.yellow;
-                    else if (info.status.Contains("Output Full"))
-                        GUI.contentColor = Color.cyan;
-
-                    GUILayout.Label(info.status);
-                    GUI.contentColor = originalColor;
-                    
+                    GUILayout.Label($"<b><size=16>{planetGroup.Key}</size></b>", new GUIStyle(GUI.skin.label) { richText = true, alignment = TextAnchor.MiddleLeft });
                     GUILayout.EndHorizontal();
+
+                    if (_planetFolds[planetGroup.Key])
+                    {
+                        var groupedByProto = System.Linq.Enumerable.GroupBy(planetGroup, b => b.protoId);
+                        foreach (var protoGroup in groupedByProto)
+                        {
+                            var first = System.Linq.Enumerable.First(protoGroup);
+                            int protoId = first.protoId;
+                            
+                            if (!_protoFolds[planetGroup.Key].ContainsKey(protoId)) _protoFolds[planetGroup.Key][protoId] = false;
+
+                            Texture2D icon = LDB.items.Select(protoId)?.iconSprite?.texture;
+                            
+                            GUILayout.BeginHorizontal();
+                            GUILayout.Space(20);
+                            GUILayout.BeginVertical();
+                            
+                            GUILayout.BeginHorizontal();
+                            if (GUILayout.Button(_protoFolds[planetGroup.Key][protoId] ? "▼" : "▶", new GUIStyle(GUI.skin.label) { fixedWidth = 20 }))
+                            {
+                                _protoFolds[planetGroup.Key][protoId] = !_protoFolds[planetGroup.Key][protoId];
+                            }
+                            if (icon != null) GUILayout.Label(icon, GUILayout.Width(20), GUILayout.Height(20));
+                            GUILayout.Label($"<b>{first.machineName} ({System.Linq.Enumerable.Count(protoGroup)})</b>", new GUIStyle(GUI.skin.label) { richText = true });
+                            GUILayout.EndHorizontal();
+                            
+                            if (_protoFolds[planetGroup.Key][protoId])
+                            {
+                                foreach (var info in protoGroup)
+                                {
+                                    GUILayout.BeginHorizontal();
+                                    GUILayout.Space(20);
+                                    if (GUILayout.Button("►", GUILayout.Width(25)))
+                                    {
+                                        FocusOnBuilding(info.factory, info.entityId);
+                                    }
+                                    
+                                    Color originalColor = GUI.contentColor;
+                                    if (info.status.Contains("No Power") || info.status.Contains("Missing") || info.status.Contains("No Veins"))
+                                        GUI.contentColor = new Color(1f, 0.4f, 0.4f);
+                                    else if (info.status.Contains("Low Power") || info.status.Contains("No Recipe") || info.status.Contains("No Orbit") || info.status.Contains("No Node"))
+                                        GUI.contentColor = new Color(1f, 0.8f, 0.4f);
+                                    else if (info.status.Contains("Output Full"))
+                                        GUI.contentColor = new Color(0.4f, 1f, 1f);
+
+                                    GUILayout.Label(info.status);
+                                    GUI.contentColor = originalColor;
+                                    
+                                    GUILayout.EndHorizontal();
+                                }
+                            }
+                            
+                            GUILayout.EndVertical();
+                            GUILayout.EndHorizontal();
+                        }
+                    }
                 }
             }
         }
@@ -521,19 +593,129 @@ namespace BottleneckUI
                 return;
             }
 
-            VectorLF3 targetPos = targetFactory.entityPool[entityId].pos;
-            Camera mainCamera = Camera.main;
-            if (mainCamera == null)
+            BottleneckUIPlugin.navi.Disable(true);
+            
+            // Unconditionally set the exact local building target. 
+            // If the user is on another planet, the arrow will silently wait 
+            // and appear the moment they land on the destination planet.
+            BottleneckUIPlugin.navi.planetId = targetFactory.planetId;
+            BottleneckUIPlugin.navi.entityId = entityId;
+
+            VectorLF3 pos = targetFactory.entityPool[entityId].pos;
+            Vector3 targetPos = pos;
+            BottleneckUIPlugin.navi.endPoint = targetPos + targetPos.normalized * 8f;
+        }
+
+        public override void OnGUI()
+        {
+            if (Camera.current != null && Camera.current.cameraType != CameraType.Game) return;
+            if (GameMain.isPaused || UIGame.viewMode == EViewMode.MilkyWay) return;
+            if (!IsVisible) return;
+
+            GUI.backgroundColor = new Color(0.12f, 0.15f, 0.2f, 0.95f);
+            base.OnGUI();
+            GUI.backgroundColor = Color.white;
+            
+            if (Mathf.Abs(WindowRect.x - BottleneckUIPlugin.WindowX.Value) > 0.1f || 
+                Mathf.Abs(WindowRect.y - BottleneckUIPlugin.WindowY.Value) > 0.1f || 
+                Mathf.Abs(WindowRect.width - BottleneckUIPlugin.WindowW.Value) > 0.1f || 
+                Mathf.Abs(WindowRect.height - BottleneckUIPlugin.WindowH.Value) > 0.1f)
             {
-                Log.Error("MainCamera is null, cannot focus on building.");
+                BottleneckUIPlugin.WindowX.Value = WindowRect.x;
+                BottleneckUIPlugin.WindowY.Value = WindowRect.y;
+                BottleneckUIPlugin.WindowW.Value = WindowRect.width;
+                BottleneckUIPlugin.WindowH.Value = WindowRect.height;
+            }
+        }
+
+        public void Update()
+        {
+            if (GameMain.isPaused || UIGame.viewMode == EViewMode.MilkyWay) 
+            {
+                BottleneckUIPlugin.navi.Disable();
                 return;
             }
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                BottleneckUIPlugin.navi.Disable();
+            }
+            
+            BottleneckUIPlugin.navi.Draw();
+        }
+    }
 
-            VectorLF3 offsetPos = targetPos + new VectorLF3(0, 150, 0); 
-            mainCamera.transform.position = (Vector3)offsetPos; 
-            mainCamera.transform.LookAt(targetPos); 
+    public class BottleneckNaviLine
+    {
+        public Vector3 endPoint;
+        public int planetId;
+        public int entityId;
+        public LineGizmo lineGizmo;
 
-            Log.Info($"Focused camera on entityId: {entityId} at {targetPos}");
+        public void GameTick()
+        {
+            if (planetId <= 0) return;
+            Draw();
+        }
+
+        public void Draw()
+        {
+            if (planetId <= 0) return;
+            if (GameMain.localPlanet != null && GameMain.localPlanet.id == planetId)
+            {
+                if (lineGizmo == null)
+                    Enable();
+                else
+                    lineGizmo.Open();
+                
+                Vector3 playerPos = GameMain.mainPlayer.position;
+                Vector3 startPos = playerPos + playerPos.normalized * 4f;
+
+                if (Time.frameCount % 30 == 0)
+                {
+                    if ((startPos - endPoint).sqrMagnitude < 2000f)
+                    {
+                        Disable(true);
+                        return;
+                    }
+                }
+
+                if (lineGizmo != null)
+                {
+                    lineGizmo.startPoint = startPos;
+                    lineGizmo.endPoint = endPoint;
+                }
+            }
+            else
+            {
+                if (lineGizmo != null)
+                    Disable();
+            }
+        }
+
+        public void Enable()
+        {
+            if (lineGizmo != null) return;
+            lineGizmo = LineGizmo.Create(1, Vector3.zero, Vector3.zero);
+            lineGizmo.autoRefresh = true;
+            lineGizmo.multiplier = 5f;
+            lineGizmo.alphaMultiplier = 0.6f;
+            lineGizmo.width = 3f;
+            lineGizmo.color = Configs.builtin.gizmoColors[4];
+            lineGizmo.spherical = true;
+            lineGizmo.Open();
+            lineGizmo.gameObject.SetActive(true);
+        }
+
+        public void Disable(bool reset = false)
+        {
+            if (lineGizmo != null)
+            {
+                lineGizmo.Close();
+                lineGizmo = null;
+            }
+            if (!reset) return;
+            planetId = 0;
+            entityId = 0;
         }
     }
 }

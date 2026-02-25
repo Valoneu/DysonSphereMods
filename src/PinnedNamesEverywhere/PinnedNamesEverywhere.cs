@@ -113,5 +113,67 @@ namespace PinnedNamesEverywhere
                     return false;
             }
         }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(UISpaceGuide), "ClipEntryPool")]
+        public static void UISpaceGuide_ClipEntryPool_Prefix(UISpaceGuide __instance, ref int _guidecnt, bool all)
+        {
+            if (all || !AlwaysShowPinnedNames.Value) return;
+
+            var history = GameMain.data?.history;
+            if (history == null || __instance.galaxy == null) return;
+
+            var relPos = __instance.relPos;
+            var relRot = __instance.relRot;
+            var setEntryMethod = typeof(UISpaceGuide).GetMethod("SetEntry", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+            // Collect existing objects
+            System.Collections.Generic.HashSet<int> existingStars = new System.Collections.Generic.HashSet<int>();
+            System.Collections.Generic.HashSet<int> existingPlanets = new System.Collections.Generic.HashSet<int>();
+
+            for (int i = 0; i < _guidecnt; i++)
+            {
+                if (__instance.entryPool == null || i >= __instance.entryPool.Count) break;
+                var entry = __instance.entryPool[i];
+                if (entry.guideType == ESpaceGuideType.Star) existingStars.Add(entry.objId);
+                else if (entry.guideType == ESpaceGuideType.Planet) existingPlanets.Add(entry.objId);
+            }
+
+            // Loop stars
+            for (int index1 = 1; index1 <= __instance.galaxy.starCount; ++index1)
+            {
+                if (history.GetStarPin(index1) == EPin.Show && !existingStars.Contains(index1))
+                {
+                    StarData starData = __instance.galaxy.StarById(index1);
+                    if (starData != null)
+                    {
+                        Vector3 _rpos = (Vector3)Maths.QInvRotateLF(relRot, starData.uPosition - relPos);
+
+                        object[] args = new object[] { _guidecnt, ESpaceGuideType.Star, index1, 0, _rpos, 0.0f };
+                        setEntryMethod?.Invoke(__instance, args);
+                        _guidecnt = (int)args[0]; // Update ref
+                    }
+                }
+            }
+            
+            // Loop planets
+            for (int i = 0; i < __instance.galaxy.starCount; i++)
+            {
+                var star = __instance.galaxy.stars[i];
+                if (star == null) continue;
+                for (int j = 0; j < star.planetCount; j++)
+                {
+                    var planet = star.planets[j];
+                    if (planet == null || planet.id == 0) continue;
+                    if (history.GetPlanetPin(planet.id) == EPin.Show && !existingPlanets.Contains(planet.id))
+                    {
+                        Vector3 _rpos = (Vector3)Maths.QInvRotateLF(relRot, planet.uPosition - relPos);
+                        object[] args = new object[] { _guidecnt, ESpaceGuideType.Planet, planet.id, 0, _rpos, (float)planet.realRadius };
+                        setEntryMethod?.Invoke(__instance, args);
+                        _guidecnt = (int)args[0];
+                    }
+                }
+            }
+        }
     }
 }

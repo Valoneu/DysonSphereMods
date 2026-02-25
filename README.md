@@ -27,7 +27,6 @@
 | **BottleneckUI** | Shows a UI listing all crafting machines that lack input items or power. | v1.0.0 |
 | **InfinityTechnologies** | Allows for more granular control over infinite research levels. | v1.0.0 |
 | **SortByStorage** | Adds a "Storage" sort option to the Production Statistics panel to sort by total stored quantity. | v1.0.0 |
-| **SpaceTargetEverything** | Allows space vessels to target everything on the ground by finding alternative ground targets when idle. | v1.0.0 |
 | **PlanetMinerFast** | Optimized version of PlanetMiner. Mines veins directly into stations set to Local Demand. Low UPS impact. | v1.0.0 |
 
 ---

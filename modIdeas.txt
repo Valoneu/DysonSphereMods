@@ -1,0 +1,5 @@
+change the recording of data in vessel trails to always record the 60 minutes and the slider should go from 1 minute to 60 minutes and also moving the slider should just change what you see and not reset it and it should also save when you exit a save to not wait 60 minutes every time
+make a mod that allows the special miner mine the fluid when its not over any vein + copy planet wide mining
+mod that hides vein depleted, research completed, fog bases that are attacking/close to attacking
+mod that sprays everything on the planet but uses it from the station like distribute warpers
+copypaste ils/pls settings
