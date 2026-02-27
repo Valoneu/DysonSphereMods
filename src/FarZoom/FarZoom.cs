@@ -5,7 +5,6 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
 using DysonSphereMods.Shared;
-
 namespace FarZoom
 {
     [BepInPlugin(MyPluginInfo.PLUGIN_GUID, MyPluginInfo.PLUGIN_NAME, MyPluginInfo.PLUGIN_VERSION)]
@@ -14,78 +13,54 @@ namespace FarZoom
     {
         public static ConfigEntry<float> ZoomMultiplier;
         public static ConfigEntry<float> ZoomSpeedMultiplier;
-
         private Harmony _harmony;
-
         private void Awake()
         {
             Log.Init(Logger);
-
             ZoomMultiplier = Config.Bind("General", "ZoomMultiplier", 2f, "Multiplier for the maximum zoom distance in Mech/Build mode. Default is 2.0 (2x vanilla).");
             ZoomSpeedMultiplier = Config.Bind("General", "ZoomSpeedMultiplier", 1f, "Multiplier for the zoom speed in Mech/Build mode. Default is 1.0 (vanilla speed).");
-
             _harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
             _harmony.PatchAll(typeof(FarZoomPatcher));
-
             Logger.LogInfo($"{MyPluginInfo.PLUGIN_NAME} v{MyPluginInfo.PLUGIN_VERSION} loaded!");
         }
-
         private void OnDestroy()
         {
             _harmony?.UnpatchSelf();
         }
     }
-
     public static class FarZoomPatcher
     {
         public static float CurrentFovMultiplier = 1f;
-
-        // --- Input Handling ---
-
         [HarmonyPatch(typeof(GameCamera), nameof(GameCamera.Logic))]
         [HarmonyPrefix]
         public static void GameCamera_Logic_Prefix()
         {
-            // If Shift is held and there's scroll input, adjust FOV
             if (VFInput.shift && Mathf.Abs(VFInput.mouseWheel) > 0.0001f)
             {
-                // Scroll up (positive) = increase FOV, Scroll down (negative) = decrease FOV
-                // We use a 10% step
                 float step = VFInput.mouseWheel > 0 ? 1.1f : 0.90909f;
                 CurrentFovMultiplier *= step;
-
-                // Clamp to reasonable limits (e.g., 0.1x to 5x)
                 CurrentFovMultiplier = Mathf.Clamp(CurrentFovMultiplier, 0.1f, 5f);
             }
         }
-
-        // --- FOV Patches ---
-
         [HarmonyPatch(typeof(RTSPoser), nameof(RTSPoser.Calculate))]
         [HarmonyPrefix]
         public static void RTSPoser_Calculate_Prefix(RTSPoser __instance)
         {
             __instance.normalFov = 60f * CurrentFovMultiplier;
-            // Maximum zoom distance patch
             __instance.distMax = 57f * FarZoomPlugin.ZoomMultiplier.Value;
         }
-
         [HarmonyPatch(typeof(PlanetPoser), nameof(PlanetPoser.Calculate))]
         [HarmonyPrefix]
         public static void PlanetPoser_Calculate_Prefix(PlanetPoser __instance)
         {
             __instance.normalFov = 60f * CurrentFovMultiplier;
         }
-
         [HarmonyPatch(typeof(GraticulePoser), nameof(GraticulePoser.Calculate))]
         [HarmonyPrefix]
         public static void GraticulePoser_Calculate_Prefix(GraticulePoser __instance)
         {
             __instance.normalFov = 40f * CurrentFovMultiplier;
         }
-
-        // --- RTS Zoom Speed Patch ---
-
         [HarmonyPatch(typeof(RTSPoser), nameof(RTSPoser.Calculate))]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> RTSPoser_Calculate_Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -94,7 +69,6 @@ namespace FarZoom
             bool patched = false;
             for (int i = 0; i < codes.Count; i++)
             {
-                // Find where Clamp01 is called for zoom speed
                 if (codes[i].opcode == OpCodes.Call && codes[i].operand.ToString().Contains("Clamp01"))
                 {
                     codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(FarZoomPlugin), nameof(FarZoomPlugin.ZoomSpeedMultiplier))));
@@ -107,9 +81,6 @@ namespace FarZoom
             if (!patched) Log.Warning("RTSPoser_Calculate_Transpiler failed to find Clamp01");
             return codes;
         }
-
-        // --- GameCamera Logic - Fix collision poser limits for RTS mode ---
-
         [HarmonyPatch(typeof(GameCamera), nameof(GameCamera.Logic))]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> GameCamera_Logic_Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -118,7 +89,6 @@ namespace FarZoom
             bool patched = false;
             for (int i = 0; i < codes.Count; i++)
             {
-                // Find hardcoded 58f limit
                 if (codes[i].opcode == OpCodes.Ldc_R4 && (float)codes[i].operand == 58f)
                 {
                     codes.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(FarZoomPlugin), nameof(FarZoomPlugin.ZoomMultiplier))));
@@ -131,9 +101,6 @@ namespace FarZoom
             if (!patched) Log.Warning("GameCamera_Logic_Transpiler failed to find 58f");
             return codes;
         }
-
-        // --- Zoom Blocking Patches (Technical Debt Fix) ---
-
         [HarmonyPatch(typeof(RTSPoser), nameof(RTSPoser.Calculate))]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> RTSPoser_BlockZoom_Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -150,11 +117,9 @@ namespace FarZoom
                     break;
                 }
             }
-
             if (!patched) Log.Warning("RTSPoser_BlockZoom_Transpiler failed");
             return codes;
         }
-
         [HarmonyPatch(typeof(PlanetPoser), nameof(PlanetPoser.Calculate))]
         [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> PlanetPoser_BlockZoom_Transpiler(IEnumerable<CodeInstruction> instructions)
@@ -171,7 +136,6 @@ namespace FarZoom
                     break;
                 }
             }
-
             if (!patched) Log.Warning("PlanetPoser_BlockZoom_Transpiler failed");
             return codes;
         }
