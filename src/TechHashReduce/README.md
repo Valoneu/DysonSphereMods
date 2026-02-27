@@ -16,4 +16,5 @@ Patches the technology prototype database at runtime immediately upon load, modi
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

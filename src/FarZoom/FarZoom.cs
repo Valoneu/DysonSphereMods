@@ -145,7 +145,7 @@ namespace FarZoom
                 if (codes[i].opcode == OpCodes.Ldfld && codes[i].operand.ToString().Contains("disableDist"))
                 {
                     codes.Insert(i + 2, new CodeInstruction(OpCodes.Brtrue_S, codes[i + 1].operand));
-                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(VFInput), nameof(VFInput.shift))));
+                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(VFInput), nameof(VFInput.shift))));
                     patched = true;
                     break;
                 }
@@ -163,10 +163,10 @@ namespace FarZoom
             bool patched = false;
             for (int i = 0; i < codes.Count - 2; i++)
             {
-                if (codes[i].opcode == OpCodes.Call && codes[i].operand.ToString().Contains("get_inFullscreenGUI"))
+                if (codes[i].opcode == OpCodes.Ldsfld && codes[i].operand.ToString().Contains("inFullscreenGUI"))
                 {
                     codes.Insert(i + 2, new CodeInstruction(OpCodes.Brtrue_S, codes[i + 1].operand));
-                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Call, AccessTools.PropertyGetter(typeof(VFInput), nameof(VFInput.shift))));
+                    codes.Insert(i + 2, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(VFInput), nameof(VFInput.shift))));
                     patched = true;
                     break;
                 }

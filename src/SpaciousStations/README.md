@@ -18,4 +18,5 @@ Overrides property injection for Station component proto setups utilizing intern
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

@@ -16,4 +16,5 @@ Subscribes to `TickManager`'s slow-tick event (every 60 frames) to scan planetar
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

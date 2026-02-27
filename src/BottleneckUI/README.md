@@ -17,4 +17,5 @@ Uses Harmony prefixes on machine simulation elements to collect state data, inje
 * **BepInEx, CommonAPI**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

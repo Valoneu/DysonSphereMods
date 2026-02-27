@@ -3,3 +3,4 @@ make a mod that allows the special miner mine the fluid when its not over any ve
 mod that hides vein depleted, research completed, fog bases that are attacking/close to attacking
 mod that sprays everything on the planet but uses it from the station like distribute warpers
 copypaste ils/pls settings
+mod that automatically takes rockets and sails from station and gets them into the sphere maybe create a custom new building

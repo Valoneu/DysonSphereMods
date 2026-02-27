@@ -5,7 +5,6 @@
     <Project Path="src/DistributeWarpers/DistributeWarpers.csproj" />
     <Project Path="src/FactoryOverclock/FactoryOverclock.csproj" />
     <Project Path="src/FarZoom/FarZoom.csproj" />
-    <Project Path="src/HydrogenDissolution/HydrogenDissolution.csproj" />
     <Project Path="src/InfinityTechnologies/InfinityTechnologies.csproj" />
     <Project Path="src/LessShipPower/LessShipPower.csproj" />
     <Project Path="src/MaxLVLIncrease/MaxLVLIncrease.csproj" />

@@ -16,4 +16,5 @@ Utilizes fast MSIL Delegates (`AccessTools.FieldRefAccess`) to bypass standard r
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

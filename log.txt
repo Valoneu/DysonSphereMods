@@ -1,0 +1,266 @@
+[Message:   BepInEx] BepInEx 5.4.17.0 - DSPGAME (22.02.2026 15:06:16)
+[Message:   BepInEx] Preloader started
+[Message:   BepInEx] Preloader finished
+[Message:   BepInEx] Chainloader ready
+[Message:   BepInEx] Chainloader started
+[Info   :   BepInEx] 58 plugins to load
+[Warning:   BepInEx] Skipping [FactoryOverclock 2.1.8] because a newer version exists (FactoryOverclock 3.0.0)
+[Warning:   BepInEx] Skipping [SpaciousStations 1.1.0] because a newer version exists (SpaciousStations 1.2.0)
+[Warning:   BepInEx] Plugin [DSP Common API 1.6.7.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [Common API Nebula Compatibility 1.6.7.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [DSP Mod Save 1.2.2] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [AssemblerVerticalConstruction 1.1.9] targets a wrong version of BepInEx (5.4.23.4) and might not work until you update
+[Warning:   BepInEx] Plugin [LSTM 0.9.5] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [PlanetFinder 1.2.3] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [SplitterOverBelt 1.1.7] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [No Dark Fog Seeds 1.1.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [Blueprint Tweaks 1.6.10] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [Blueprint Tweaks Installation Checker 1.6.10] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [CheatEnabler 2.4.2] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [CompressSave 1.3.8] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [UXAssist 1.5.4] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Error  :   BepInEx] Could not load [BuildToolOptCAPIcompat 1.0.0] because it is incompatible with: org.kremnev8.plugin.BlueprintTweaks
+[Warning:   BepInEx] Plugin [FactoryOverclock 3.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [SpaciousStations 1.2.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [CloserStations 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [StationDistance 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [DistributeWarpers 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [FarZoom 1.0.1] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [MaxLVLIncrease 1.0.4] targets a wrong version of BepInEx (5.4.19.0) and might not work until you update
+[Warning:   BepInEx] Plugin [StacksizeMultiplier 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [VesselTrails 1.2.1] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [LDBTool 3.0.3] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Info   :   BepInEx] Loading [ModFixerOne 2.1.1]
+[Info   :   BepInEx] Loading [ErrorAnalyzer 1.3.3]
+[Info   :   BepInEx] Loading [DSPAfterburner 0.0.4]
+[Info   :   BepInEx] Loading [DSPStationInfo 0.4.11]
+[Info   :   BepInEx] Loading [ReorderDysonNodes 0.1.0]
+[Info   :   BepInEx] Loading [LSTM 0.9.5]
+[Info   :   BepInEx] Loading [NoHidingManualResearch 1.0.0]
+[Info   :   BepInEx] Loading [PlanetFinder 1.2.3]
+[Info   :   BepInEx] Loading [Replenishment 1.1.3]
+[Info   :   BepInEx] Loading [SplitterOverBelt 1.1.7]
+[Info   :   BepInEx] Loading [HMIMHFasterCraftingSpeed 1.0.0]
+[Info   :   BepInEx] Loading [IlLine 1.0.0]
+[Info   :   BepInEx] Loading [DSP Mod Save 1.2.2]
+[Info   :   BepInEx] Loading [DSPOptimizations 1.1.19]
+[Info   :DSPOptimizations] 10 optimization sets loaded
+[Info   :   BepInEx] Loading [NebulaMultiplayerModApi 2.1.0.7]
+[Info   :   BepInEx] Loading [LDBTool 3.0.3]
+[Info   :   LDBTool] LDBTool is loaded successfully!
+[Info   :   BepInEx] Loading [DSP Common API 1.6.7.0]
+[Info   :DSP Common API] Enabling CommonAPI Submodule: LocalizationModule
+[Info   :DSP Common API] Enabling CommonAPI Submodule: PickerExtensionsSystem
+[Info   :DSP Common API] Enabling CommonAPI Submodule: ProtoRegistry
+[Info   :DSP Common API] Enabling CommonAPI Submodule: TabSystem
+[Info   :DSP Common API] Enabling CommonAPI Submodule: CustomKeyBindSystem
+[Info   :DSP Common API] Common API is initialized!
+[Info   :   BepInEx] Loading [UXAssist 1.5.4]
+[Info   :   BepInEx] Loading [CheatEnabler 2.4.2]
+[Info   :   BepInEx] Loading [BulletTime 1.5.13]
+[Info   :   BepInEx] Loading [SphereEditorTools 2.2.5]
+[Info   :   BepInEx] Loading [CloserStations 1.0.0]
+[Info   :CloserStations] CloserStations v1.0.0 loaded!
+[Info   :   BepInEx] Loading [DistributeWarpers 1.0.0]
+[Info   :DistributeWarpers] DistributeWarpers v1.0.0 loaded!
+[Info   :   BepInEx] Loading [FactoryOverclock 3.0.0]
+[Info   :FactoryOverclock] FactoryOverclock 3.0.0 loaded.
+[Info   :   BepInEx] Loading [FarZoom 1.0.1]
+[Info   :   FarZoom] FarZoom v1.0.1 loaded!
+[Info   :   BepInEx] Loading [MaxLVLIncrease 1.0.4]
+[Info   :   BepInEx] Loading [SpaciousStations 1.2.0]
+[Info   :SpaciousStations] SpaciousStations v1.2.0 loaded!
+[Info   :   BepInEx] Loading [StacksizeMultiplier 1.0.0]
+[Info   :StacksizeMultiplier] StacksizeMultiplier v1.0.0 loaded!
+[Info   :   BepInEx] Loading [StationDistance 1.0.0]
+[Info   :StationDistance] StationDistance v1.0.0 loaded!
+[Info   :   BepInEx] Loading [VesselTrails 1.2.1]
+[Info   :VesselTrails] VesselTrails v1.2.1 loaded!
+[Info   :   BepInEx] Loading [AutoQueueTech 0.0.6]
+[Info   :AutoQueueTech] AutoQueueTech Awake() called
+[Info   :   BepInEx] Loading [Common API Nebula Compatibility 1.6.7.0]
+[Error  :   BepInEx] Could not load [MMSBottleneckCompat 1.0] because it has missing dependencies: Bottleneck
+[Error  :   BepInEx] Could not load [MMSCCBSCompat 1.0] because it has missing dependencies: kumor.plugin.CustomCreateBirthStar
+[Error  :   BepInEx] Could not load [MMSGCPatch 1.0] because it has missing dependencies: org.LoShin.GenesisBook
+[Error  :   BepInEx] Could not load [MMSGS2Compat 1.0] because it has missing dependencies: dsp.galactic-scale.2
+[Info   :   BepInEx] Loading [MoreMegaStructure 1.8.10]
+[Info   :DSP Common API] Mod Gnimaerd.DSP.plugin.MoreMegaStructure loading phase is over.
+[Info   :   BepInEx] Loading [Free Blueprint Tech 1.0.4]
+[Info   :   BepInEx] Loading [AssemblerVerticalConstruction 1.1.9]
+[Info   :   BepInEx] Loading [No Dark Fog Seeds 1.1.0]
+[Info   :No Dark Fog Seeds] Plugin No_DF_Seeds is loaded!
+[Info   :   BepInEx] Loading [Blueprint Tweaks 1.6.10]
+[Info   :DSP Common API] Successfully loaded translations from 'C:\Users\filip\AppData\Roaming\r2modmanPlus-local\DysonSphereProgram\profiles\ModdedNEW\BepInEx\plugins\kremnev8-BlueprintTweaks\Locale'
+[Info   :Blueprint Tweaks] Blueprint tweaks mod is initialized!
+[Info   :   BepInEx] Loading [Blueprint Tweaks Installation Checker 1.6.10]
+[Info   :Blueprint Tweaks Installation Checker] Check successful. Installation is correct!
+[Info   :   BepInEx] Loading [CompressSave 1.3.8]
+[Info   :   BepInEx] Loading [PlanetwideMining 0.0.15]
+[Info   :PlanetwideMining] Plugin PlanetwideMining is loaded!
+[Info   :   BepInEx] Loading [SphereOpt 0.9.1]
+[Info   : SphereOpt] Loading custom shaders from bundle.
+[Info   : SphereOpt] Loaded custom shader: VF Shaders/Dyson Sphere/Dyson Shell Unlit Instanced
+[Info   : SphereOpt] Loaded custom shader: VF Shaders/Dyson Sphere/Frame Inst REPLACE
+[Info   : SphereOpt] Loaded custom shader: VF Shaders/Dyson Sphere/Node Inst REPLACE
+[Info   :   BepInEx] Loading [BuildToolOpt 1.1.5]
+[Info   :   BepInEx] Loading [FactoryLocator 1.3.12]
+[Info   :   BepInEx] Loading [MassRecipePaste 1.1.3]
+[Info   :   BepInEx] Loading [MassRecipePasteCAPIcompat 1.0.0]
+[Info   :   BepInEx] Loading [PlanetwideSpray 1.1.10]
+[Info   :PlanetwideSpray] Cheat mode: Force Proliferator Level = 4
+[Info   :   BepInEx] Loading [RateMonitor 0.4.2]
+[Info   :   BepInEx] Loading [RateMonitorCAPIcompat 1.0.0]
+[Info   :   BepInEx] Loading [StatsUITweaks 1.6.13]
+[Info   :   BepInEx] Loading [UITweaks 1.0.0]
+[Info   :   BepInEx] Loading [战场分析基站配送支持 3.1.4]
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] 正在加载... (GUID: un1eagle.battlefieldanalysisbasedeliver)
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✓ PlanetFactory.Init 补丁已应用
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✓ PlanetFactory.Import 补丁已应用（清理旧虚拟配送器）
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✓ PlanetFactory.Free 补丁已应用
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✓ BattleBaseComponent.InternalUpdate 补丁已应用（核心逻辑）
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✓ LogisticCourierRenderer.Update 补丁已应用（无人机可见）
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✓ GameData.Export 补丁已应用（存档安全）
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✓ GameData.Import 补丁已应用（自动重新派遣）
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ========================================
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ✅ 加载完成！基站直接派遣方案
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] 📦 战场基站无人机数量: 20，速度倍率: 2（可在配置中修改）
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] 🚀 无需虚拟配送器，性能优化
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] 💾 存档安全，自动兼容旧方案
+[Info   :战场分析基站配送支持] [战场分析基站配送支持] ========================================
+[Message:   BepInEx] Chainloader startup complete
+[Info   :DSP Common API] Editing localizations!
+[Info   :DSPOptimizations] 4 commands loaded from DSPOptimizations
+[Info   :ModFixerOne] LDBTool - OK
+[Info   :DSP Mod Save] DSP Mod Save is initialized!
+[Warning:  HarmonyX] AccessTools.Property: Could not find property for type System.IO.BinaryReader and name ReadInt32
+[Info   :Common API Nebula Compatibility] Common API Nebula Compatibility ready!
+[Info   : SphereOpt] replacing shader on: dyson-node-0
+[Info   : SphereOpt] replacing shader on: dyson-frame-0
+[Info   : SphereOpt] replacing shader on: dyson-frame-1
+[Info   :DSP Mod Save] _autosave_tmp: Game mod save not exist
+[Info   :DSP Common API] Checking missing machines!
+[Info   :FactoryOverclock] Refreshing all factory systems...
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2316, Name=大型采矿机, name=Advanced Mining Machine
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2103, Name=物流运输站, name=Planetary Logistics Station
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2104, Name=星际物流运输站, name=Interstellar Logistics Station
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2105, Name=轨道采集器, name=Orbital Collector
+[Info   :SpaciousStations] GameMain.Begin: All station limits synced.
+[Info   :   LDBTool] Pre Loading...
+[Info   :   LDBTool] Add 9480 Gravity generator to ItemProtoSet.
+[Info   :   LDBTool] Add 9481 Plane constraint ring to ItemProtoSet.
+[Info   :   LDBTool] Add 9482 Graviton drill to ItemProtoSet.
+[Info   :   LDBTool] Add 9483 Tunneling exciter to ItemProtoSet.
+[Info   :   LDBTool] Add 9484 Resonant disc to ItemProtoSet.
+[Info   :   LDBTool] Add 9485 Photon probe to ItemProtoSet.
+[Info   :   LDBTool] Add 9486 Quantum computer to ItemProtoSet.
+[Info   :   LDBTool] Add 9487 Interstellar assembly component to ItemProtoSet.
+[Info   :   LDBTool] Add 9488 Matter decompressor carrier rocket to ItemProtoSet.
+[Info   :   LDBTool] Add 9489 Science nexus carrier rocket to ItemProtoSet.
+[Info   :   LDBTool] Add 9490 Resonant generator carrier rocket to ItemProtoSet.
+[Info   :   LDBTool] Add 9491 Interstellar assembly carrier rocket to ItemProtoSet.
+[Info   :   LDBTool] Add 9492 Crystal reconstructor carrier rocket to ItemProtoSet.
+[Info   :   LDBTool] Add 9500 Multi-functional integrated components to ItemProtoSet.
+[Info   :   LDBTool] Add 9503 Force field generator to ItemProtoSet.
+[Info   :   LDBTool] Add 9504 Compound cyrstal to ItemProtoSet.
+[Info   :   LDBTool] Add 9505 Electromagnetic force suppressor to ItemProtoSet.
+[Info   :   LDBTool] Add 9506 Gluon generator to ItemProtoSet.
+[Info   :   LDBTool] Add 9507 Strong interaction overload device to ItemProtoSet.
+[Info   :   LDBTool] Add 9508 Flow guide frame to ItemProtoSet.
+[Info   :   LDBTool] Add 9509 Star cannon component to ItemProtoSet.
+[Info   :   LDBTool] Add 9510 Star cannon carrier rocket to ItemProtoSet.
+[Info   :   LDBTool] Add 9511 Droplet to ItemProtoSet.
+[Info   :   LDBTool] Add 9512 Exchange Logistic Station to ItemProtoSet.
+[Info   :   LDBTool] Add 530 Gravity generatorRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 531 Plane constraint ringRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 532 Graviton drillRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 533 Tunneling exciterRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 534 Resonant discRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 535 Photon probeRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 536 Quantum computerRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 537 Interstellar assembly componentRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 538 Matter decompressor carrier rocketRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 539 Science nexus carrier rocketRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 540 Resonant generator carrier rocketRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 541 Interstellar assembly carrier rocketRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 542 Crystal reconstructor carrier rocketRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 550 Multi-functional integrated componentsRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 565 力场发生器Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 566 复合态晶体Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 567 电磁力抑制器Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 568 胶子发生器Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 569 强力过载装置Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 570 导流框架Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 571 恒星炮组件Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 572 恒星炮运载火箭Recipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 573 水滴gmRecipe to RecipeProtoSet.
+[Info   :   LDBTool] Add 575 Exchange Logistic Station to RecipeProtoSet.
+[Info   :   LDBTool] Add 1918 Nicoll-Dyson beam to TechProtoSet.
+[Info   :   LDBTool] Post Loading...
+[Info   :DSP Common API] Reinit cached data!
+[Info   :DSP Common API] Post loading is complete!
+[Info   :   LDBTool] Add 9493 星际组装厂生产机器图标专用 to ItemProtoSet.
+[Info   :   LDBTool] Add 9494 Copper reconstruct receiver to ItemProtoSet.
+[Info   :   LDBTool] Add 9495 Silicon reconstruct receiver to ItemProtoSet.
+[Info   :   LDBTool] Add 9496 Titanium reconstruct receiver to ItemProtoSet.
+[Info   :   LDBTool] Add 9497 Unipolar magnet receiver to ItemProtoSet.
+[Info   :   LDBTool] Add 9498 Crystal receiver to ItemProtoSet.
+[Info   :   LDBTool] Add 9499 Component integration station to ItemProtoSet.
+[Info   :   LDBTool] Add 9501 Graphite extraction receiver to ItemProtoSet.
+[Info   :   LDBTool] Add 9502 Optical crystal receiver to ItemProtoSet.
+[Info   :   LDBTool] Add 554 Assembling machine - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 551 Conveyor belt - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 556 Chemical plant - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 558 Collider - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 562 Interstellar logistics - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 559 Lab - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 561 Planetary logistics - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 553 Substation - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 560 Artificial star - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 557 Refinery - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 555 Plane smelter - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 552 Sorter - quick assembly to RecipeProtoSet.
+[Info   :   LDBTool] Add 352 集装分拣器 快速组装 to RecipeProtoSet.
+[Info   :   LDBTool] Add 353 制造台4 快速组装 to RecipeProtoSet.
+[Info   :   LDBTool] Add 354 熔炉3 快速组装 to RecipeProtoSet.
+[Info   :   LDBTool] Add 355 实验室2 快速组装 to RecipeProtoSet.
+[Info   :   LDBTool] Add 356 大矿机 快速组装 to RecipeProtoSet.
+[Info   :   LDBTool] Add 357 抽水泵 快速组装 to RecipeProtoSet.
+[Info   :   LDBTool] Add 543 星际组装厂生产机器图标专用 to RecipeProtoSet.
+[Info   :   LDBTool] Add 544 Copper reconstruct receiver to RecipeProtoSet.
+[Info   :   LDBTool] Add 545 Silicon reconstruct receiver to RecipeProtoSet.
+[Info   :   LDBTool] Add 546 Titanium reconstruct receiver to RecipeProtoSet.
+[Info   :   LDBTool] Add 547 Unipolar magnet receiver to RecipeProtoSet.
+[Info   :   LDBTool] Add 548 Crystal receiver to RecipeProtoSet.
+[Info   :   LDBTool] Add 549 Component integration station to RecipeProtoSet.
+[Info   :   LDBTool] Add 563 Graphite extraction receiver to RecipeProtoSet.
+[Info   :   LDBTool] Add 564 Optical crystal receiver to RecipeProtoSet.
+[Info   :   LDBTool] Calling ItemProto init functions...
+[Info   :   LDBTool]  Set build bar at 6,9 ID:9512 name:Exchange Logistic Station
+[Info   :   LDBTool] Done.
+[Warning:DSP Common API] This version of CommonAPI was built for build id "0.10.33.26941", you are running "0.10.34.28470".
+[Warning:DSP Common API] Should any problems arise, please check for a new version before reporting issues.
+[Info   :SpaciousStations] Performing final pass on prototypes for SpaciousStations...
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2316, Name=大型采矿机, name=Advanced Mining Machine
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2103, Name=物流运输站, name=Planetary Logistics Station
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2104, Name=星际物流运输站, name=Interstellar Logistics Station
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2105, Name=轨道采集器, name=Orbital Collector
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=9512, Name=物资交换器, name=Exchange Logistic Station
+[Info   :VesselTrails] Captured 207 original stack sizes.
+[Info   :VesselTrails] Applied multiplier to 206 items.
+[Info   :ModFixerOne] PreloadAndInitAll
+[Info   :DSP Mod Save] Pre Load!
+[Info   :DSP Mod Save] File has mod com.Selsion.DSPOptimizations save data starting from 294
+[Info   :DSP Mod Save] File has mod dsp.common-api.CommonAPI save data starting from 298
+[Info   :DSP Mod Save] File has mod org.soardev.uxassist save data starting from 316
+[Info   :DSP Mod Save] File has mod Gnimaerd.DSP.plugin.MoreMegaStructure save data starting from 350
+[Info   :DSP Mod Save] File has mod lltcggie.DSP.plugin.AssemblerVerticalConstruction save data starting from 129202
+[Info   :DSP Mod Save] Post Load!
+[Info   :DSP Common API] Checking missing machines!
+[Info   :FactoryOverclock] Refreshing all factory systems...
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2316, Name=大型采矿机, name=Advanced Mining Machine
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2103, Name=物流运输站, name=Planetary Logistics Station
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2104, Name=星际物流运输站, name=Interstellar Logistics Station
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=2105, Name=轨道采集器, name=Orbital Collector
+[Info   :SpaciousStations] SpaciousStations processing Station: ID=9512, Name=物资交换器, name=Exchange Logistic Station
+[Info   :SpaciousStations] GameMain.Begin: All station limits synced.
+[Info   :PlanetFinder] loading vein data completed

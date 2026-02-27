@@ -32,13 +32,23 @@ namespace SpaciousStations
         public static ConfigEntry<float> ILS_StorageMultiplier;
         public static ConfigEntry<float> ILS_ChargeMultiplier;
         public static ConfigEntry<float> ILS_EnergyMultiplier;
+        public static ConfigEntry<int> ILS_ShipReleasePerTick;
+
+        public static ConfigEntry<float> EXC_DroneMultiplier;
+        public static ConfigEntry<float> EXC_ShipMultiplier;
+        public static ConfigEntry<float> EXC_StorageMultiplier;
+        public static ConfigEntry<float> EXC_ChargeMultiplier;
+        public static ConfigEntry<float> EXC_EnergyMultiplier;
 
         public static ConfigEntry<int> DroneTaskInterval;
         public static ConfigEntry<int> ShipTaskInterval;
-        public static ConfigEntry<int> ILS_ShipReleasePerTick;
 
         public static ConfigEntry<float> InternalLastStorageMultiplier;
         public static ConfigEntry<float> InternalLastChargeMultiplier;
+        public static ConfigEntry<float> InternalLastPLSStorageMultiplier;
+        public static ConfigEntry<float> InternalLastPLSChargeMultiplier;
+        public static ConfigEntry<float> InternalLastEXCStorageMultiplier;
+        public static ConfigEntry<float> InternalLastEXCChargeMultiplier;
 
         private void Awake()
         {
@@ -55,11 +65,21 @@ namespace SpaciousStations
             ILS_EnergyMultiplier = Config.Bind("Interstellar Logistics Station", "EnergyMultiplier", 2f, "Multiplies station's max energy storage for ILS.");
             ILS_ShipReleasePerTick = Config.Bind("Interstellar Logistics Station", "ShipReleasePerTick", 1, "Maximum number of ships that can be dispatched from a single ILS in a single tick (when it's their turn to dispatch). Vanilla is 1.");
 
+            EXC_DroneMultiplier = Config.Bind("Megastructures Exchange Station", "DroneMultiplier", 2f, "Multiplies max number of drones in an Exchange Station.");
+            EXC_ShipMultiplier = Config.Bind("Megastructures Exchange Station", "ShipMultiplier", 2f, "Multiplies max number of ships in an Exchange Station.");
+            EXC_StorageMultiplier = Config.Bind("Megastructures Exchange Station", "StorageMultiplier", 2f, "Multiplies maximum amount of items in an Exchange Station.");
+            EXC_ChargeMultiplier = Config.Bind("Megastructures Exchange Station", "ChargeMultiplier", 2f, "Multiplies station's charge power for Exchange Station.");
+            EXC_EnergyMultiplier = Config.Bind("Megastructures Exchange Station", "EnergyMultiplier", 2f, "Multiplies station's max energy storage for Exchange Station.");
+
             DroneTaskInterval = Config.Bind("General", "DroneTaskInterval", 20, "The interval between drone dispatches. Lower is faster. Vanilla default is 20 (3 dispatches per second). Setting this to 1 will dispatch drones every tick (60 per second).");
             ShipTaskInterval = Config.Bind("General", "ShipTaskInterval", 10, "The interval between vessel dispatches for high priority items. Lower is faster. Vanilla default is 10 (6 dispatches per second). Setting this to 1 will dispatch vessels every tick (60 per second). Note: other priority items use 3x and 6x this interval.");
 
             InternalLastStorageMultiplier = Config.Bind("Internal", "LastStorageMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
             InternalLastChargeMultiplier = Config.Bind("Internal", "LastChargeMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
+            InternalLastPLSStorageMultiplier = Config.Bind("Internal", "LastPLSStorageMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
+            InternalLastPLSChargeMultiplier = Config.Bind("Internal", "LastPLSChargeMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
+            InternalLastEXCStorageMultiplier = Config.Bind("Internal", "LastEXCStorageMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
+            InternalLastEXCChargeMultiplier = Config.Bind("Internal", "LastEXCChargeMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
 
             Log.Init(Logger);
             SyncConfigToService();
@@ -83,6 +103,12 @@ namespace SpaciousStations
             MultiplierService.SetMultiplier("Station_ILS_Storage", ILS_StorageMultiplier.Value);
             MultiplierService.SetMultiplier("Station_ILS_Charge", ILS_ChargeMultiplier.Value);
             MultiplierService.SetMultiplier("Station_ILS_Energy", ILS_EnergyMultiplier.Value);
+
+            MultiplierService.SetMultiplier("Station_EXC_Drone", EXC_DroneMultiplier.Value);
+            MultiplierService.SetMultiplier("Station_EXC_Ship", EXC_ShipMultiplier.Value);
+            MultiplierService.SetMultiplier("Station_EXC_Storage", EXC_StorageMultiplier.Value);
+            MultiplierService.SetMultiplier("Station_EXC_Charge", EXC_ChargeMultiplier.Value);
+            MultiplierService.SetMultiplier("Station_EXC_Energy", EXC_EnergyMultiplier.Value);
             
             MultiplierService.CommitChanges();
         }
@@ -152,7 +178,7 @@ namespace SpaciousStations
                 };
             }
             
-            ApplyToDesc(item.prefabDesc, _originalValues[item.ID]);
+            ApplyToDesc(item.prefabDesc, _originalValues[item.ID], item);
         }
 
         private static void ApplyToModel(ModelProto model)
@@ -181,16 +207,36 @@ namespace SpaciousStations
                         EnergyPerTick = item.prefabDesc.workEnergyPerTick
                     };
                 }
-                ApplyToDesc(model.prefabDesc, _originalValues[item.ID]);
+                ApplyToDesc(model.prefabDesc, _originalValues[item.ID], item);
             }
         }
 
-        private static void ApplyToDesc(PrefabDesc desc, ProtoValues original)
+        private static void ApplyToDesc(PrefabDesc desc, ProtoValues original, ItemProto item = null)
         {
             if (desc == null) return;
             
             float droneMul, shipMul, storageMul, energyMul, chargeMul;
-            if (desc.isStellarStation)
+
+            // MoreMegaStructure Exchange Station has a specific name or ID, but typically mod items use IDs > 9000 or specific names.
+            // The safest check is the name "MegaStructure" in the type or prefab, but since it's an ItemProto, it has a name.
+            bool isExchangeStation = item != null && (
+                item.ID >= 9400 ||
+                (item.name != null && (item.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                item.Name == "星际组装厂" || item.Name == "物资交换器" || item.Name == "Interstellar Assembly" || item.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || item.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0
+            );
+            // For now, checking name or ID is the only way if we don't have direct access to Megastructures types. Let's use name heuristic.
+            // A more robust check: MoreMegaStructure uses ID 9494, 9495, etc. Let's check for ID range if we know it, or just rely on Name. 
+            // In FactoryOverclock it checks `isPowerExchanger` but for "ExchangeStationComponent" it's different.
+            // Actually, "ExchangeStationComponent" is not an exchanger, it's a station. Megastructure's exchange station is a station with a specific Name or ID.
+            if (isExchangeStation)
+            {
+                droneMul = MultiplierService.GetMultiplier("Station_EXC_Drone", 1f);
+                shipMul = MultiplierService.GetMultiplier("Station_EXC_Ship", 1f);
+                storageMul = MultiplierService.GetMultiplier("Station_EXC_Storage", 1f);
+                energyMul = MultiplierService.GetMultiplier("Station_EXC_Energy", 1f);
+                chargeMul = MultiplierService.GetMultiplier("Station_EXC_Charge", 1f);
+            }
+            else if (desc.isStellarStation)
             {
                 droneMul = MultiplierService.GetMultiplier("Station_ILS_Drone", 1f);
                 shipMul = MultiplierService.GetMultiplier("Station_ILS_Ship", 1f);
@@ -342,10 +388,17 @@ namespace SpaciousStations
                         // Fix storage limits — only rescale if multiplier changed
                         if (station.storage != null)
                         {
-                            float storageMul = desc.isStellarStation
-                                ? MultiplierService.GetMultiplier("Station_ILS_Storage")
-                                : MultiplierService.GetMultiplier("Station_PLS_Storage");
-                            float lastMul = SpaciousStationsPlugin.InternalLastStorageMultiplier.Value;
+                            bool isExchange = itemProto != null && (
+                                itemProto.ID >= 9400 ||
+                                (itemProto.name != null && (itemProto.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                                itemProto.Name == "星际组装厂" || itemProto.Name == "物资交换器" || itemProto.Name == "Interstellar Assembly" || itemProto.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0
+                            );
+
+                            float storageMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Storage") :
+                                               desc.isStellarStation ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
+                            float lastMul = isExchange ? SpaciousStationsPlugin.InternalLastEXCStorageMultiplier.Value :
+                                            desc.isStellarStation ? SpaciousStationsPlugin.InternalLastStorageMultiplier.Value : SpaciousStationsPlugin.InternalLastPLSStorageMultiplier.Value;
+                            
                             int vanillaExtra = GetVanillaAdditionStorage(station);
                             int vanillaMax = original.ItemCount + vanillaExtra;
                             int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * storageMul);
@@ -375,10 +428,17 @@ namespace SpaciousStations
                         if (!desc.isCollectStation && station.pcId > 0 && factory.powerSystem != null
                             && station.pcId < factory.powerSystem.consumerCursor)
                         {
-                            float chargeMul = desc.isStellarStation
-                                ? MultiplierService.GetMultiplier("Station_ILS_Charge")
-                                : MultiplierService.GetMultiplier("Station_PLS_Charge");
-                            float lastChgMul = SpaciousStationsPlugin.InternalLastChargeMultiplier.Value;
+                            bool isExchange = itemProto != null && (
+                                itemProto.ID >= 9400 ||
+                                (itemProto.name != null && (itemProto.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                                itemProto.Name == "星际组装厂" || itemProto.Name == "物资交换器" || itemProto.Name == "Interstellar Assembly" || itemProto.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0
+                            );
+
+                            float chargeMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Charge") :
+                                              desc.isStellarStation ? MultiplierService.GetMultiplier("Station_ILS_Charge") : MultiplierService.GetMultiplier("Station_PLS_Charge");
+                            float lastChgMul = isExchange ? SpaciousStationsPlugin.InternalLastEXCChargeMultiplier.Value :
+                                               desc.isStellarStation ? SpaciousStationsPlugin.InternalLastChargeMultiplier.Value : SpaciousStationsPlugin.InternalLastPLSChargeMultiplier.Value;
+                            
                             bool chargeChanged = Math.Abs(lastChgMul - chargeMul) > 0.001f;
 
                             long currentChargePwr = factory.powerSystem.consumerPool[station.pcId].workEnergyPerTick;
@@ -402,10 +462,12 @@ namespace SpaciousStations
                 }
             }
 
-            float currStoreMul = MultiplierService.GetMultiplier("Station_ILS_Storage");
-            float currChargeMul = MultiplierService.GetMultiplier("Station_ILS_Charge");
-            SpaciousStationsPlugin.InternalLastStorageMultiplier.Value = currStoreMul;
-            SpaciousStationsPlugin.InternalLastChargeMultiplier.Value = currChargeMul;
+            SpaciousStationsPlugin.InternalLastStorageMultiplier.Value = MultiplierService.GetMultiplier("Station_ILS_Storage");
+            SpaciousStationsPlugin.InternalLastChargeMultiplier.Value = MultiplierService.GetMultiplier("Station_ILS_Charge");
+            SpaciousStationsPlugin.InternalLastPLSStorageMultiplier.Value = MultiplierService.GetMultiplier("Station_PLS_Storage");
+            SpaciousStationsPlugin.InternalLastPLSChargeMultiplier.Value = MultiplierService.GetMultiplier("Station_PLS_Charge");
+            SpaciousStationsPlugin.InternalLastEXCStorageMultiplier.Value = MultiplierService.GetMultiplier("Station_EXC_Storage");
+            SpaciousStationsPlugin.InternalLastEXCChargeMultiplier.Value = MultiplierService.GetMultiplier("Station_EXC_Charge");
             
             Log.Info("GameMain.Begin: All station limits synced.");
         }
@@ -455,7 +517,20 @@ namespace SpaciousStations
         [HarmonyPatch(typeof(UIStationStorage), nameof(UIStationStorage.GetAdditionStorage))]
         public static void UIStationStorage_GetAdditionStorage_Postfix(UIStationStorage __instance, ref int __result)
         {
-            if (__instance.station != null)
+            if (__instance.station != null && __instance.stationWindow != null && __instance.stationWindow.factory != null)
+            {
+                ItemProto item = LDB.items.Select(__instance.stationWindow.factory.entityPool[__instance.station.entityId].protoId);
+                bool isExchange = item != null && (
+                    item.ID >= 9400 ||
+                    (item.name != null && (item.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                    item.Name == "星际组装厂" || item.Name == "物资交换器" || item.Name == "Interstellar Assembly" || item.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || item.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0
+                );
+
+                float storageMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Storage") :
+                                   __instance.station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
+                __result = (int)(__result * storageMul);
+            }
+            else if (__instance.station != null)
             {
                 float storageMul = __instance.station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
                 __result = (int)(__result * storageMul);
@@ -470,7 +545,20 @@ namespace SpaciousStations
         [HarmonyPatch(typeof(UIControlPanelStationStorage), nameof(UIControlPanelStationStorage.GetAdditionStorage))]
         public static void UIControlPanelStationStorage_GetAdditionStorage_Postfix(UIControlPanelStationStorage __instance, ref int __result)
         {
-             if (__instance.masterInspector != null && __instance.masterInspector.station != null)
+             if (__instance.masterInspector != null && __instance.masterInspector.station != null && __instance.masterInspector.factory != null)
+             {
+                 ItemProto item = LDB.items.Select(__instance.masterInspector.factory.entityPool[__instance.masterInspector.station.entityId].protoId);
+                 bool isExchange = item != null && (
+                     item.ID >= 9400 ||
+                     (item.name != null && (item.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                     item.Name == "星际组装厂" || item.Name == "物资交换器" || item.Name == "Interstellar Assembly" || item.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || item.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0
+                 );
+
+                 float storageMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Storage") :
+                                    __instance.masterInspector.station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
+                 __result = (int)(__result * storageMul);
+             }
+             else if (__instance.masterInspector != null && __instance.masterInspector.station != null)
              {
                  float storageMul = __instance.masterInspector.station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
                  __result = (int)(__result * storageMul);
@@ -479,6 +567,128 @@ namespace SpaciousStations
              {
                  __result = (int)(__result * MultiplierService.GetMultiplier("Station_ILS_Storage"));
              }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIStationStorage), nameof(UIStationStorage.RefreshValues))]
+        public static void UIStationStorage_RefreshValues_Postfix(UIStationStorage __instance)
+        {
+            if (__instance.station != null && __instance.stationWindow != null && __instance.stationWindow.factory != null && __instance.maxSlider != null)
+            {
+                ItemProto item = LDB.items.Select(__instance.stationWindow.factory.entityPool[__instance.station.entityId].protoId);
+                if (item != null && item.prefabDesc != null)
+                {
+                    bool isExchange = item.ID >= 9400 ||
+                                      (item.name != null && (item.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                                      item.Name == "星际组装厂" || item.Name == "物资交换器" || item.Name == "Interstellar Assembly" || item.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || item.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    float storageMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Storage") :
+                                       __instance.station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
+
+                    int vanillaExtra = __instance.station.isCollector ? GameMain.history.localStationExtraStorage :
+                                       __instance.station.isVeinCollector ? GameMain.history.localStationExtraStorage :
+                                       __instance.station.isStellar ? GameMain.history.remoteStationExtraStorage :
+                                       GameMain.history.localStationExtraStorage;
+
+                    if (_originalValues.TryGetValue(item.ID, out var original))
+                    {
+                        int newMax = (int)(original.ItemCount * storageMul) + (int)(vanillaExtra * storageMul);
+                        __instance.maxSlider.maxValue = newMax / 100f;
+                    }
+                }
+            }
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIControlPanelStationStorage), nameof(UIControlPanelStationStorage.RefreshValues))]
+        public static void UIControlPanelStationStorage_RefreshValues_Postfix(UIControlPanelStationStorage __instance)
+        {
+            if (__instance.station != null && __instance.masterInspector != null && __instance.masterInspector.factory != null && __instance.maxSlider != null)
+            {
+                ItemProto item = LDB.items.Select(__instance.masterInspector.factory.entityPool[__instance.station.entityId].protoId);
+                if (item != null && item.prefabDesc != null)
+                {
+                    bool isExchange = item.ID >= 9400 ||
+                                      (item.name != null && (item.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                                      item.Name == "星际组装厂" || item.Name == "物资交换器" || item.Name == "Interstellar Assembly" || item.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || item.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    float storageMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Storage") :
+                                       __instance.station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
+
+                    int vanillaExtra = __instance.station.isCollector ? GameMain.history.localStationExtraStorage :
+                                       __instance.station.isVeinCollector ? GameMain.history.localStationExtraStorage :
+                                       __instance.station.isStellar ? GameMain.history.remoteStationExtraStorage :
+                                       GameMain.history.localStationExtraStorage;
+
+                    if (_originalValues.TryGetValue(item.ID, out var original))
+                    {
+                        int newMax = (int)(original.ItemCount * storageMul) + (int)(vanillaExtra * storageMul);
+                        __instance.maxSlider.maxValue = newMax / 100f;
+                    }
+                }
+            }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.SetStationStorage))]
+        public static void PlanetTransport_SetStationStorage_Prefix(PlanetTransport __instance, int stationId, ref int itemCountMax)
+        {
+            if (stationId > 0 && stationId < __instance.stationCursor)
+            {
+                StationComponent station = __instance.stationPool[stationId];
+                if (station != null && station.entityId > 0 && __instance.factory != null)
+                {
+                    ItemProto item = LDB.items.Select(__instance.factory.entityPool[station.entityId].protoId);
+                    if (item != null && item.prefabDesc != null)
+                    {
+                        bool isExchange = item.ID >= 9400 ||
+                                          (item.name != null && (item.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                                          item.Name == "星际组装厂" || item.Name == "物资交换器" || item.Name == "Interstellar Assembly" || item.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || item.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                        float storageMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Storage") :
+                                           station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
+
+                        int vanillaExtra = station.isCollector ? GameMain.history.localStationExtraStorage :
+                                           station.isVeinCollector ? GameMain.history.localStationExtraStorage :
+                                           station.isStellar ? GameMain.history.remoteStationExtraStorage :
+                                           GameMain.history.localStationExtraStorage;
+
+                        if (_originalValues.TryGetValue(item.ID, out var original))
+                        {
+                            int customMax = (int)(original.ItemCount * storageMul) + (int)(vanillaExtra * storageMul);
+                            
+                            // The slider passes in a value from 0 to 400,000 for Exchange Station.
+                            // SetStationStorage clamps it: `if (itemCountMax > num1 + num2) itemCountMax = num1 + num2;`
+                            // If we update `itemCountMax` to cap ONLY at our `customMax`, we can just skip the vanilla clamp!
+                            // But wait, we can't skip the clamp without a transpiler.
+                            // Let's just redefine `itemCountMax` to whatever the slider passed in, up to `customMax`.
+                            // Then, in a postfix, we'll re-apply the value!
+                            
+                            // Let's create a local field to store the requested max.
+                            _lastRequestedMax[stationId] = Mathf.Min(itemCountMax, customMax);
+                        }
+                    }
+                }
+            }
+        }
+
+        private static Dictionary<int, int> _lastRequestedMax = new Dictionary<int, int>();
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.SetStationStorage))]
+        public static void PlanetTransport_SetStationStorage_Postfix(PlanetTransport __instance, int stationId, int storageIdx, int itemId, int itemCountMax)
+        {
+            if (_lastRequestedMax.TryGetValue(stationId, out int wantedMax))
+            {
+                if (storageIdx >= 0 && storageIdx < __instance.stationPool[stationId].storage.Length)
+                {
+                    if (__instance.stationPool[stationId].storage[storageIdx].itemId == itemId)
+                    {
+                        __instance.stationPool[stationId].storage[storageIdx].max = wantedMax;
+                    }
+                }
+                _lastRequestedMax.Remove(stationId);
+            }
         }
 
         [HarmonyTranspiler]

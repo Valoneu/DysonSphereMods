@@ -17,4 +17,5 @@ Replaces logic inside `UIStarmap` and localized GUI renderers. Uses an optimized
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

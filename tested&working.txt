@@ -4,3 +4,12 @@ SortByStorage
 PinnedNamesEverywhere
 PlanetMinerFast
 BottleneckUI
+DistributeWarpers
+LessShipPower
+MaxLVLIncrease
+StacksizeMultiplier
+VesselTrails
+FarZoom
+TechHashReduce
+CloserStations
+InfinityTechnologies

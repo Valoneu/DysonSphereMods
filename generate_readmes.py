@@ -31,12 +31,6 @@ mods = {
         "tech": "Patches the game's `PlayerCamera` and `UIStarmap` camera clamp logic, modifying maximum distance floating-point values before the camera matrix constraints are applied.",
         "deps": "BepInEx"
     },
-    "HydrogenDissolution": {
-        "desc": "Adds a new, highly-efficient chemical plant recipe designed exclusively to destroy excess Hydrogen. Perfect for late-game refining layouts or antimatter setups that stall due to trapped hydrogen backups.",
-        "config": "- No direct configuration required. The recipe is automatically injected into the central game registry.",
-        "tech": "Uses BepInEx to execute Harmony patches alongside CommonAPI's `ProtoRegistry` to safely inject `ERecipeType.Chemical` (ID 650) directly into the item database at runtime.",
-        "deps": "BepInEx, CommonAPI"
-    },
     "InfinityTechnologies": {
         "desc": "Allows for more granular, balanced control over the infinite research levels by recalculating tech requirements, ensuring late-game research paths scale infinitely efficiently.",
         "config": "- Customizable technology multipliers and toggle overrides via BepInEx config manager.",
@@ -123,6 +117,7 @@ template = """# {name}
 * **{deps}**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu
 """
 

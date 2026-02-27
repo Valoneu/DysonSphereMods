@@ -18,7 +18,6 @@
 | **MaxLVLIncrease** | Extension of the infinite research level cap. | v1.1.0 |
 | **TechHashReduce** | Dynamic scaling of technology research costs. | v1.2.0 |
 | **LessShipPower** | Optimization of logistics vessel energy consumption. | v1.1.0 |
-| **HydrogenDissolution** | Chemical plant recipe for high-volume hydrogen disposal. | v1.1.0 |
 | **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.0 |
 | **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.3.0 |
 | **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.1.0 |

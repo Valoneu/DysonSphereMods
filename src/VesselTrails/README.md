@@ -16,4 +16,5 @@ Intersects standard UI rendering pools, safely pushing visual vertex elements di
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu
