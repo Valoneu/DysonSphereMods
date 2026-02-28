@@ -2,10 +2,9 @@
     "name": "SpaciousStations",
     "version_number": "1.2.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/SpaciousStations",
-    "description": "Dramatically scales up every metric for logistics stations. Specifically multiplies the maximum allowed drones, interstellar vessels, storage capacity numbers, and station charging power limits seamlessly.",
+    "description": "Comprehensive logistics station upgrade. Multiplies storage, drone/vessel capacity, and charging speed. Optimized drone dispatch prioritizes the closest available station.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17",
-        "CommonAPI-CommonAPI-1.6.5",
-        "xiaoye97-LDBTool-3.0.2"
+        "CommonAPI-CommonAPI-1.6.5"
     ]
 }

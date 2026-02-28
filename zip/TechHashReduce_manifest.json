@@ -2,7 +2,7 @@
     "name": "TechHashReduce",
     "version_number": "1.2.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/TechHashReduce",
-    "description": "Injects a dynamic scaling mechanism for technology research costs (Universal Matrix Hashes), drastically reducing the astronomical matrix requirements typically found deep in very late-game repeating technologies.",
+    "description": "Allows scaling the hash requirement (cost) for research. Speed up your progression or add a challenge by adjusting the universal research investment required for all technologies.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17"
     ]

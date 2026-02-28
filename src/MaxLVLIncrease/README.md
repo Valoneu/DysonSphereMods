@@ -1,16 +1,16 @@
 # MaxLVLIncrease
 
-Strips out the arbitrary level caps injected by late-game infinite research technologies, allowing all repeating tech (like Vein Utilization and Drone Speed) to scale literally forever.
+Extends the level caps for infinite research technologies (like Vein Utilization and Drone Speed), allowing them to scale past vanilla limits.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- `MaxLevel`: Default `99999` (or infinite). Standard configuration cap variable.
+- `MaxLevelValue`: Sets the new max level (Default `50,000`).
 
 ### Deep Technical Details
-Overwrites the game's native tech-tree maximum definitions during initialization by patching the proto database immediately after the localized dictionary load sequence.
+Overwrites the game's native tech-tree maximum definitions during initialization by patching the prototype database and ensuring tech states are migrated correctly on save load.
 
 ### Dependencies
 * **BepInEx**

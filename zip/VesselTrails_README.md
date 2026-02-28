@@ -1,17 +1,17 @@
 # VesselTrails
 
-Activates high-performance rendering for beautiful, dynamic logistics vessel travel trails inside the Star Map. Gives you a live, visual heartbeat of your entire galactic logistics web moving between stars. Always records 60 minutes of data with a display-only slider, and persists trail data across save/load.
+Visualizes galactic logistics routes with dynamic 3D travel trails. See your entire logistics web moving in real-time or as a heatmap of traffic volume. Data persists across sessions.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- `HistoryMinutes`: Display range slider (1-60 minutes). Data always records full 60 minutes.
-- Configurable toggles for trail rendering, thickness, color mode, and alpha fade.
+- `NumPad 1`: Toggle Logistics UI. `NumPad 3`: Toggle trail lines.
+- Configurable opacity, thickness, and color modes (Material vs Heatmap).
 
 ### Deep Technical Details
-Intersects standard UI rendering pools, safely pushing visual vertex elements directly into the 3D Star Map canvas layer. Trail data persists via `.vesseltrails` sidecar files alongside game saves.
+Uses custom GL rendering to draw trails in 3D space. Tracks vessel history in a background manager and saves traffic data in `.vesseltrails` files alongside game saves.
 
 ### Dependencies
 * **BepInEx, CommonAPI**

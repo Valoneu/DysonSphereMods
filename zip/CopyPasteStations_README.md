@@ -10,7 +10,7 @@ Seamlessly integrates with the game's native building copy/paste system to trans
 Uses native Copy (`Shift+C`) and Paste (`Shift+V`) commands.
 
 ### Deep Technical Details
-Hooks `PlanetFactory.CopyBuildingSetting/PasteBuildingSetting` to serialize/deserialize `StationComponent` state. Includes logic to verify and transfer inventory drones/ships into the target station on-demand.
+Hooks `PlanetFactory.CopyBuildingSetting` and `PasteBuildingSetting` to serialize/deserialize `StationComponent` states. Logic verifies and transfers inventory drones/ships into the target station on-demand.
 
 ### Dependencies
 * **BepInEx**

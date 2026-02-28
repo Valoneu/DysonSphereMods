@@ -2,7 +2,7 @@
     "name": "PinnedNamesEverywhere",
     "version_number": "1.0.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/PinnedNamesEverywhere",
-    "description": "Forces pinned star and planet names alongside their distances to remain globally visible on your screen, even when you are lightyears away on the opposite side of the cluster.",
+    "description": "Ensures pinned star and planet names (and distances) remain globally visible on your screen, regardless of camera distance or screen position.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17"
     ]

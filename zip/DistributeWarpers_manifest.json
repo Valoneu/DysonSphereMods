@@ -2,7 +2,7 @@
     "name": "DistributeWarpers",
     "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/DistributeWarpers",
-    "description": "Automates the balancing of Space Warpers across an entire planet. Instead of manually belting warpers to every station, this mod aggregates warpers and automatically inserts them into the internal warper slots of any station requesting them.",
+    "description": "Automates Space Warper distribution across a planet. Aggregates warpers from any station storage and automatically refills the internal warper slots of all Interstellar Logistics Stations (ILS) on that planet.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17"
     ]

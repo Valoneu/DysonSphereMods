@@ -1,16 +1,16 @@
 # SortByStorage
 
-Injects a highly requested 'Storage' sorting option natively into the Production Statistics UI panel, letting you sort the entire planetary or galactic network by the total quantity of stored items.
+Adds 'Stored Descending' and 'Stored Ascending' sorting options natively into the Production Statistics UI panel, letting you sort items by their total stored quantity across the current scope.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- Operates natively inside the Production screen. No configs required.
+Select the new options in the sorting dropdown within the Production Statistics window.
 
 ### Deep Technical Details
-Hooks into the game's internal `UIProductionStatWindow` UI routines via Harmony transpilation, injecting custom sorting parameter logic and rendering GUI list elements transparently.
+Hooks into `UIStatisticsWindow` routines to refresh item storage counts and apply a custom quicksort algorithm to the UI list elements.
 
 ### Dependencies
 * **BepInEx**

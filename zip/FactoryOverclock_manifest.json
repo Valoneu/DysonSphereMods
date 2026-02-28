@@ -2,7 +2,7 @@
     "name": "FactoryOverclock",
     "version_number": "3.0.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/FactoryOverclock",
-    "description": "Provides deep tools to multiply the production speed of machines (Assemblers, Smelters, Miners, Labs, Ejectors, Silos) while dynamically scaling power requirements and circumventing the 3600 items/minute station throughput and fractionator limitat...",
+    "description": "Global throughput and speed multiplier for your entire factory. Scales production speeds for Assemblers, Smelters, Miners, Labs, and even Silos/Ejectors while dynamically scaling power requirements to balanced levels.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5"

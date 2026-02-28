@@ -24,7 +24,7 @@
 | **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.1.0 |
 | **PinnedNamesEverywhere** | Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges. | v1.0.0 |
 | **BottleneckUI** | Shows a UI listing all crafting machines that lack input items or power. | v1.0.0 |
-| **InfinityTechnologies** | Allows for more granular control over infinite research levels. | v1.0.0 |
+| **InfinityTechnologies** | Allows for more granular control over infinite research levels. | v1.0.1 |
 | **SortByStorage** | Adds a "Storage" sort option to the Production Statistics panel to sort by total stored quantity. | v1.0.0 |
 | **PlanetMinerFast** | Optimized version of PlanetMiner. Mines veins directly into stations set to Local Demand. Low UPS impact. | v1.0.0 |
 | **PlanetWideFluid** | Addon for PlanetwideMining: Advanced Miners extract planet fluids when not over a vein. | v1.0.0 |

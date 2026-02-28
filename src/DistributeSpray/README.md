@@ -1,6 +1,6 @@
 # DistributeSpray
 
-Eliminates the need for spray coaters and belts by automatically applying proliferator spray to items as they enter machines planet-wide, drawing from any station storage with proliferator available. Station slot needs to be set to 'Storage' mode.
+Eliminates the need for spray coaters and belts by automatically applying proliferator spray to items as they enter machines planet-wide, drawing from any station storage with proliferator available.
 
 ---
 
@@ -8,9 +8,10 @@ Eliminates the need for spray coaters and belts by automatically applying prolif
 
 ### Mechanics and Configuration
 - `ModEnabled`: Master toggle in BepInEx config.
+- Station slot must be set to 'Storage' (None) mode in the local logistics settings.
 
 ### Deep Technical Details
-Implements an optimized debt-based credit system. Intercepts `PlanetFactory.InsertInto` to apply spray immediately, then reconciles the material cost from station storage on a background task every frame.
+Implements an optimized credit-based system. Intercepts `PlanetFactory.InsertInto` to apply spray immediately, then reconciles the material cost from station storage on a background task.
 
 ### Dependencies
 * **BepInEx**

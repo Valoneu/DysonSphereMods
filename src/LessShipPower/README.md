@@ -1,16 +1,16 @@
 # LessShipPower
 
-Optimizes and reduces the massive energy blocks required for Interstellar Logistics Vessels to initiate hyperspace warps, allowing earlier game interstellar transport without collapsing local energy grids.
+Reduces the massive energy required for Interstellar Logistics Vessels to initiate trips, allowing easier interstellar transport without collapsing local energy grids in the mid-game.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- `VesselEnergyScale`: Float multiplier (Default `0.25`) that scales back the megawatt cost of interstellar travel.
+- `VesselEnergyScale`: Multiplier (Default `0.25`) that scales back the energy cost of vessel travel.
 
 ### Deep Technical Details
-Executes a rapid Harmony Postfix on `StationComponent.CalcTripEnergyCost`, intercepting the internal 64-bit integer mathematics block and scaling it down securely.
+Applies a Harmony Postfix on `StationComponent.CalcTripEnergyCost`, intercepting the internal cost calculation and scaling it down before applying the drain.
 
 ### Dependencies
 * **BepInEx**

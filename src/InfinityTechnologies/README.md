@@ -1,6 +1,6 @@
 # InfinityTechnologies
 
-Allows for more granular, balanced control over the infinite research levels by recalculating tech requirements, ensuring late-game research paths scale infinitely efficiently.
+Expands the late-game by adding 6 new custom infinite technologies to the research tree: Infinite Inventory, Wireless Power Boost, Dyson Sphere Efficiency, Proliferator Enhancement, Logistics Combat Fire Rate, and Research Productivity.
 
 ---
 
@@ -10,7 +10,7 @@ Allows for more granular, balanced control over the infinite research levels by 
 - Customizable technology multipliers and toggle overrides via BepInEx config manager.
 
 ### Deep Technical Details
-Utilizes fast MSIL Delegates (`AccessTools.FieldRefAccess`) to bypass standard reflection overhead during Dyson Sphere power updates and technology node recalculations to ensure high UPS.
+Utilizes a `ModifierManager` to recalculate game multipliers based on tech states. Uses Harmony patches on Dyson Sphere, Lab, and Combat logic to apply these dynamic bonuses.
 
 ### Dependencies
 * **BepInEx**

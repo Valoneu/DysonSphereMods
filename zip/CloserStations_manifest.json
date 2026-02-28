@@ -2,7 +2,7 @@
     "name": "CloserStations",
     "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/CloserStations",
-    "description": "Significantly reduces the minimum placement distance required between logistics stations, allowing you to pack Planetary and Interstellar Logistics Stations tightly together to form compact super-hubs.",
+    "description": "Reduces the minimum placement distance required between logistics stations, allowing you to pack Planetary and Interstellar Logistics Stations tightly together.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17"
     ]

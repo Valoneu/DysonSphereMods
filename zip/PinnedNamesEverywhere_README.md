@@ -1,17 +1,17 @@
 # PinnedNamesEverywhere
 
-Forces pinned star and planet names alongside their distances to remain globally visible on your screen, even when you are lightyears away on the opposite side of the cluster.
+Ensures pinned star and planet names (and distances) remain globally visible on your screen, regardless of camera distance or screen position.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- `Alpha`: Configuration for GUI text transparency levels.
-- `Visibility`: Toggle distance culling bounds.
+- `PinnedNamesMinimumAlpha`: Ensures names remain readable even when far away.
+- `AlwaysShowPinnedDistances`: Optional toggle for distance persistence.
 
 ### Deep Technical Details
-Replaces logic inside `UIStarmap` and localized GUI renderers. Uses an optimized cache mechanism to limit string allocations while rendering external 3D space text onto the 2D UI plane.
+Patches `UISpaceGuideEntry` to force text visibility and `UISpaceGuide.ClipEntryPool` to ensure pinned objects bypass the game's standard UI culling logic.
 
 ### Dependencies
 * **BepInEx**

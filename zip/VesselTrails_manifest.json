@@ -2,7 +2,7 @@
     "name": "VesselTrails",
     "version_number": "1.3.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/VesselTrails",
-    "description": "Activates high-performance rendering for beautiful, dynamic logistics vessel travel trails inside the Star Map. Gives you a live, visual heartbeat of your entire galactic logistics web moving between stars. Always records 60 minutes of data with a...",
+    "description": "Visualizes galactic logistics routes with dynamic 3D travel trails. See your entire logistics web moving in real-time or as a heatmap of traffic volume. Data persists across sessions.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5"

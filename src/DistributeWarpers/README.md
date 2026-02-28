@@ -1,6 +1,6 @@
 # DistributeWarpers
 
-Automates the balancing of Space Warpers across an entire planet. Instead of manually belting warpers to every station, this mod aggregates warpers and automatically inserts them into the internal warper slots of any station requesting them.
+Automates Space Warper distribution across a planet. Aggregates warpers from any station storage and automatically refills the internal warper slots of all Interstellar Logistics Stations (ILS) on that planet.
 
 ---
 
@@ -8,9 +8,10 @@ Automates the balancing of Space Warpers across an entire planet. Instead of man
 
 ### Mechanics and Configuration
 - `TargetCount`: Default `50`. The number of warpers to maintain in a station's internal slot.
+- `CheckInterval`: How often (in ticks) to check and distribute.
 
 ### Deep Technical Details
-Subscribes to `TickManager`'s slow-tick event (every 60 frames) to scan planetary logistics pools and silently transfer items without triggering expensive physics updates in the main game loop.
+Subscribes to `onFactoryFrameEnd` to scan planetary logistics pools and transfer items without triggering expensive physics updates or breaking vanilla statistics.
 
 ### Dependencies
 * **BepInEx**

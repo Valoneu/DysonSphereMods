@@ -2,7 +2,7 @@
     "name": "FarZoom",
     "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/FarZoom",
-    "description": "Dramatically expands the camera's zoom parameters, allowing you to zoom significantly further away from the mech in planetary view, and expanding the Starmap zoom capabilities for a vastly better galaxy overview.",
+    "description": "Dramatically expands the camera's zoom parameters and adds Field of View (FOV) controls. Zoom out lightyears in the star map or enjoy wide-angle planetary views.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17"
     ]

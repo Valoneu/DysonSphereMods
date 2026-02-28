@@ -18,125 +18,125 @@ EXCLUDE_DLLS = {
 }
 
 MOD_README_DEFINITIONS = {
-    "BottleneckUI": {
-        "desc": "Adds a comprehensive UI panel listing all crafting machines across the planet that are currently lacking input items or suffering from power shortages, allowing you to instantly identify factory bottlenecks.",
-        "config": "- `Hotkey`: Default `LeftControl + B` to toggle the Bottleneck UI.\n- All settings save directly to BepInEx `.cfg`.",
-        "tech": "Uses Harmony prefixes on machine simulation elements to collect state data, injecting a custom Unity GUI overlay built on the native DSP window framework.",
-        "deps": "BepInEx, CommonAPI"
-    },
-    "CloserStations": {
-        "desc": "Significantly reduces the minimum placement distance required between logistics stations, allowing you to pack Planetary and Interstellar Logistics Stations tightly together to form compact super-hubs.",
-        "config": "- `MinStationDistance`: Float configurable value dictating the required placement radius between stations.",
-        "tech": "Transpiles the game's internal `BuildTool_Click` and placement validation methods to forcefully override the planetary distance checks for station entities.",
-        "deps": "BepInEx"
-    },
-    "DistributeWarpers": {
-        "desc": "Automates the balancing of Space Warpers across an entire planet. Instead of manually belting warpers to every station, this mod aggregates warpers and automatically inserts them into the internal warper slots of any station requesting them.",
-        "config": "- `TargetCount`: Default `50`. The number of warpers to maintain in a station's internal slot.",
-        "tech": "Subscribes to `TickManager`'s slow-tick event (every 60 frames) to scan planetary logistics pools and silently transfer items without triggering expensive physics updates in the main game loop.",
-        "deps": "BepInEx"
-    },
-    "FactoryOverclock": {
-        "desc": "Provides deep tools to multiply the production speed of machines (Assemblers, Smelters, Miners, Labs, Ejectors, Silos) while dynamically scaling power requirements and circumventing the 3600 items/minute station throughput and fractionator limitations.",
-        "config": "- `MultiplierEnabled`: Toggle the mod entirely (Hotkey: `KeypadMinus`).\n- `AssemblerMultiplier`, `MinerMultiplier`, `StationMultiplier`, etc.: Defines exact scaling integers.\n- `DrawMultiplier`: Power consumption scaling factor.",
-        "tech": "Uses Harmony prefixes/postfixes to double-tick logistical operations like fractionators and splitters, while pre-calculating modified arrays for component work-energy logic. Zero runtime reflection.",
-        "deps": "BepInEx, CommonAPI"
-    },
-    "FarZoom": {
-        "desc": "Dramatically expands the camera's zoom parameters, allowing you to zoom significantly further away from the mech in planetary view, and expanding the Starmap zoom capabilities for a vastly better galaxy overview.",
-        "config": "- `MaxZoomDistance`: Configuration for the maximum planetary camera distance.\n- `StarmapZoom`: Configuration for interstellar camera bounds.",
-        "tech": "Patches the game's `PlayerCamera` and `UIStarmap` camera clamp logic, modifying maximum distance floating-point values before the camera matrix constraints are applied.",
-        "deps": "BepInEx"
-    },
-    "InfinityTechnologies": {
-        "desc": "Allows for more granular, balanced control over the infinite research levels by recalculating tech requirements, ensuring late-game research paths scale infinitely efficiently.",
-        "config": "- Customizable technology multipliers and toggle overrides via BepInEx config manager.",
-        "tech": "Utilizes fast MSIL Delegates (`AccessTools.FieldRefAccess`) to bypass standard reflection overhead during Dyson Sphere power updates and technology node recalculations to ensure high UPS.",
-        "deps": "BepInEx"
-    },
-    "LessShipPower": {
-        "desc": "Optimizes and reduces the massive energy blocks required for Interstellar Logistics Vessels to initiate hyperspace warps, allowing earlier game interstellar transport without collapsing local energy grids.",
-        "config": "- `VesselEnergyScale`: Float multiplier (Default `0.25`) that scales back the megawatt cost of interstellar travel.",
-        "tech": "Executes a rapid Harmony Postfix on `StationComponent.CalcTripEnergyCost`, intercepting the internal 64-bit integer mathematics block and scaling it down securely.",
-        "deps": "BepInEx"
-    },
-    "MaxLVLIncrease": {
-        "desc": "Strips out the arbitrary level caps injected by late-game infinite research technologies, allowing all repeating tech (like Vein Utilization and Drone Speed) to scale literally forever.",
-        "config": "- `MaxLevel`: Default `99999` (or infinite). Standard configuration cap variable.",
-        "tech": "Overwrites the game's native tech-tree maximum definitions during initialization by patching the proto database immediately after the localized dictionary load sequence.",
-        "deps": "BepInEx"
-    },
-    "PinnedNamesEverywhere": {
-        "desc": "Forces pinned star and planet names alongside their distances to remain globally visible on your screen, even when you are lightyears away on the opposite side of the cluster.",
-        "config": "- `Alpha`: Configuration for GUI text transparency levels.\n- `Visibility`: Toggle distance culling bounds.",
-        "tech": "Replaces logic inside `UIStarmap` and localized GUI renderers. Uses an optimized cache mechanism to limit string allocations while rendering external 3D space text onto the 2D UI plane.",
-        "deps": "BepInEx"
-    },
-    "PlanetMinerFast": {
-        "desc": "An aggressively optimized fork of PlanetMiner. It completely eliminates the need for mining machines, pulling ores directly into associated Logistics Stations set to 'Local Demand'. Practically zero UPS and GPU impact.",
-        "config": "- Miner activation configuration inside Station context menus.",
-        "tech": "Compiles Weaver compatibility validation checks into `FastInvokeHandler` delegates to completely skip standard slow C# reflection overhead during every fast DSP tick.",
-        "deps": "BepInEx"
-    },
-    "SortByStorage": {
-        "desc": "Injects a highly requested 'Storage' sorting option natively into the Production Statistics UI panel, letting you sort the entire planetary or galactic network by the total quantity of stored items.",
-        "config": "- Operates natively inside the Production screen. No configs required.",
-        "tech": "Hooks into the game's internal `UIProductionStatWindow` UI routines via Harmony transpilation, injecting custom sorting parameter logic and rendering GUI list elements transparently.",
-        "deps": "BepInEx"
-    },
-    "SpaciousStations": {
-        "desc": "Dramatically scales up every metric for logistics stations. Specifically multiplies the maximum allowed drones, interstellar vessels, storage capacity numbers, and station charging power limits seamlessly.",
-        "config": "- `CapacityMultiplier`: Multiplies total item slots.\n- `DroneShipMultiplier`: Fleet scaling multiplier.\n- `ChargeMultiplier`: Power limit scaling.",
-        "tech": "Overrides property injection for Station component proto setups utilizing internal DSP native arrays. Evaluates edge logic loops to prevent overflow issues on rendering limits.",
-        "deps": "BepInEx"
-    },
-    "StacksizeMultiplier": {
-        "desc": "Provides a massive, globally customizable stack size multiplier to all game items, saving massive amounts of inventory and storage space. Includes a dedicated UI panel for live fine-tuning.",
-        "config": "- `Hotkey`: Default `LeftAlt + S` to open the Stack Size adjustment UI panel in-game.\n- `GlobalMultiplier`: Multiplies all items globally on load.\n- Contains unique save states for individual custom item overrides.",
-        "tech": "Implements a custom `StacksizeMultiplierWindow` completely inheriting from native `WindowBase` to ensure seamless scrolling/interaction with the native Canvas DSP pipeline.",
-        "deps": "BepInEx, CommonAPI"
-    },
-    "TechHashReduce": {
-        "desc": "Injects a dynamic scaling mechanism for technology research costs (Universal Matrix Hashes), drastically reducing the astronomical matrix requirements typically found deep in very late-game repeating technologies.",
-        "config": "- `HashScale`: Float multiplier adjusting and reducing global tech hash costs universally.",
-        "tech": "Patches the technology prototype database at runtime immediately upon load, modifying `hashNeeded` mathematically against predefined tier limits without breaking the tech-tree UI rendering formats.",
-        "deps": "BepInEx"
-    },
-    "VesselTrails": {
-        "desc": "Activates high-performance rendering for beautiful, dynamic logistics vessel travel trails inside the Star Map. Gives you a live, visual heartbeat of your entire galactic logistics web moving between stars. Always records 60 minutes of data with a display-only slider, and persists trail data across save/load.",
-        "config": "- `HistoryMinutes`: Display range slider (1-60 minutes). Data always records full 60 minutes.\n- Configurable toggles for trail rendering, thickness, color mode, and alpha fade.",
-        "tech": "Intersects standard UI rendering pools, safely pushing visual vertex elements directly into the 3D Star Map canvas layer. Trail data persists via `.vesseltrails` sidecar files alongside game saves.",
-        "deps": "BepInEx, CommonAPI"
-    },
     "AdvancedPump": {
-        "desc": "Repurposes Advanced Miners (Vein Collectors) into high-capacity planet pumps. When placed anywhere on a planet with a fluid (water, acid), they extract it at an extreme rate (150,000 speed). Completely removes the floating item icon for a cleaner look.",
+        "desc": "Repurposes Advanced Miners (Vein Collectors) into high-capacity planet pumps. When placed anywhere on a planet with a fluid (water, acid), they extract it at an extreme rate (150,000 speed).",
         "config": "N/A (Operates automatically on placement).",
         "tech": "Hooks into `onFactoryFrameEnd` to scan Vein Collectors every 30 ticks; forces `EMinerType.Water` and clears `entitySignPool` icons for advanced miners with zero veins. Overrides `BuildTool_Click` to allow placement on any terrain.",
         "deps": "BepInEx"
     },
-    "HideWarnings": {
-        "desc": "Selectively hide disruptive in-game warnings with a dedicated configuration UI. Supports hiding power failure, resource shortages, sorter jams, and even the research completion banner.",
-        "config": "- `Hotkey`: Default `Keypad5` to toggle the filter window.\n- Toggles available for: Power, Veins, Sorters, Damage, Dashboard, and Tech.",
-        "tech": "Postfixes `WarningSystem.WarningLogic` to zero out hidden signal counts. Prefixes `UIGeneralTips.OnTechUnlocked` to safely suppress UI popups.",
+    "BottleneckUI": {
+        "desc": "Adds a comprehensive UI panel listing all crafting machines across the planet that are currently lacking input items or suffering from power shortages. Features real-time scanning and sorting to help you kill factory bottlenecks instantly.",
+        "config": "- `Hotkey`: Default `LeftControl + B` to toggle the Bottleneck UI.\n- Filter by machine type, power status, or inventory state.",
+        "tech": "Uses Harmony patches to collect machine states during simulation, injecting a custom Unity GUI overlay into the native DSP window framework with optimized list virtualization.",
         "deps": "BepInEx, CommonAPI"
     },
-    "DistributeSpray": {
-        "desc": "Eliminates the need for spray coaters and belts by automatically applying proliferator spray to items as they enter machines planet-wide, drawing from any station storage with proliferator available. Station slot needs to be set to 'Storage' mode.",
-        "config": "- `ModEnabled`: Master toggle in BepInEx config.",
-        "tech": "Implements an optimized debt-based credit system. Intercepts `PlanetFactory.InsertInto` to apply spray immediately, then reconciles the material cost from station storage on a background task every frame.",
+    "CloserStations": {
+        "desc": "Reduces the minimum placement distance required between logistics stations, allowing you to pack Planetary and Interstellar Logistics Stations tightly together.",
+        "config": "- `DistanceMultiplier`: Default `0.75`. Multiplier for the minimum placement radius.",
+        "tech": "Transpiles `BuildTool_Click.CheckBuildConditions` and `BuildTool_BlueprintPaste.CheckBuildConditions` to scale down the magic distance constants used for station-to-station collision.",
         "deps": "BepInEx"
     },
     "CopyPasteStations": {
         "desc": "Seamlessly integrates with the game's native building copy/paste system to transfer detailed station configurations. Automatically refills missing drones and ships from your inventory during the paste operation.",
         "config": "Uses native Copy (`Shift+C`) and Paste (`Shift+V`) commands.",
-        "tech": "Hooks `PlanetFactory.CopyBuildingSetting/PasteBuildingSetting` to serialize/deserialize `StationComponent` state. Includes logic to verify and transfer inventory drones/ships into the target station on-demand.",
+        "tech": "Hooks `PlanetFactory.CopyBuildingSetting` and `PasteBuildingSetting` to serialize/deserialize `StationComponent` states. Logic verifies and transfers inventory drones/ships into the target station on-demand.",
         "deps": "BepInEx"
     },
-    "StationLaunchSystem": {
-        "desc": "Automated, high-performance Dyson construction system. Launches rockets and injects solar sails directly into Dyson shells from stations set to 'Storage' mode. Features equatorial priority and strict construction sequencing.",
-        "config": "- `RocketsPerTick`: Max rockets per tick per station.\n- `SailsPerTick`: Max solar sails per tick per station.",
-        "tech": "Uses a 120-tick shell cache and 10-tick batch processing to minimize UPS lag. Sorting logic prioritizing absolute Y-coordinates (equator). Restores missing Dyson Sphere statistics for direct injections.",
+    "DistributeSpray": {
+        "desc": "Eliminates the need for spray coaters and belts by automatically applying proliferator spray to items as they enter machines planet-wide, drawing from any station storage with proliferator available.",
+        "config": "- `ModEnabled`: Master toggle in BepInEx config.\n- Station slot must be set to 'Storage' (None) mode in the local logistics settings.",
+        "tech": "Implements an optimized credit-based system. Intercepts `PlanetFactory.InsertInto` to apply spray immediately, then reconciles the material cost from station storage on a background task.",
         "deps": "BepInEx"
+    },
+    "DistributeWarpers": {
+        "desc": "Automates Space Warper distribution across a planet. Aggregates warpers from any station storage and automatically refills the internal warper slots of all Interstellar Logistics Stations (ILS) on that planet.",
+        "config": "- `TargetCount`: Default `50`. The number of warpers to maintain in a station's internal slot.\n- `CheckInterval`: How often (in ticks) to check and distribute.",
+        "tech": "Subscribes to `onFactoryFrameEnd` to scan planetary logistics pools and transfer items without triggering expensive physics updates or breaking vanilla statistics.",
+        "deps": "BepInEx"
+    },
+    "FactoryOverclock": {
+        "desc": "Global throughput and speed multiplier for your entire factory. Scales production speeds for Assemblers, Smelters, Miners, Labs, and even Silos/Ejectors while dynamically scaling power requirements to balanced levels.",
+        "config": "- `Hotkey`: `KeypadMinus` to toggle overclocking.\n- Independent multipliers for all machine types (Assemblers, Belts, Sorters, Silos, etc.).",
+        "tech": "Uses Harmony transpilers to double-tick logistics (splitters/pilers) and pre-calculates component work-energy logic to ensure high performance even at 20x speed.",
+        "deps": "BepInEx, CommonAPI"
+    },
+    "FarZoom": {
+        "desc": "Dramatically expands the camera's zoom parameters and adds Field of View (FOV) controls. Zoom out lightyears in the star map or enjoy wide-angle planetary views.",
+        "config": "- `Shift + Scroll`: Change Field of View (FOV).\n- `ZoomMultiplier`: Extends maximum zoom distance.\n- `ZoomSpeedMultiplier`: Adjusts camera zoom sensitivity.",
+        "tech": "Patches `GameCamera`, `RTSPoser`, and `PlanetPoser` calculation logic, modifying FOV and distance clamp values before the camera matrix constraints are applied.",
+        "deps": "BepInEx"
+    },
+    "HideWarnings": {
+        "desc": "Selectively hide disruptive in-game warnings with a dedicated configuration UI. Supports hiding power failure, resource shortages, sorter jams, and even the research completion banner.",
+        "config": "- `Hotkey`: Default `Keypad5` to toggle the filter window.\n- Toggles for: Power, Veins, Sorters, Damage, Dashboard, and Tech.",
+        "tech": "Postfixes `WarningSystem.WarningLogic` to zero out hidden signal counts. Prefixes `UIGeneralTips.OnTechUnlocked` to safely suppress UI research popups.",
+        "deps": "BepInEx, CommonAPI"
+    },
+    "InfinityTechnologies": {
+        "desc": "Expands the late-game by adding 6 new custom infinite technologies to the research tree: Infinite Inventory, Wireless Power Boost, Dyson Sphere Efficiency, Proliferator Enhancement, Logistics Combat Fire Rate, and Research Productivity.",
+        "config": "- Customizable technology multipliers and toggle overrides via BepInEx config manager.",
+        "tech": "Utilizes a `ModifierManager` to recalculate game multipliers based on tech states. Uses Harmony patches on Dyson Sphere, Lab, and Combat logic to apply these dynamic bonuses.",
+        "deps": "BepInEx"
+    },
+    "LessShipPower": {
+        "desc": "Reduces the massive energy required for Interstellar Logistics Vessels to initiate trips, allowing easier interstellar transport without collapsing local energy grids in the mid-game.",
+        "config": "- `VesselEnergyScale`: Multiplier (Default `0.25`) that scales back the energy cost of vessel travel.",
+        "tech": "Applies a Harmony Postfix on `StationComponent.CalcTripEnergyCost`, intercepting the internal cost calculation and scaling it down before applying the drain.",
+        "deps": "BepInEx"
+    },
+    "MaxLVLIncrease": {
+        "desc": "Extends the level caps for infinite research technologies (like Vein Utilization and Drone Speed), allowing them to scale past vanilla limits.",
+        "config": "- `MaxLevelValue`: Sets the new max level (Default `50,000`).",
+        "tech": "Overwrites the game's native tech-tree maximum definitions during initialization by patching the prototype database and ensuring tech states are migrated correctly on save load.",
+        "deps": "BepInEx"
+    },
+    "PinnedNamesEverywhere": {
+        "desc": "Ensures pinned star and planet names (and distances) remain globally visible on your screen, regardless of camera distance or screen position.",
+        "config": "- `PinnedNamesMinimumAlpha`: Ensures names remain readable even when far away.\n- `AlwaysShowPinnedDistances`: Optional toggle for distance persistence.",
+        "tech": "Patches `UISpaceGuideEntry` to force text visibility and `UISpaceGuide.ClipEntryPool` to ensure pinned objects bypass the game's standard UI culling logic.",
+        "deps": "BepInEx"
+    },
+    "PlanetMinerFast": {
+        "desc": "An aggressively optimized mining system that pulls ores directly into Logistics Stations set to 'Local Demand'. Eliminates the need for miners, belts, and power lines over veins with minimal UPS impact.",
+        "config": "Set a station slot to 'Local Demand' for the target ore to start mining planet-wide.",
+        "tech": "Uses an optimized `PlanetVeinCache` (rebuilt on changes) to identify veins and directly inject items into station storage. Consumes 20MJ per operation from the station's energy pool.",
+        "deps": "BepInEx"
+    },
+    "SortByStorage": {
+        "desc": "Adds 'Stored Descending' and 'Stored Ascending' sorting options natively into the Production Statistics UI panel, letting you sort items by their total stored quantity across the current scope.",
+        "config": "Select the new options in the sorting dropdown within the Production Statistics window.",
+        "tech": "Hooks into `UIStatisticsWindow` routines to refresh item storage counts and apply a custom quicksort algorithm to the UI list elements.",
+        "deps": "BepInEx"
+    },
+    "SpaciousStations": {
+        "desc": "Comprehensive logistics station upgrade. Multiplies storage, drone/vessel capacity, and charging speed. Optimized drone dispatch prioritizes the closest available station.",
+        "config": "- Extensive multipliers for PLS, ILS, and Exchange Stations.\n- `ShipReleasePerTick`: Controls how many ships launch per tick.\n- `DroneTaskInterval`: Controls how fast drones are dispatched.",
+        "tech": "Modifies station prototypes via Harmony patches on `VFPreload`. Implements a distance-based comparer for `RematchLocalPairs` to ensure drones always fly the shortest path.",
+        "deps": "BepInEx, CommonAPI"
+    },
+    "StacksizeMultiplier": {
+        "desc": "Globally customizable stack size multiplier for all items. Includes a dedicated in-game UI for fine-tuning individual item stacks and saving separate overrides.",
+        "config": "- `Hotkey`: Default `NumPad 2` to toggle the adjustment UI.\n- Separate global multipliers for Items, Buildings, and Drones/Vessels.",
+        "tech": "Implements a custom `StacksizeMultiplierWindow` inheriting from native `WindowBase`. Directly modifies `ItemProto` stack sizes and updates the player's package in real-time.",
+        "deps": "BepInEx, CommonAPI"
+    },
+    "StationLaunchSystem": {
+        "desc": "Automated, high-performance Dyson construction system. Launches rockets and injects solar sails directly into Dyson shells from stations set to 'Storage' mode. Features equatorial priority.",
+        "config": "- `RocketsPerTick`: Max rockets per tick per station.\n- `SailsPerTick`: Max solar sails per tick per station.",
+        "tech": "Uses a 120-tick shell cache and 10-tick batch processing to minimize UPS lag. Prioritizes shell construction starting from the equator (absolute Y-coordinate).",
+        "deps": "BepInEx"
+    },
+    "TechHashReduce": {
+        "desc": "Allows scaling the hash requirement (cost) for research. Speed up your progression or add a challenge by adjusting the universal research investment required for all technologies.",
+        "config": "- `HashrateScale`: Multiplier for technology hash requirements. Below 1.0 is cheaper; above 1.0 is more expensive.",
+        "tech": "Patches `TechProto.GetHashNeeded` to apply the scale and `GameHistoryData.Import` to ensure save games remain consistent across requirement changes.",
+        "deps": "BepInEx"
+    },
+    "VesselTrails": {
+        "desc": "Visualizes galactic logistics routes with dynamic 3D travel trails. See your entire logistics web moving in real-time or as a heatmap of traffic volume. Data persists across sessions.",
+        "config": "- `NumPad 1`: Toggle Logistics UI. `NumPad 3`: Toggle trail lines.\n- Configurable opacity, thickness, and color modes (Material vs Heatmap).",
+        "tech": "Uses custom GL rendering to draw trails in 3D space. Tracks vessel history in a background manager and saves traffic data in `.vesseltrails` files alongside game saves.",
+        "deps": "BepInEx, CommonAPI"
     }
 }
 
@@ -268,14 +268,14 @@ MOD_MANIFEST_DEPENDENCIES = {
     "FactoryOverclock": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5"],
     "FarZoom": ["xiaoye97-BepInEx-5.4.17"],
     "HideWarnings": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5"],
-    "InfinityTechnologies": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5"],
+    "InfinityTechnologies": ["xiaoye97-BepInEx-5.4.17"],
     "LessShipPower": ["xiaoye97-BepInEx-5.4.17"],
-    "MaxLVLIncrease": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5", "xiaoye97-LDBTool-3.0.2"],
+    "MaxLVLIncrease": ["xiaoye97-BepInEx-5.4.17"],
     "PinnedNamesEverywhere": ["xiaoye97-BepInEx-5.4.17"],
     "PlanetMinerFast": ["xiaoye97-BepInEx-5.4.17"],
     "AdvancedPump": ["xiaoye97-BepInEx-5.4.17"],
-    "SortByStorage": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5"],
-    "SpaciousStations": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5", "xiaoye97-LDBTool-3.0.2"],
+    "SortByStorage": ["xiaoye97-BepInEx-5.4.17"],
+    "SpaciousStations": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5"],
     "StacksizeMultiplier": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5"],
     "StationLaunchSystem": ["xiaoye97-BepInEx-5.4.17"],
     "TechHashReduce": ["xiaoye97-BepInEx-5.4.17"],

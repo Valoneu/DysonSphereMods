@@ -1,16 +1,16 @@
 # TechHashReduce
 
-Injects a dynamic scaling mechanism for technology research costs (Universal Matrix Hashes), drastically reducing the astronomical matrix requirements typically found deep in very late-game repeating technologies.
+Allows scaling the hash requirement (cost) for research. Speed up your progression or add a challenge by adjusting the universal research investment required for all technologies.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- `HashScale`: Float multiplier adjusting and reducing global tech hash costs universally.
+- `HashrateScale`: Multiplier for technology hash requirements. Below 1.0 is cheaper; above 1.0 is more expensive.
 
 ### Deep Technical Details
-Patches the technology prototype database at runtime immediately upon load, modifying `hashNeeded` mathematically against predefined tier limits without breaking the tech-tree UI rendering formats.
+Patches `TechProto.GetHashNeeded` to apply the scale and `GameHistoryData.Import` to ensure save games remain consistent across requirement changes.
 
 ### Dependencies
 * **BepInEx**

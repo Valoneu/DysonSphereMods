@@ -1,16 +1,16 @@
 # CloserStations
 
-Significantly reduces the minimum placement distance required between logistics stations, allowing you to pack Planetary and Interstellar Logistics Stations tightly together to form compact super-hubs.
+Reduces the minimum placement distance required between logistics stations, allowing you to pack Planetary and Interstellar Logistics Stations tightly together.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- `MinStationDistance`: Float configurable value dictating the required placement radius between stations.
+- `DistanceMultiplier`: Default `0.75`. Multiplier for the minimum placement radius.
 
 ### Deep Technical Details
-Transpiles the game's internal `BuildTool_Click` and placement validation methods to forcefully override the planetary distance checks for station entities.
+Transpiles `BuildTool_Click.CheckBuildConditions` and `BuildTool_BlueprintPaste.CheckBuildConditions` to scale down the magic distance constants used for station-to-station collision.
 
 ### Dependencies
 * **BepInEx**

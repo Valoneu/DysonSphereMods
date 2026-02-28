@@ -2,7 +2,7 @@
     "name": "DistributeSpray",
     "version_number": "1.0.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/DistributeSpray",
-    "description": "Eliminates the need for spray coaters and belts by automatically applying proliferator spray to items as they enter machines planet-wide, drawing from any station storage with proliferator available. Station slot needs to be set to 'Storage' mode.",
+    "description": "Eliminates the need for spray coaters and belts by automatically applying proliferator spray to items as they enter machines planet-wide, drawing from any station storage with proliferator available.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17"
     ]

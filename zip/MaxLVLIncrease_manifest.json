@@ -2,10 +2,8 @@
     "name": "MaxLVLIncrease",
     "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/MaxLVLIncrease",
-    "description": "Strips out the arbitrary level caps injected by late-game infinite research technologies, allowing all repeating tech (like Vein Utilization and Drone Speed) to scale literally forever.",
+    "description": "Extends the level caps for infinite research technologies (like Vein Utilization and Drone Speed), allowing them to scale past vanilla limits.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.17",
-        "CommonAPI-CommonAPI-1.6.5",
-        "xiaoye97-LDBTool-3.0.2"
+        "xiaoye97-BepInEx-5.4.17"
     ]
 }

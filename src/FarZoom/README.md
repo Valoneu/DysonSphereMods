@@ -1,17 +1,18 @@
 # FarZoom
 
-Dramatically expands the camera's zoom parameters, allowing you to zoom significantly further away from the mech in planetary view, and expanding the Starmap zoom capabilities for a vastly better galaxy overview.
+Dramatically expands the camera's zoom parameters and adds Field of View (FOV) controls. Zoom out lightyears in the star map or enjoy wide-angle planetary views.
 
 ---
 
 ## Technical Information
 
 ### Mechanics and Configuration
-- `MaxZoomDistance`: Configuration for the maximum planetary camera distance.
-- `StarmapZoom`: Configuration for interstellar camera bounds.
+- `Shift + Scroll`: Change Field of View (FOV).
+- `ZoomMultiplier`: Extends maximum zoom distance.
+- `ZoomSpeedMultiplier`: Adjusts camera zoom sensitivity.
 
 ### Deep Technical Details
-Patches the game's `PlayerCamera` and `UIStarmap` camera clamp logic, modifying maximum distance floating-point values before the camera matrix constraints are applied.
+Patches `GameCamera`, `RTSPoser`, and `PlanetPoser` calculation logic, modifying FOV and distance clamp values before the camera matrix constraints are applied.
 
 ### Dependencies
 * **BepInEx**
