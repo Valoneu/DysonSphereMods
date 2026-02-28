@@ -5,8 +5,8 @@
   "TechHashReduce": "1.2.0",
   "DistributeWarpers": "1.1.0",
   "CloserStations": "1.1.0",
-  "SpaciousStations": "1.2.0",
-  "VesselTrails": "1.3.0",
+  "SpaciousStations": "1.2.1",
+  "VesselTrails": "1.3.1",
   "StacksizeMultiplier": "1.1.0",
   "FarZoom": "1.1.0",
   "InfinityTechnologies": "1.0.1",
@@ -16,7 +16,7 @@
   "PlanetMinerFast": "1.0.0",
   "AdvancedPump": "1.0.0",
   "HideWarnings": "1.0.0",
-  "DistributeSpray": "1.0.0",
+  "DistributeSpray": "1.0.1",
   "CopyPasteStations": "1.0.0",
   "StationLaunchSystem": "1.0.0"
 }

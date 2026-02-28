@@ -18,8 +18,8 @@
 | **MaxLVLIncrease** | Extension of the infinite research level cap. | v1.1.0 |
 | **TechHashReduce** | Dynamic scaling of technology research costs. | v1.2.0 |
 | **LessShipPower** | Optimization of logistics vessel energy consumption. | v1.1.0 |
-| **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.0 |
-| **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.3.0 |
+| **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.1 |
+| **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.3.1 |
 | **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.1.0 |
 | **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.1.0 |
 | **PinnedNamesEverywhere** | Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges. | v1.0.1 |
@@ -29,7 +29,7 @@
 | **PlanetMinerFast** | Optimized version of PlanetMiner. Mines veins directly into stations set to Local Demand. Low UPS impact. | v1.0.0 |
 | **PlanetWideFluid** | Addon for PlanetwideMining: Advanced Miners extract planet fluids when not over a vein. | v1.0.0 |
 | **HideWarnings** | Hide specific in-game warnings with a toggleable UI (Ctrl+Numpad5). | v1.0.0 |
-| **DistributeSpray** | Auto-spray items planet-wide using proliferator stored in logistics stations. | v1.0.0 |
+| **DistributeSpray** | Auto-spray items planet-wide using proliferator stored in logistics stations. | v1.0.1 |
 | **CopyPasteStations** | Copy and paste item slot configurations between ILS/PLS stations. | v1.0.0 |
 | **StationLaunchSystem** | Auto-launch rockets and solar sails from ILS stations to the Dyson Sphere. | v1.0.0 |
 

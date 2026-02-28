@@ -19,7 +19,7 @@ namespace VesselTrails
     {
         public const string MOD_GUID = "com.Valoneu.VesselTrails";
         public const string MOD_NAME = "VesselTrails";
-        public const string MOD_VERSION = "1.3.0";
+        public const string MOD_VERSION = "1.3.1";
         public static ConfigEntry<bool> ShowTrails;
         public static ConfigEntry<bool> ShowHoverTooltips;
         public static ConfigEntry<float> TrailOpacity;
@@ -135,15 +135,20 @@ namespace VesselTrails
             public float LastSeenTime;
             public float AverageVesselCount; 
             private Queue<int> _history = new Queue<int>();
+            private long _historySum = 0;
             public List<float> TripStartTimes = new List<float>();
             public HashSet<int> ActiveShipKeys = new HashSet<int>();
             public void RecordSample(List<int> shipKeys, float interval, float historyMinutes)
             {
                 int count = shipKeys.Count;
                 _history.Enqueue(count);
+                _historySum += count;
                 int maxSamples = Mathf.Max(1, (int)(60f * 60f / interval));
-                while (_history.Count > maxSamples) _history.Dequeue();
-                AverageVesselCount = (float)_history.Sum() / _history.Count;
+                while (_history.Count > maxSamples)
+                {
+                    _historySum -= _history.Dequeue();
+                }
+                AverageVesselCount = (float)_historySum / _history.Count;
                 LastSeenTime = Time.time;
                 foreach (var key in shipKeys)
                 {
@@ -215,6 +220,32 @@ namespace VesselTrails
         public Dictionary<(int, int), RoutePath> RoutePaths { get; } = new Dictionary<(int, int), RoutePath>();
         public float GlobalMaxTraffic { get; private set; } = 1f;
         public float GlobalMinTraffic { get; private set; } = 0f;
+        public class UICache
+        {
+            public class ItemData
+            {
+                public int ItemId;
+                public string ItemName;
+                public int TotalTrips;
+                public float PerMin;
+                public float Load;
+            }
+            public class RouteData
+            {
+                public int StarA;
+                public int StarB;
+                public string StarAName;
+                public string StarBName;
+                public List<ItemData> Items = new List<ItemData>();
+                public int TotalTrips;
+            }
+            public List<RouteData> SortedRoutes = new List<RouteData>();
+            public int ClusterTotalTrips;
+            public float ClusterTotalLoad;
+            public float ClusterTripsPerMin;
+            public float LastRefreshTime;
+        }
+        public UICache Cache { get; private set; } = new UICache();
         public VesselRouteManager()
         {
             TickManager.OnSlowTick += UpdateData;
@@ -287,6 +318,51 @@ namespace VesselTrails
             }
             foreach (var k in toRemove) RoutePaths.Remove(k);
             if (GlobalMinTraffic == float.MaxValue) GlobalMinTraffic = 0f;
+            if (Time.time - Cache.LastRefreshTime > 1.0f) RefreshUICache();
+        }
+        private void RefreshUICache()
+        {
+            float hMin = VesselTrailsPlugin.HistoryMinutes.Value;
+            var newRoutes = new List<UICache.RouteData>();
+            int clusterTotalTrips = 0;
+            float clusterTotalLoad = 0f;
+            float clusterEffMin = 0.1f;
+            foreach (var route in RoutePaths.Values)
+            {
+                var rd = new UICache.RouteData
+                {
+                    StarA = route.StarA,
+                    StarB = route.StarB,
+                    StarAName = GameMain.galaxy.StarById(route.StarA)?.displayName ?? "Unknown",
+                    StarBName = GameMain.galaxy.StarById(route.StarB)?.displayName ?? "Unknown"
+                };
+                foreach (var hist in route.ItemHistories.Values)
+                {
+                    int total = hist.GetTotalTrips(hMin);
+                    float effectiveMin = hist.GetEffectiveMinutes(hMin);
+                    float perMin = total / Mathf.Max(0.1f, effectiveMin);
+                    rd.Items.Add(new UICache.ItemData
+                    {
+                        ItemId = hist.ItemId,
+                        ItemName = LDB.items.Select(hist.ItemId)?.name ?? "Unknown",
+                        TotalTrips = total,
+                        PerMin = perMin,
+                        Load = hist.AverageVesselCount
+                    });
+                    clusterTotalTrips += total;
+                    clusterTotalLoad += hist.AverageVesselCount;
+                    if (effectiveMin > clusterEffMin) clusterEffMin = effectiveMin;
+                }
+                rd.Items = rd.Items.OrderByDescending(i => i.TotalTrips).ToList();
+                rd.TotalTrips = rd.Items.Sum(i => i.TotalTrips);
+                if (rd.TotalTrips > 0 || rd.Items.Any(i => i.Load > 0.01f))
+                    newRoutes.Add(rd);
+            }
+            Cache.SortedRoutes = newRoutes.OrderByDescending(r => r.TotalTrips).Take(100).ToList();
+            Cache.ClusterTotalTrips = clusterTotalTrips;
+            Cache.ClusterTotalLoad = clusterTotalLoad;
+            Cache.ClusterTripsPerMin = clusterTotalTrips / clusterEffMin;
+            Cache.LastRefreshTime = Time.time;
         }
     }
     public class VesselTrailRenderer : MonoBehaviour
@@ -646,35 +722,19 @@ namespace VesselTrails
                     ? VesselTrailsPlugin.ColorMode.Material : VesselTrailsPlugin.ColorMode.Heatmap;
             }
             GUILayout.Space(15);
-            float hMin = VesselTrailsPlugin.HistoryMinutes.Value;
-            int clusterTotalTrips = 0;
-            float clusterTotalLoad = 0f;
-            foreach (var route in _manager.RoutePaths.Values)
-            {
-                foreach (var hist in route.ItemHistories.Values)
-                {
-                    clusterTotalTrips += hist.GetTotalTrips(hMin);
-                    clusterTotalLoad += hist.AverageVesselCount;
-                }
-            }
-            float clusterEffMin = 0.1f;
-            foreach (var route in _manager.RoutePaths.Values)
-                foreach (var hist in route.ItemHistories.Values)
-                {
-                    float em = hist.GetEffectiveMinutes(hMin);
-                    if (em > clusterEffMin) clusterEffMin = em;
-                }
-            float clusterTripsPerMin = clusterTotalTrips / clusterEffMin;
             GUILayout.Label("CLUSTER TOTALS", headerStyle);
             GUILayout.BeginHorizontal();
             GUILayout.Label("All Logistics Vessels", GUILayout.Width(WindowRect.width - 240));
-            GUILayout.Label($"<b>{clusterTotalTrips}</b>", GUILayout.Width(50));
-            GUILayout.Label($"<b>{clusterTripsPerMin:F1}</b>", GUILayout.Width(50));
-            GUILayout.Label($"<b>{clusterTotalLoad:F1}</b>", GUILayout.Width(50));
+            GUILayout.Label($"<b>{_manager.Cache.ClusterTotalTrips}</b>", GUILayout.Width(50));
+            GUILayout.Label($"<b>{_manager.Cache.ClusterTripsPerMin:F1}</b>", GUILayout.Width(50));
+            GUILayout.Label($"<b>{_manager.Cache.ClusterTotalLoad:F1}</b>", GUILayout.Width(50));
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
+            float hMin = VesselTrailsPlugin.HistoryMinutes.Value;
             string hStr = hMin <= 0 ? "REAL-TIME" : $"LAST {hMin:F1}m";
             GUILayout.Label($"ACTIVE ROUTES ({hStr})", headerStyle);
+            if (_manager.Cache.SortedRoutes.Count >= 100)
+                GUILayout.Label("<size=10><color=#ffaa00><i>(Showing top 100 routes only)</i></color></size>", headerStyle);
             GUILayout.BeginHorizontal();
             GUILayout.Label("Route / Item", GUILayout.Width(WindowRect.width - 240));
             GUILayout.Label("Total", GUILayout.Width(50));
@@ -685,30 +745,21 @@ namespace VesselTrails
         }
         protected override void DrawWindowContent()
         {
-            float hMin = VesselTrailsPlugin.HistoryMinutes.Value;
-            var sortedRoutes = _manager.RoutePaths.Values.OrderByDescending(r => r.GetTotalTrips(hMin)).ToList();
             GUIStyle rowStyle = new GUIStyle(GUI.skin.box);
             rowStyle.normal.background = Texture2D.whiteTexture;
             rowStyle.padding = new RectOffset(5, 5, 5, 5);
-            foreach (var route in sortedRoutes)
+            foreach (var route in _manager.Cache.SortedRoutes)
             {
-                string starAName = GameMain.galaxy.StarById(route.StarA)?.displayName ?? "Unknown";
-                string starBName = GameMain.galaxy.StarById(route.StarB)?.displayName ?? "Unknown";
                 GUI.backgroundColor = new Color(0.2f, 0.3f, 0.4f, 0.2f);
                 GUILayout.BeginVertical(rowStyle);
-                GUILayout.Label($"<b>{starAName} -> {starBName}</b>");
-                var sortedItems = route.ItemHistories.Values.OrderByDescending(h => h.GetTotalTrips(hMin)).ToList();
-                foreach (var hist in sortedItems)
+                GUILayout.Label($"<b>{route.StarAName} -> {route.StarBName}</b>");
+                foreach (var hist in route.Items)
                 {
-                    string itemName = LDB.items.Select(hist.ItemId)?.name ?? "Unknown";
-                    int total = hist.GetTotalTrips(hMin);
-                    float effectiveMin = hist.GetEffectiveMinutes(hMin);
-                    float perMin = total / Mathf.Max(0.1f, effectiveMin);
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label($" <color=#aaaaaa>• {itemName}</color>", GUILayout.Width(WindowRect.width - 240));
-                    GUILayout.Label($"{total}", GUILayout.Width(50));
-                    GUILayout.Label($"{perMin:F1}", GUILayout.Width(50));
-                    GUILayout.Label($"{hist.AverageVesselCount:F1}", GUILayout.Width(50));
+                    GUILayout.Label($" <color=#aaaaaa>• {hist.ItemName}</color>", GUILayout.Width(WindowRect.width - 240));
+                    GUILayout.Label($"{hist.TotalTrips}", GUILayout.Width(50));
+                    GUILayout.Label($"{hist.PerMin:F1}", GUILayout.Width(50));
+                    GUILayout.Label($"{hist.Load:F1}", GUILayout.Width(50));
                     GUILayout.EndHorizontal();
                 }
                 GUILayout.EndVertical();

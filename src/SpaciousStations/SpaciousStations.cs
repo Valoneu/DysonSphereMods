@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using BepInEx;
 using BepInEx.Configuration;
@@ -18,7 +20,7 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.2.0";
+        public const string MOD_VERSION = "1.2.1";
         public static ConfigEntry<float> PLS_DroneMultiplier;
         public static ConfigEntry<float> PLS_ShipMultiplier;
         public static ConfigEntry<float> PLS_StorageMultiplier;
@@ -35,6 +37,7 @@ namespace SpaciousStations
         public static ConfigEntry<float> EXC_StorageMultiplier;
         public static ConfigEntry<float> EXC_ChargeMultiplier;
         public static ConfigEntry<float> EXC_EnergyMultiplier;
+        public static ConfigEntry<float> EXC_InternalsMultiplier;
         public static ConfigEntry<int> DroneTaskInterval;
         public static ConfigEntry<int> ShipTaskInterval;
         public static ConfigEntry<float> InternalLastStorageMultiplier;
@@ -61,6 +64,7 @@ namespace SpaciousStations
             EXC_StorageMultiplier = Config.Bind("Megastructures Exchange Station", "StorageMultiplier", 2f, "Multiplies maximum amount of items in an Exchange Station.");
             EXC_ChargeMultiplier = Config.Bind("Megastructures Exchange Station", "ChargeMultiplier", 2f, "Multiplies station's charge power for Exchange Station.");
             EXC_EnergyMultiplier = Config.Bind("Megastructures Exchange Station", "EnergyMultiplier", 2f, "Multiplies station's max energy storage for Exchange Station.");
+            EXC_InternalsMultiplier = Config.Bind("Megastructures Exchange Station", "InternalsMultiplier", 10f, "Multiplies the internal storage capacity of the Interstellar Assembly (Assembly Nexus). Vanilla is 99,999.");
             DroneTaskInterval = Config.Bind("General", "DroneTaskInterval", 20, "The interval between drone dispatches. Lower is faster. Vanilla default is 20 (3 dispatches per second). Setting this to 1 will dispatch drones every tick (60 per second).");
             ShipTaskInterval = Config.Bind("General", "ShipTaskInterval", 10, "The interval between vessel dispatches for high priority items. Lower is faster. Vanilla default is 10 (6 dispatches per second). Setting this to 1 will dispatch vessels every tick (60 per second). Note: other priority items use 3x and 6x this interval.");
             InternalLastStorageMultiplier = Config.Bind("Internal", "LastStorageMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
@@ -211,7 +215,10 @@ namespace SpaciousStations
                 chargeMul = MultiplierService.GetMultiplier("Station_PLS_Charge", 1f);
             }
             desc.stationMaxDroneCount = (int)(original.DroneCount * droneMul);
-            desc.stationMaxShipCount = (int)(original.ShipCount * shipMul);
+            if (isExchangeStation)
+                desc.stationMaxShipCount = (int)(original.ShipCount * shipMul);
+            else
+                desc.stationMaxShipCount = (int)(original.ShipCount > 10 ? 10 : original.ShipCount);
             desc.stationMaxItemCount = (int)(original.ItemCount * storageMul);
             desc.stationMaxEnergyAcc = (long)(original.EnergyMax * energyMul);
             if (!desc.isCollectStation)
@@ -239,9 +246,14 @@ namespace SpaciousStations
         private static int _shipsReleasedThisTick = 0;
         [HarmonyPrefix]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.DetermineDispatch))]
-        public static void StationComponent_DetermineDispatch_Prefix()
+        public static void StationComponent_DetermineDispatch_Safety_Prefix(StationComponent __instance)
         {
             _shipsReleasedThisTick = 0;
+            int total = __instance.idleShipCount + __instance.workShipCount;
+            if (total > __instance.workShipDatas.Length)
+            {
+                __instance.PatchShipArray(total + 10);
+            }
         }
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.DetermineDispatch))]
@@ -295,6 +307,8 @@ namespace SpaciousStations
             var desc = itemProto.prefabDesc;
             if (desc == null) return;
             __instance.PatchDroneArray(desc.stationMaxDroneCount);
+            if (itemProto.IsExchangeStation())
+                __instance.PatchShipArray(desc.stationMaxShipCount);
             __instance.energyMax = desc.stationMaxEnergyAcc;
             __instance.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
         }
@@ -316,6 +330,8 @@ namespace SpaciousStations
                         if (itemProto?.prefabDesc == null || !_originalValues.TryGetValue(itemProto.ID, out var original)) continue;
                         var desc = itemProto.prefabDesc;
                         station.PatchDroneArray(desc.stationMaxDroneCount);
+                        if (itemProto.IsExchangeStation())
+                            station.PatchShipArray(desc.stationMaxShipCount);
                         station.energyMax = desc.stationMaxEnergyAcc;
                         station.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
                         if (station.storage != null)
@@ -629,6 +645,253 @@ namespace SpaciousStations
             var dock = __instance.droneDock;
             Array.Sort(__instance.localPairs, 0, __instance.localPairCount, new LocalPairDistanceComparer(__instance.id, dock, stationPool));
         }
+        private static ConditionalWeakTable<StationComponent, ExtraShipState> _extraShipStates = new ConditionalWeakTable<StationComponent, ExtraShipState>();
+        private class ExtraShipState
+        {
+            public bool[] IdleShips;
+            public bool[] WorkingShips;
+            public ExtraShipState(int capacity)
+            {
+                IdleShips = new bool[capacity];
+                WorkingShips = new bool[capacity];
+            }
+        }
+        public static bool IsExchangeStation(this ItemProto item)
+        {
+            if (item == null) return false;
+            return item.ID >= 9400 ||
+                   (item.name != null && (item.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || item.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
+                   item.Name == "星际组装厂" || item.Name == "物资交换器" || item.Name == "Interstellar Assembly" || item.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || item.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+        private static ExtraShipState GetExtraShipState(StationComponent station)
+        {
+            if (station == null) return null;
+            if (!_extraShipStates.TryGetValue(station, out var state))
+            {
+                state = new ExtraShipState(station.workShipDatas.Length);
+                _extraShipStates.Add(station, state);
+                for (int i = 0; i < Math.Min(64, state.IdleShips.Length); i++)
+                {
+                    state.IdleShips[i] = (station.idleShipIndices & (1UL << i)) != 0;
+                    state.WorkingShips[i] = (station.workShipIndices & (1UL << i)) != 0;
+                }
+            }
+            if (state.IdleShips.Length < station.workShipDatas.Length)
+            {
+                int newLen = station.workShipDatas.Length;
+                bool[] newIdle = new bool[newLen];
+                bool[] newWork = new bool[newLen];
+                Array.Copy(state.IdleShips, newIdle, state.IdleShips.Length);
+                Array.Copy(state.WorkingShips, newWork, state.WorkingShips.Length);
+                for (int i = state.IdleShips.Length; i < newLen; i++) newIdle[i] = true;
+                state.IdleShips = newIdle;
+                state.WorkingShips = newWork;
+            }
+            return state;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.IdleShipGetToWork))]
+        public static bool StationComponent_IdleShipGetToWork_Prefix(StationComponent __instance, int index)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state != null && index >= 0 && index < state.IdleShips.Length)
+            {
+                state.IdleShips[index] = false;
+                state.WorkingShips[index] = true;
+            }
+            if (index < 64)
+            {
+                __instance.idleShipIndices &= ~(1UL << index);
+                __instance.workShipIndices |= (1UL << index);
+            }
+            return false;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.WorkShipBackToIdle))]
+        public static bool StationComponent_WorkShipBackToIdle_Prefix(StationComponent __instance, int index)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state != null && index >= 0 && index < state.IdleShips.Length)
+            {
+                state.IdleShips[index] = true;
+                state.WorkingShips[index] = false;
+            }
+            if (index < 64)
+            {
+                __instance.idleShipIndices |= (1UL << index);
+                __instance.workShipIndices &= ~(1UL << index);
+            }
+            return false;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.AddIdleShip))]
+        public static bool StationComponent_AddIdleShip_Prefix(StationComponent __instance, int index)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state != null && index >= 0 && index < state.IdleShips.Length)
+            {
+                state.IdleShips[index] = true;
+                state.WorkingShips[index] = false;
+            }
+            if (index < 64)
+            {
+                __instance.idleShipIndices |= (1UL << index);
+            }
+            return false;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.RemoveIdleShip))]
+        public static bool StationComponent_RemoveIdleShip_Prefix(StationComponent __instance, int index)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state != null && index >= 0 && index < state.IdleShips.Length)
+            {
+                state.IdleShips[index] = false;
+                state.WorkingShips[index] = false;
+            }
+            if (index < 64)
+            {
+                __instance.idleShipIndices &= ~(1UL << index);
+            }
+            return false;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.HasWorkShipIndex))]
+        public static bool StationComponent_HasWorkShipIndex_Prefix(StationComponent __instance, int index, ref bool __result)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state != null && index >= 0 && index < state.WorkingShips.Length)
+            {
+                __result = state.WorkingShips[index];
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.HasIdleShipIndex))]
+        public static bool StationComponent_HasIdleShipIndex_Prefix(StationComponent __instance, int index, ref bool __result)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state != null && index >= 0 && index < state.IdleShips.Length)
+            {
+                __result = state.IdleShips[index];
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.HasShipIndex))]
+        public static bool StationComponent_HasShipIndex_Prefix(StationComponent __instance, int index, ref bool __result)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state != null && index >= 0 && index < state.IdleShips.Length)
+            {
+                __result = state.IdleShips[index] || state.WorkingShips[index];
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.ShipRenderersOnTick))]
+        public static bool StationComponent_ShipRenderersOnTick_Prefix(StationComponent __instance, AstroData[] astroPoses, ref VectorLF3 rPos, ref Quaternion rRot)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state == null) return true;
+            int num1 = 0;
+            int num2 = 0;
+            int length = __instance.workShipDatas.Length;
+            for (int i = 0; i < length; i++) if (state.IdleShips[i]) num1++;
+            int number = __instance.idleShipCount - num1;
+            if (number > 0)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    if (!state.IdleShips[i] && !state.WorkingShips[i])
+                    {
+                        StationComponent_AddIdleShip_Prefix(__instance, i);
+                        number--;
+                        if (number == 0) break;
+                    }
+                }
+            }
+            else if (number < 0)
+            {
+                for (int i = length - 1; i >= 0; i--)
+                {
+                    if (state.IdleShips[i])
+                    {
+                        StationComponent_RemoveIdleShip_Prefix(__instance, i);
+                        number++;
+                        if (number == 0) break;
+                    }
+                }
+            }
+            ref VectorLF3 uPos = ref astroPoses[__instance.planetId].uPos;
+            ref Quaternion uRot = ref astroPoses[__instance.planetId].uRot;
+            VectorLF3 lookPos = new VectorLF3(0, 0, 0);
+            Vector3 uVel = new Vector3(0, 0, 0);
+            Quaternion qRot = new Quaternion(0, 0, 0, 1);
+            for (int i = 0; i < length; i++) {
+                if (i >= __instance.shipRenderers.Length) break;
+                ref ShipRenderingData sr = ref __instance.shipRenderers[i];
+                ref ShipUIRenderingData sui = ref __instance.shipUIRenderers[i];
+                if (state.IdleShips[i]) {
+                    sr.gid = __instance.gid;
+                    StationComponent.lpos2upos_ref(ref uPos, ref uRot, ref __instance.shipDiskPos[i], ref lookPos);
+                    Maths.QMultiply_ref(ref uRot, ref __instance.shipDiskRot[i], out qRot);
+                    sr.SetPose(ref lookPos, ref qRot, ref rPos, ref rRot, ref uVel, 0);
+                    num2 = i + 1;
+                    sr.anim = Vector4.zero;
+                    sui.gid = 0;
+                } else if (state.WorkingShips[i]) {
+                    sr.gid = __instance.gid;
+                    num2 = i + 1;
+                    sui.gid = __instance.gid;
+                } else {
+                    sr.gid = 0;
+                    sr.anim = Vector4.zero;
+                    sui.gid = 0;
+                }
+            }
+            __instance.renderShipCount = num2;
+            return false;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.QueryIdleShip))]
+        public static bool StationComponent_QueryIdleShip_Prefix(StationComponent __instance, int qIdx, ref int __result)
+        {
+            var state = GetExtraShipState(__instance);
+            if (state == null) return true;
+            int len = __instance.workShipDatas.Length;
+            for (int i = 0; i < len; i++)
+            {
+                int num = (qIdx + i) % len;
+                if (num < state.IdleShips.Length && state.IdleShips[num])
+                {
+                    __result = num;
+                    return false;
+                }
+            }
+            __result = -1;
+            return false;
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.Import))]
+        public static void StationComponent_Import_ShipFix_Postfix(StationComponent __instance)
+        {
+            if (__instance == null) return;
+            var state = GetExtraShipState(__instance);
+            if (state == null) return;
+            for (int i = 0; i < state.IdleShips.Length; i++) state.IdleShips[i] = true;
+            for (int i = 0; i < __instance.workShipCount; i++)
+            {
+                int shipIdx = __instance.workShipDatas[i].shipIndex;
+                if (shipIdx >= 0 && shipIdx < state.IdleShips.Length)
+                {
+                    state.IdleShips[shipIdx] = false;
+                }
+            }
+        }
         private struct LocalPairDistanceComparer : IComparer<SupplyDemandPair>
         {
             private readonly int _myId;
@@ -656,6 +919,92 @@ namespace SpaciousStations
                 float dy = _myDock.y - otherDock.y;
                 float dz = _myDock.z - otherDock.z;
                 return dx * dx + dy * dy + dz * dz;
+            }
+        }
+    }
+    public static class StationExtensions
+    {
+        public static void PatchDroneArray(this StationComponent station, int newCount)
+        {
+            if (station == null || station.workDroneDatas == null) return;
+            if (station.workDroneDatas.Length < newCount)
+            {
+                int oldLen = station.workDroneDatas.Length;
+                Array.Resize(ref station.workDroneDatas, newCount);
+                Array.Resize(ref station.workDroneOrders, newCount);
+                Array.Resize(ref station.droneDispatchStatus, newCount);
+                for (int i = oldLen; i < newCount; i++)
+                {
+                    station.workDroneDatas[i] = default;
+                    station.workDroneOrders[i] = default;
+                    station.droneDispatchStatus[i] = 1;
+                }
+            }
+        }
+        public static bool IsExchangeStation(this StationComponent station)
+        {
+            if (station == null || station.planetId <= 0) return false;
+            var factory = GameMain.galaxy?.PlanetById(station.planetId)?.factory;
+            if (factory == null || station.entityId <= 0 || station.entityId >= factory.entityPool.Length) return false;
+            int protoId = factory.entityPool[station.entityId].protoId;
+            return LDB.items.Select(protoId).IsExchangeStation();
+        }
+        public static void PatchShipArray(this StationComponent station, int newCount)
+        {
+            if (station == null || station.workShipDatas == null) return;
+            if (station.workShipDatas.Length < newCount)
+            {
+                int oldLen = station.workShipDatas.Length;
+                Array.Resize(ref station.workShipDatas, newCount);
+                Array.Resize(ref station.workShipOrders, newCount);
+                Array.Resize(ref station.shipRenderers, newCount);
+                Array.Resize(ref station.shipUIRenderers, newCount);
+                Array.Resize(ref station.shipDiskPos, newCount);
+                Array.Resize(ref station.shipDiskRot, newCount);
+                for (int i = oldLen; i < newCount; i++)
+                {
+                    station.workShipDatas[i] = default;
+                    station.workShipOrders[i] = default;
+                    station.shipRenderers[i] = default;
+                    station.shipUIRenderers[i] = default;
+                    if (oldLen > 0)
+                    {
+                        station.shipDiskPos[i] = station.shipDiskPos[i % oldLen];
+                        station.shipDiskRot[i] = station.shipDiskRot[i % oldLen];
+                    }
+                    else
+                    {
+                        station.shipDiskPos[i] = Vector3.zero;
+                        station.shipDiskRot[i] = Quaternion.identity;
+                    }
+                }
+            }
+        }
+    }
+    [HarmonyPatch]
+    public static class MMS_StarAssembly_Patch
+    {
+        [HarmonyPrepare]
+        public static bool Prepare() => AccessTools.TypeByName("MoreMegaStructure.StarAssembly") != null;
+        [HarmonyTargetMethod]
+        public static MethodBase TargetMethod() => AccessTools.Method("MoreMegaStructure.StarAssembly:InternalUpdate");
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            float mult = SpaciousStationsPlugin.EXC_InternalsMultiplier.Value;
+            int newMax = (int)(99999 * mult);
+            int newSoft = (int)(10000 * mult);
+            foreach (var ins in instructions)
+            {
+                if (ins.opcode == OpCodes.Ldc_I4 && (int)ins.operand == 99999)
+                {
+                    ins.operand = newMax;
+                }
+                else if (ins.opcode == OpCodes.Ldc_I4 && (int)ins.operand == 10000)
+                {
+                    ins.operand = newSoft;
+                }
+                yield return ins;
             }
         }
     }
