@@ -16,7 +16,7 @@
 | **DistributeWarpers** | Automated interstellar warper refills for all logistics stations. | v1.1.0 |
 | **CloserStations** | Reduced minimum distance for logistics stations placement. | v1.1.0 |
 | **MaxLVLIncrease** | Extension of the infinite research level cap. | v1.1.0 |
-| **TechHashReduce** | Dynamic scaling of technology research costs. | v1.2.0 |
+| **TechHashReduce** | Dynamic scaling of technology research costs. | v1.2.1 |
 | **LessShipPower** | Optimization of logistics vessel energy consumption. | v1.1.0 |
 | **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.1 |
 | **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.3.1 |
