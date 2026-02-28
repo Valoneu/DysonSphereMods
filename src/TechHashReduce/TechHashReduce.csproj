@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>TechHashReduce</Description>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <BepInExPluginGuid>com.Valoneu.TechHashReduce</BepInExPluginGuid>
     <BepInExPluginName>TechHashReduce</BepInExPluginName>
-    <BepInExPluginVersion>1.2.1</BepInExPluginVersion>
+    <BepInExPluginVersion>1.2.2</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />

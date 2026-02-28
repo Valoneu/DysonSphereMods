@@ -35,6 +35,7 @@ namespace TechHashReduce
                 if (tech != null && __instance.techStates.ContainsKey(tech.ID))
                 {
                     var techState = __instance.techStates[tech.ID];
+                    techState.hashNeeded = tech.GetHashNeeded(techState.curLevel);
                     if (techState.hashUploaded >= techState.hashNeeded)
                     {
                         Log.Warning($"[TechHashReduce Debug] Import check: Tech {tech.ID} loaded with hashUploaded ({techState.hashUploaded}) >= hashNeeded ({techState.hashNeeded}). Clamping uploaded.");
