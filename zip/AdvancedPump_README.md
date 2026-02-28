@@ -1,6 +1,6 @@
 # AdvancedPump
 
-Repurposes Advanced Miners (Vein Collectors) into high-capacity planet pumps. When placed anywhere on a planet with a fluid (water, acid), they extract it at an extreme rate (150,000 speed). Completely removes the floating item icon for a cleaner look.
+Repurposes Advanced Miners (Vein Collectors) into high-capacity planet pumps. When placed anywhere on a planet with a fluid (water, acid), they extract it at an extreme rate (150,000 speed).
 
 ---
 

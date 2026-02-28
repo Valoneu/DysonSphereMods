@@ -22,7 +22,7 @@
 | **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.3.0 |
 | **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.1.0 |
 | **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.1.0 |
-| **PinnedNamesEverywhere** | Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges. | v1.0.0 |
+| **PinnedNamesEverywhere** | Makes pinned star and planet names visible in the normal camera view even at long distances or screen edges. | v1.0.1 |
 | **BottleneckUI** | Shows a UI listing all crafting machines that lack input items or power. | v1.0.0 |
 | **InfinityTechnologies** | Allows for more granular control over infinite research levels. | v1.0.1 |
 | **SortByStorage** | Adds a "Storage" sort option to the Production Statistics panel to sort by total stored quantity. | v1.0.0 |

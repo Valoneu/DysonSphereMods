@@ -33,7 +33,7 @@ namespace PinnedNamesEverywhere
         [HarmonyPatch(typeof(UISpaceGuideEntry), "_OnLateUpdate")]
         public static void UISpaceGuideEntry__OnLateUpdate_Postfix(UISpaceGuideEntry __instance)
         {
-            if (!AlwaysShowPinnedNames.Value) return;
+            if (!AlwaysShowPinnedNames.Value || UIGame.viewMode == EViewMode.Starmap || UIGame.viewMode == EViewMode.Globe) return;
             int currentFrame = Time.frameCount;
             if (!_pinnedCache.TryGetValue(__instance, out var state) || currentFrame - state.LastCheckFrame > 60)
             {
@@ -95,7 +95,7 @@ namespace PinnedNamesEverywhere
         [HarmonyPatch(typeof(UISpaceGuide), "ClipEntryPool")]
         public static void UISpaceGuide_ClipEntryPool_Prefix(UISpaceGuide __instance, ref int _guidecnt, bool all)
         {
-            if (all || !AlwaysShowPinnedNames.Value) return;
+            if (all || !AlwaysShowPinnedNames.Value || UIGame.viewMode == EViewMode.Starmap || UIGame.viewMode == EViewMode.Globe) return;
             var history = GameMain.data?.history;
             if (history == null || __instance.galaxy == null) return;
             var relPos = __instance.relPos;

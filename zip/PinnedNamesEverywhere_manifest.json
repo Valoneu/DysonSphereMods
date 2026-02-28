@@ -1,6 +1,6 @@
 {
     "name": "PinnedNamesEverywhere",
-    "version_number": "1.0.0",
+    "version_number": "1.0.1",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/PinnedNamesEverywhere",
     "description": "Ensures pinned star and planet names (and distances) remain globally visible on your screen, regardless of camera distance or screen position.",
     "dependencies": [
