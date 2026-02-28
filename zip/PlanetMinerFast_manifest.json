@@ -4,6 +4,6 @@
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/PlanetMinerFast",
     "description": "An aggressively optimized fork of PlanetMiner. It completely eliminates the need for mining machines, pulling ores directly into associated Logistics Stations set to 'Local Demand'. Practically zero UPS and GPU impact.",
     "dependencies": [
-        "xiaoye97-BepInEx-5.4.21"
+        "xiaoye97-BepInEx-5.4.17"
     ]
 }

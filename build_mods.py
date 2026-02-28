@@ -272,7 +272,7 @@ MOD_MANIFEST_DEPENDENCIES = {
     "LessShipPower": ["xiaoye97-BepInEx-5.4.17"],
     "MaxLVLIncrease": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5", "xiaoye97-LDBTool-3.0.2"],
     "PinnedNamesEverywhere": ["xiaoye97-BepInEx-5.4.17"],
-    "PlanetMinerFast": ["xiaoye97-BepInEx-5.4.21"],
+    "PlanetMinerFast": ["xiaoye97-BepInEx-5.4.17"],
     "AdvancedPump": ["xiaoye97-BepInEx-5.4.17"],
     "SortByStorage": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5"],
     "SpaciousStations": ["xiaoye97-BepInEx-5.4.17", "CommonAPI-CommonAPI-1.6.5", "xiaoye97-LDBTool-3.0.2"],
