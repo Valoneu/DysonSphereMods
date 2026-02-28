@@ -13,3 +13,8 @@ FarZoom
 TechHashReduce
 CloserStations
 InfinityTechnologies
+HideWarnings
+CopyPasteStations
+DistributeSpray
+AdvancedPump
+StationLaunchSystem

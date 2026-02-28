@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Hide specific in-game warnings with a toggleable UI.</Description>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>com.Valoneu.HideWarnings</BepInExPluginGuid>
+    <BepInExPluginName>HideWarnings</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />
+  </ItemGroup>
+</Project>

@@ -16,4 +16,5 @@ Transpiles the game's internal `BuildTool_Click` and placement validation method
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

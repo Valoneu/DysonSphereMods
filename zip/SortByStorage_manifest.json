@@ -2,7 +2,7 @@
     "name": "SortByStorage",
     "version_number": "1.0.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/SortByStorage",
-    "description": "Adds a \"Storage\" sort option to the Production Statistics panel to sort by total stored quantity.",
+    "description": "Injects a highly requested 'Storage' sorting option natively into the Production Statistics UI panel, letting you sort the entire planetary or galactic network by the total quantity of stored items.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5"

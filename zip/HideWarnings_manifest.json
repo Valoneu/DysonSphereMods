@@ -1,0 +1,10 @@
+{
+    "name": "HideWarnings",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/HideWarnings",
+    "description": "Selectively hide disruptive in-game warnings with a dedicated configuration UI. Supports hiding power failure, resource shortages, sorter jams, and even the research completion banner.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.17",
+        "CommonAPI-CommonAPI-1.6.5"
+    ]
+}

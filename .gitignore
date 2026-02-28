@@ -47,6 +47,7 @@ temp_stage/
 *.zip
 *.rar
 *.7z
+MODS.md
 *gemini*
 /.env
 /tcli_bin

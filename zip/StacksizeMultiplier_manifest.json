@@ -2,7 +2,7 @@
     "name": "StacksizeMultiplier",
     "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/StacksizeMultiplier",
-    "description": "Scalable item stack size multiplier for all game items.",
+    "description": "Provides a massive, globally customizable stack size multiplier to all game items, saving massive amounts of inventory and storage space. Includes a dedicated UI panel for live fine-tuning.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5"

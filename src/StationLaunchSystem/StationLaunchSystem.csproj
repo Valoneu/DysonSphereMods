@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Auto-launch rockets and sails from ILS stations to the Dyson sphere.</Description>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>com.Valoneu.StationLaunchSystem</BepInExPluginGuid>
+    <BepInExPluginName>StationLaunchSystem</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />
+  </ItemGroup>
+</Project>

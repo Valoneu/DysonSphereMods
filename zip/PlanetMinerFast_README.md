@@ -16,4 +16,5 @@ Compiles Weaver compatibility validation checks into `FastInvokeHandler` delegat
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

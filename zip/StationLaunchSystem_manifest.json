@@ -1,0 +1,9 @@
+{
+    "name": "StationLaunchSystem",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/StationLaunchSystem",
+    "description": "Automated, high-performance Dyson construction system. Launches rockets and injects solar sails directly into Dyson shells from stations set to 'Storage' mode. Features equatorial priority and strict construction sequencing.",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.17"
+    ]
+}

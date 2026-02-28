@@ -18,91 +18,81 @@ namespace DistributeWarpers
         private void Awake()
         {
             Log.Init(Logger);
-            InitConfig(Config);
+            ModEnabled = Config.Bind("General", "Enabled", true, "Enable/disable automatic warper distribution");
+            TargetWarperCount = Config.Bind("General", "TargetCount", 50, "How many warpers each station should try to maintain (max 50)");
+            CheckInterval = Config.Bind("General", "CheckInterval", 120, "How often (in ticks) to check and distribute");
             var harmony = new Harmony(GUID);
-            TickManager.Patch(harmony);
-            DistributeWarpersPatcher.Init();
-            Log.Info($"{NAME} v{VERSION} loaded and refactored!");
-        }
-        private void InitConfig(ConfigFile confFile)
-        {
-            ModEnabled = confFile.Bind("General", "Enabled", true, "Enable/disable automatic warper distribution");
-            TargetWarperCount = confFile.Bind("General", "TargetCount", 50, "How many warpers each station should try to maintain in its internal slot (max 50)");
-            CheckInterval = confFile.Bind("General", "CheckInterval", 120, "How often (in ticks) to check and distribute warpers on a planet (60 ticks = 1 second)");
+            harmony.PatchAll(typeof(GameBeginPatch));
+            Log.Info($"{NAME} v{VERSION} loaded!");
         }
     }
-    public static class DistributeWarpersPatcher
+    [HarmonyPatch]
+    public static class GameBeginPatch
     {
-        public static void Init()
+        private static bool _subscribed = false;
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameMain), "Begin")]
+        public static void OnGameBegin()
         {
-            TickManager.OnSlowTick += OnSlowTick;
+            try {
+                if (_subscribed) { GameMain.logic.onFactoryFrameEnd -= WarperLogic.OnFactoryFrameEnd; _subscribed = false; }
+                GameMain.logic.onFactoryFrameEnd += WarperLogic.OnFactoryFrameEnd; _subscribed = true;
+            } catch { }
         }
-        private static void OnSlowTick()
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameMain), "End")]
+        public static void OnGameEnd()
         {
-            if (!DistributeWarpersPlugin.ModEnabled.Value) return;
-            if (GameMain.data == null || GameMain.data.factories == null) return;
-            foreach (var factory in GameMain.data.factories)
-            {
-                if (factory?.transport != null)
-                {
-                    DistributeWarpersOnPlanet(factory.transport);
-                }
-            }
+            try { if (_subscribed) { GameMain.logic.onFactoryFrameEnd -= WarperLogic.OnFactoryFrameEnd; _subscribed = false; } } catch { }
         }
-        private static void DistributeWarpersOnPlanet(PlanetTransport transport)
+    }
+    public static class WarperLogic
+    {
+        private const int WARPER_ID = 1210;
+        public static void OnFactoryFrameEnd()
         {
-            if (transport == null || transport.factory == null) return;
-            const int warperId = 1210;
-            int totalWarpersInCargo = 0;
-            for (int i = 1; i < transport.stationCursor; i++)
-            {
-                var station = transport.stationPool[i];
-                if (station == null || station.id != i || station.isCollector) continue;
-                for (int j = 0; j < station.storage.Length; j++)
-                {
-                    if (station.storage[j].itemId == warperId && station.storage[j].count > 0)
-                    {
-                        totalWarpersInCargo += station.storage[j].count;
+            try {
+                if (!DistributeWarpersPlugin.ModEnabled.Value || GameMain.data == null || GameMain.gameTick % (long)DistributeWarpersPlugin.CheckInterval.Value != 0) return;
+                var data = GameMain.data;
+                for (int fi = 0; fi < data.factoryCount; fi++) {
+                    var factory = data.factories[fi];
+                    if (factory?.transport == null) continue;
+                    int[] consumeReg = GameMain.statistics?.production?.factoryStatPool?[factory.index]?.consumeRegister;
+                    int totalAvailable = 0;
+                    for (int i = 1; i < factory.transport.stationCursor; i++) {
+                        var st = factory.transport.stationPool[i];
+                        if (st == null || st.id != i || st.isCollector) continue;
+                        for (int j = 0; j < st.storage.Length; j++) if (st.storage[j].itemId == WARPER_ID && st.storage[j].count > 0) totalAvailable += st.storage[j].count;
+                    }
+                    if (totalAvailable <= 0) continue;
+                    for (int i = 1; i < factory.transport.stationCursor; i++) {
+                        var st = factory.transport.stationPool[i];
+                        if (st == null || st.id != i || st.isCollector || !st.isStellar) continue;
+                        int needed = Math.Min(DistributeWarpersPlugin.TargetWarperCount.Value, 50) - st.warperCount;
+                        if (needed <= 0) continue;
+                        int toAdd = Math.Min(needed, totalAvailable);
+                        int removed = TakeWarpersFromDepot(factory.transport, toAdd);
+                        if (removed > 0) {
+                            st.warperCount += removed; totalAvailable -= removed;
+                            if (consumeReg != null) { lock (consumeReg) consumeReg[WARPER_ID] += removed; }
+                        }
+                        if (totalAvailable <= 0) break;
                     }
                 }
-            }
-            if (totalWarpersInCargo <= 0) return;
-            for (int i = 1; i < transport.stationCursor; i++)
-            {
-                var station = transport.stationPool[i];
-                if (station == null || station.id != i || station.isCollector || !station.isStellar) continue;
-                int target = Math.Min(DistributeWarpersPlugin.TargetWarperCount.Value, 50);
-                int currentWarpers = station.warperCount;
-                int needed = target - currentWarpers;
-                if (needed <= 0) continue;
-                int toAdd = Math.Min(needed, totalWarpersInCargo);
-                if (toAdd <= 0) continue;
-                int removed = TakeWarpersFromPlanetCargo(transport, toAdd);
-                station.warperCount += removed;
-                totalWarpersInCargo -= removed;
-                if (totalWarpersInCargo <= 0) break;
-            }
+            } catch { }
         }
-        private static int TakeWarpersFromPlanetCargo(PlanetTransport transport, int count)
+        private static int TakeWarpersFromDepot(PlanetTransport transp, int count)
         {
-            int remaining = count;
-            const int warperId = 1210;
-            for (int i = 1; i < transport.stationCursor; i++)
-            {
-                var station = transport.stationPool[i];
-                if (station == null || station.id != i || station.isCollector) continue;
-                for (int j = 0; j < station.storage.Length; j++)
-                {
-                    if (station.storage[j].itemId == warperId && station.storage[j].count > 0)
-                    {
-                        int take = Math.Min(remaining, station.storage[j].count);
-                        station.storage[j].count -= take;
-                        remaining -= take;
-                        if (remaining <= 0) return count;
-                    }
+            int rem = count;
+            for (int i = 1; i < transp.stationCursor; i++) {
+                var st = transp.stationPool[i];
+                if (st == null || st.id != i || st.isCollector) continue;
+                for (int j = 0; j < st.storage.Length; j++) if (st.storage[j].itemId == WARPER_ID && st.storage[j].count > 0) {
+                    int take = Math.Min(rem, st.storage[j].count); st.storage[j].count -= take; rem -= take;
+                    if (rem <= 0) return count;
                 }
             }
-            return count - remaining;
+            return count - rem;
         }
     }
 }

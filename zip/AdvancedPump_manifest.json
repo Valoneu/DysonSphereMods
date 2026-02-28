@@ -1,0 +1,9 @@
+{
+    "name": "AdvancedPump",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/AdvancedPump",
+    "description": "Repurposes Advanced Miners (Vein Collectors) into high-capacity planet pumps. When placed anywhere on a planet with a fluid (water, acid), they extract it at an extreme rate (150,000 speed). Completely removes the floating item icon for a cleaner ...",
+    "dependencies": [
+        "xiaoye97-BepInEx-5.4.17"
+    ]
+}

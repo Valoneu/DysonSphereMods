@@ -16,4 +16,5 @@ Executes a rapid Harmony Postfix on `StationComponent.CalcTripEnergyCost`, inter
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

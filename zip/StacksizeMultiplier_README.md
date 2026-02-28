@@ -18,4 +18,5 @@ Implements a custom `StacksizeMultiplierWindow` completely inheriting from nativ
 * **BepInEx, CommonAPI**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

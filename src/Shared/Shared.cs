@@ -114,7 +114,9 @@ namespace DysonSphereMods.Shared
         public virtual void OnGUI()
         {
             if (!IsVisible) return;
+            GUI.backgroundColor = new Color(0.08f, 0.12f, 0.22f, 0.95f);
             WindowRect = GUILayout.Window(WindowId, WindowRect, DrawWindowInternal, Title);
+            GUI.backgroundColor = Color.white;
             WindowRect.x = Mathf.Clamp(WindowRect.x, -WindowRect.width + 50, Screen.width - 50);
             WindowRect.y = Mathf.Clamp(WindowRect.y, -20, Screen.height - 50);
         }

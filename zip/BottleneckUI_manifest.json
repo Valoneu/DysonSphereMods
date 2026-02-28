@@ -2,7 +2,7 @@
     "name": "BottleneckUI",
     "version_number": "1.0.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/BottleneckUI",
-    "description": "Shows a UI listing all crafting machines that lack input items or power.",
+    "description": "Adds a comprehensive UI panel listing all crafting machines across the planet that are currently lacking input items or suffering from power shortages, allowing you to instantly identify factory bottlenecks.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17",
         "CommonAPI-CommonAPI-1.6.5"

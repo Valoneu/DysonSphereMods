@@ -16,4 +16,5 @@ Hooks into the game's internal `UIProductionStatWindow` UI routines via Harmony 
 * **BepInEx**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

@@ -2,7 +2,7 @@
     "name": "LessShipPower",
     "version_number": "1.1.0",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/LessShipPower",
-    "description": "Optimization of logistics vessel energy consumption.",
+    "description": "Optimizes and reduces the massive energy blocks required for Interstellar Logistics Vessels to initiate hyperspace warps, allowing earlier game interstellar transport without collapsing local energy grids.",
     "dependencies": [
         "xiaoye97-BepInEx-5.4.17"
     ]

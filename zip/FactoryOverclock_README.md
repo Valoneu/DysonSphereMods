@@ -18,4 +18,5 @@ Uses Harmony prefixes/postfixes to double-tick logistical operations like fracti
 * **BepInEx, CommonAPI**
 
 ---
+**Game Version:** V0.10.34.28455
 **Developer:** Valoneu

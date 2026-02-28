@@ -1,9 +1,32 @@
 [Message:   BepInEx] BepInEx 5.4.17.0 - DSPGAME (22.02.2026 15:06:16)
+[Info   :   BepInEx] Running under Unity v2022.3.62.1451004
+[Info   :   BepInEx] CLR runtime version: 4.0.30319.42000
+[Info   :   BepInEx] Supports SRE: True
+[Info   :   BepInEx] System platform: Bits64, Windows
 [Message:   BepInEx] Preloader started
+[Info   :   BepInEx] Loaded 1 patcher method from [BepInEx.Preloader 5.4.17.0]
+[Info   :   BepInEx] Loaded 1 patcher method from [CommonAPIPreloader 1.6.7.0]
+[Info   :   BepInEx] Loaded 1 patcher method from [BlueprintTweaksPatcher 1.0.0.0]
+[Info   :   BepInEx] Loaded 1 patcher method from [DSPOptimizationsPreloader 1.0.0.0]
+[Info   :   BepInEx] Loaded 1 patcher method from [ModFixerOnePreloader 2.1.0.0]
+[Info   :   BepInEx] 5 patcher plugins loaded
+[Info   :   BepInEx] Patching [UnityEngine.CoreModule] with [BepInEx.Chainloader]
+[Info   :   BepInEx] Patching [Assembly-CSharp] with [BlueprintTweaks.Preloader]
+[Info   :BlueprintTweaks Preloader] Preloader patching is successful!
+[Info   :   BepInEx] Patching [Assembly-CSharp] with [CommonAPI.Preloader]
+[Info   :Common API Preloader] Preloader patching is successful!
+[Info   :   BepInEx] Patching [Assembly-CSharp] with [DSPOptimizations.Preloader]
+[Info   :DSPOptimizations Preloader] Successfully ran preloader patch
+[Info   :   BepInEx] Patching [Assembly-CSharp] with [ModFixerOne.Preloader]
+[Info   :   BepInEx] Patching [UnityEngine.CoreModule] with [ModFixerOne.Preloader]
+[Info   :ModFixerOne Preloader] Type forward for UnityEngine.Input: UnityEngine.CoreModule => UnityEngine.InputLegacyModule
+[Info   :   BepInEx] Patching [UnityEngine.UI] with [ModFixerOne.Preloader]
+[Info   :   Console] Successfully injected property 'readOnly' into 'InputField'.
 [Message:   BepInEx] Preloader finished
 [Message:   BepInEx] Chainloader ready
 [Message:   BepInEx] Chainloader started
-[Info   :   BepInEx] 58 plugins to load
+[Info   :   BepInEx] 60 plugins to load
+[Warning:   BepInEx] Skipping [DistributeWarpers 1.0.0] because a newer version exists (DistributeWarpers 1.1.0)
 [Warning:   BepInEx] Skipping [FactoryOverclock 2.1.8] because a newer version exists (FactoryOverclock 3.0.0)
 [Warning:   BepInEx] Skipping [SpaciousStations 1.1.0] because a newer version exists (SpaciousStations 1.2.0)
 [Warning:   BepInEx] Plugin [DSP Common API 1.6.7.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
@@ -19,12 +42,14 @@
 [Warning:   BepInEx] Plugin [CheatEnabler 2.4.2] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [CompressSave 1.3.8] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [UXAssist 1.5.4] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
-[Error  :   BepInEx] Could not load [BuildToolOptCAPIcompat 1.0.0] because it is incompatible with: org.kremnev8.plugin.BlueprintTweaks
+[Warning:   BepInEx] Plugin [DistributeSpray 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [DistributeWarpers 1.1.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [FactoryOverclock 3.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [PlanetWideFluid 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [SpaciousStations 1.2.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
+[Warning:   BepInEx] Plugin [StationLaunchSystem 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [CloserStations 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [StationDistance 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
-[Warning:   BepInEx] Plugin [DistributeWarpers 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [FarZoom 1.0.1] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
 [Warning:   BepInEx] Plugin [MaxLVLIncrease 1.0.4] targets a wrong version of BepInEx (5.4.19.0) and might not work until you update
 [Warning:   BepInEx] Plugin [StacksizeMultiplier 1.0.0] targets a wrong version of BepInEx (5.4.20.0) and might not work until you update
@@ -61,19 +86,25 @@
 [Info   :   BepInEx] Loading [SphereEditorTools 2.2.5]
 [Info   :   BepInEx] Loading [CloserStations 1.0.0]
 [Info   :CloserStations] CloserStations v1.0.0 loaded!
-[Info   :   BepInEx] Loading [DistributeWarpers 1.0.0]
-[Info   :DistributeWarpers] DistributeWarpers v1.0.0 loaded!
+[Info   :   BepInEx] Loading [DistributeSpray 1.0.0]
+[Info   :DistributeSpray] DistributeSpray v1.0.0 loaded!
+[Info   :   BepInEx] Loading [DistributeWarpers 1.1.0]
+[Info   :DistributeWarpers] DistributeWarpers v1.1.0 loaded!
 [Info   :   BepInEx] Loading [FactoryOverclock 3.0.0]
 [Info   :FactoryOverclock] FactoryOverclock 3.0.0 loaded.
 [Info   :   BepInEx] Loading [FarZoom 1.0.1]
 [Info   :   FarZoom] FarZoom v1.0.1 loaded!
 [Info   :   BepInEx] Loading [MaxLVLIncrease 1.0.4]
+[Info   :   BepInEx] Loading [PlanetWideFluid 1.0.0]
+[Info   :PlanetWideFluid] PlanetWideFluid v1.0.0 loaded!
 [Info   :   BepInEx] Loading [SpaciousStations 1.2.0]
 [Info   :SpaciousStations] SpaciousStations v1.2.0 loaded!
 [Info   :   BepInEx] Loading [StacksizeMultiplier 1.0.0]
 [Info   :StacksizeMultiplier] StacksizeMultiplier v1.0.0 loaded!
 [Info   :   BepInEx] Loading [StationDistance 1.0.0]
 [Info   :StationDistance] StationDistance v1.0.0 loaded!
+[Info   :   BepInEx] Loading [StationLaunchSystem 1.0.0]
+[Info   :StationLaunchSystem] StationLaunchSystem v1.0.0 loaded!
 [Info   :   BepInEx] Loading [VesselTrails 1.2.1]
 [Info   :VesselTrails] VesselTrails v1.2.1 loaded!
 [Info   :   BepInEx] Loading [AutoQueueTech 0.0.6]
@@ -102,12 +133,12 @@
 [Info   : SphereOpt] Loaded custom shader: VF Shaders/Dyson Sphere/Dyson Shell Unlit Instanced
 [Info   : SphereOpt] Loaded custom shader: VF Shaders/Dyson Sphere/Frame Inst REPLACE
 [Info   : SphereOpt] Loaded custom shader: VF Shaders/Dyson Sphere/Node Inst REPLACE
-[Info   :   BepInEx] Loading [BuildToolOpt 1.1.5]
 [Info   :   BepInEx] Loading [FactoryLocator 1.3.12]
 [Info   :   BepInEx] Loading [MassRecipePaste 1.1.3]
 [Info   :   BepInEx] Loading [MassRecipePasteCAPIcompat 1.0.0]
 [Info   :   BepInEx] Loading [PlanetwideSpray 1.1.10]
-[Info   :PlanetwideSpray] Cheat mode: Force Proliferator Level = 4
+[Info   :PlanetwideSpray] Normal mode: spray all [True] fuel power generator [True] 
+ station input [True], fractionator [True], turret [True]
 [Info   :   BepInEx] Loading [RateMonitor 0.4.2]
 [Info   :   BepInEx] Loading [RateMonitorCAPIcompat 1.0.0]
 [Info   :   BepInEx] Loading [StatsUITweaks 1.6.13]
@@ -140,11 +171,8 @@
 [Info   :DSP Mod Save] _autosave_tmp: Game mod save not exist
 [Info   :DSP Common API] Checking missing machines!
 [Info   :FactoryOverclock] Refreshing all factory systems...
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2316, Name=大型采矿机, name=Advanced Mining Machine
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2103, Name=物流运输站, name=Planetary Logistics Station
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2104, Name=星际物流运输站, name=Interstellar Logistics Station
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2105, Name=轨道采集器, name=Orbital Collector
 [Info   :SpaciousStations] GameMain.Begin: All station limits synced.
+[Info   :StationLaunchSystem] [StationLaunch] Subscribed to onFactoryFrameEnd
 [Info   :   LDBTool] Pre Loading...
 [Info   :   LDBTool] Add 9480 Gravity generator to ItemProtoSet.
 [Info   :   LDBTool] Add 9481 Plane constraint ring to ItemProtoSet.
@@ -240,11 +268,6 @@
 [Warning:DSP Common API] This version of CommonAPI was built for build id "0.10.33.26941", you are running "0.10.34.28470".
 [Warning:DSP Common API] Should any problems arise, please check for a new version before reporting issues.
 [Info   :SpaciousStations] Performing final pass on prototypes for SpaciousStations...
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2316, Name=大型采矿机, name=Advanced Mining Machine
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2103, Name=物流运输站, name=Planetary Logistics Station
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2104, Name=星际物流运输站, name=Interstellar Logistics Station
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2105, Name=轨道采集器, name=Orbital Collector
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=9512, Name=物资交换器, name=Exchange Logistic Station
 [Info   :VesselTrails] Captured 207 original stack sizes.
 [Info   :VesselTrails] Applied multiplier to 206 items.
 [Info   :ModFixerOne] PreloadAndInitAll
@@ -257,10 +280,309 @@
 [Info   :DSP Mod Save] Post Load!
 [Info   :DSP Common API] Checking missing machines!
 [Info   :FactoryOverclock] Refreshing all factory systems...
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2316, Name=大型采矿机, name=Advanced Mining Machine
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2103, Name=物流运输站, name=Planetary Logistics Station
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2104, Name=星际物流运输站, name=Interstellar Logistics Station
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=2105, Name=轨道采集器, name=Orbital Collector
-[Info   :SpaciousStations] SpaciousStations processing Station: ID=9512, Name=物资交换器, name=Exchange Logistic Station
 [Info   :SpaciousStations] GameMain.Begin: All station limits synced.
+[Info   :StationLaunchSystem] [StationLaunch] Subscribed to onFactoryFrameEnd
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
 [Info   :PlanetFinder] loading vein data completed
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 20
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 21
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 22
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 23
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 24
+[Info   :StationLaunchSystem] [StationLaunch] Launched 100 rockets from station 25
+[Info   :StationLaunchSystem] [StationLaunch] Added 68 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 320 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 288 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 312 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 488 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 320 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 296 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 248 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 412 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 500 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 304 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 296 sails from station 2
+[Info   :StationLaunchSystem] [StationLaunch] Added 304 sails from station 2
+[Warning:  HarmonyX] AccessTools.Property: Could not find property for type System.IO.BinaryReader and name ReadInt32
+[Info   :AutoQueueTech] AutoQueueTech OnDestroy() called

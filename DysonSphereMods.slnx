@@ -10,11 +10,15 @@
     <Project Path="src/MaxLVLIncrease/MaxLVLIncrease.csproj" />
     <Project Path="src/PinnedNamesEverywhere/PinnedNamesEverywhere.csproj" />
     <Project Path="src/PlanetMinerFast/PlanetMinerFast.csproj" />
-
     <Project Path="src/SortByStorage/SortByStorage.csproj" />
     <Project Path="src/SpaciousStations/SpaciousStations.csproj" />
     <Project Path="src/StacksizeMultiplier/StacksizeMultiplier.csproj" />
     <Project Path="src/TechHashReduce/TechHashReduce.csproj" />
     <Project Path="src/VesselTrails/VesselTrails.csproj" />
+    <Project Path="src/AdvancedPump/AdvancedPump.csproj" />
+    <Project Path="src/HideWarnings/HideWarnings.csproj" />
+    <Project Path="src/DistributeSpray/DistributeSpray.csproj" />
+    <Project Path="src/CopyPasteStations/CopyPasteStations.csproj" />
+    <Project Path="src/StationLaunchSystem/StationLaunchSystem.csproj" />
   </Folder>
 </Solution>

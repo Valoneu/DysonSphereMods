@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using HarmonyLib;
 using BepInEx;
@@ -42,7 +43,7 @@ namespace VesselTrails
             TrailThicknessNormal = Config.Bind("Visuals", "TrailThicknessNormal", 1.0f, "Thickness multiplier for normal view.");
             TrailThicknessStarmap = Config.Bind("Visuals", "TrailThicknessStarmap", 1.0f, "Thickness multiplier for star map.");
             TrailColorMode = Config.Bind("Visuals", "ColorMode", ColorMode.Heatmap, "Coloring mode: Material or Heatmap.");
-            HistoryMinutes = Config.Bind("General", "HistoryMinutes", 2f, "Path lifetime in minutes.");
+            HistoryMinutes = Config.Bind("General", "HistoryMinutes", 2f, "How many minutes of history to display (data always records 60 min).");
             WindowX = Config.Bind("Internal", "WindowX", 50f, "Window X position.");
             WindowY = Config.Bind("Internal", "WindowY", 50f, "Window Y position.");
             WindowW = Config.Bind("Internal", "WindowW", 500f, "Window width.");
@@ -90,8 +91,16 @@ namespace VesselTrails
                 var go = new GameObject("VesselTrailRenderer");
                 _renderer = go.AddComponent<VesselTrailRenderer>();
                 _renderer.Init(_routeManager, _window);
-                DontDestroyOnLoad(go);
+                UnityEngine.Object.DontDestroyOnLoad(go);
             }
+            VesselTrailPersistence.LoadTrailData(_routeManager);
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameSave), nameof(GameSave.SaveCurrentGame))]
+        public static void OnSave_Postfix()
+        {
+            if (_routeManager != null)
+                VesselTrailPersistence.SaveTrailData(_routeManager);
         }
     }
     public class VesselRouteManager
@@ -114,7 +123,7 @@ namespace VesselTrails
             }
             public void CleanUp(float historyMinutes)
             {
-                float lifetime = Mathf.Max(0.5f, historyMinutes) * 60f;
+                float lifetime = 60f * 60f;
                 var toRemove = ItemHistories.Where(kvp => Time.time - kvp.Value.LastSeenTime > lifetime).Select(kvp => kvp.Key).ToList();
                 foreach (var k in toRemove) ItemHistories.Remove(k);
             }
@@ -132,8 +141,7 @@ namespace VesselTrails
             {
                 int count = shipKeys.Count;
                 _history.Enqueue(count);
-                float histMin = historyMinutes <= 0 ? 0.1f : historyMinutes;
-                int maxSamples = Mathf.Max(1, (int)(histMin * 60f / interval));
+                int maxSamples = Mathf.Max(1, (int)(60f * 60f / interval));
                 while (_history.Count > maxSamples) _history.Dequeue();
                 AverageVesselCount = (float)_history.Sum() / _history.Count;
                 LastSeenTime = Time.time;
@@ -154,6 +162,17 @@ namespace VesselTrails
                 float cutoff = Time.time - windowSecs;
                 TripStartTimes.RemoveAll(t => t < cutoff - 120f); 
                 return TripStartTimes.Count(t => t >= cutoff);
+            }
+            public float GetEffectiveMinutes(float windowMin)
+            {
+                float windowSecs = windowMin * 60f;
+                if (windowSecs <= 0) windowSecs = 60f;
+                float cutoff = Time.time - windowSecs;
+                float earliest = Time.time;
+                foreach (float t in TripStartTimes)
+                    if (t >= cutoff && t < earliest) earliest = t;
+                float elapsed = (Time.time - earliest) / 60f;
+                return Mathf.Clamp(elapsed, 0.1f, windowMin);
             }
             public float GetAlpha(float lifetimeSecs)
             {
@@ -443,7 +462,8 @@ namespace VesselTrails
             {
                 string itemName = LDB.items.Select(hist.ItemId)?.name ?? $"Item {hist.ItemId}";
                 int total = hist.GetTotalTrips(histMin);
-                float perMin = total / Mathf.Max(1f, histMin);
+                float effectiveMin = hist.GetEffectiveMinutes(histMin);
+                float perMin = total / Mathf.Max(0.1f, effectiveMin);
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(itemName, labelStyle, GUILayout.Width(160));
                 GUILayout.Label($"{total}", labelStyle, GUILayout.Width(50));
@@ -616,9 +636,9 @@ namespace VesselTrails
             GUILayout.Label($"Thick (Map): {VesselTrailsPlugin.TrailThicknessStarmap.Value:F1}", GUILayout.Width(110));
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal();
-            float history = GUILayout.HorizontalSlider(VesselTrailsPlugin.HistoryMinutes.Value, 0f, 60f);
+            float history = GUILayout.HorizontalSlider(VesselTrailsPlugin.HistoryMinutes.Value, 1f, 60f);
             VesselTrailsPlugin.HistoryMinutes.Value = Mathf.Round(history);
-            GUILayout.Label($"History (min): {VesselTrailsPlugin.HistoryMinutes.Value:F0}", GUILayout.Width(110));
+            GUILayout.Label($"Display: {VesselTrailsPlugin.HistoryMinutes.Value:F0}m", GUILayout.Width(110));
             GUILayout.EndHorizontal();
             if (GUILayout.Button($"Color Mode: {VesselTrailsPlugin.TrailColorMode.Value}"))
             {
@@ -637,7 +657,14 @@ namespace VesselTrails
                     clusterTotalLoad += hist.AverageVesselCount;
                 }
             }
-            float clusterTripsPerMin = clusterTotalTrips / Mathf.Max(1f, hMin);
+            float clusterEffMin = 0.1f;
+            foreach (var route in _manager.RoutePaths.Values)
+                foreach (var hist in route.ItemHistories.Values)
+                {
+                    float em = hist.GetEffectiveMinutes(hMin);
+                    if (em > clusterEffMin) clusterEffMin = em;
+                }
+            float clusterTripsPerMin = clusterTotalTrips / clusterEffMin;
             GUILayout.Label("CLUSTER TOTALS", headerStyle);
             GUILayout.BeginHorizontal();
             GUILayout.Label("All Logistics Vessels", GUILayout.Width(WindowRect.width - 240));
@@ -675,7 +702,8 @@ namespace VesselTrails
                 {
                     string itemName = LDB.items.Select(hist.ItemId)?.name ?? "Unknown";
                     int total = hist.GetTotalTrips(hMin);
-                    float perMin = total / Mathf.Max(1f, hMin);
+                    float effectiveMin = hist.GetEffectiveMinutes(hMin);
+                    float perMin = total / Mathf.Max(0.1f, effectiveMin);
                     GUILayout.BeginHorizontal();
                     GUILayout.Label($" <color=#aaaaaa>• {itemName}</color>", GUILayout.Width(WindowRect.width - 240));
                     GUILayout.Label($"{total}", GUILayout.Width(50));
@@ -707,6 +735,97 @@ namespace VesselTrails
                 VesselTrailsPlugin.WindowY.Value = WindowRect.y;
                 VesselTrailsPlugin.WindowW.Value = WindowRect.width;
                 VesselTrailsPlugin.WindowH.Value = WindowRect.height;
+            }
+        }
+    }
+    public static class VesselTrailPersistence
+    {
+        private static string GetSaveFilePath()
+        {
+            string savePath = GameConfig.gameSaveFolder;
+            string saveName = DSPGame.LoadFile ?? "unknown";
+            return Path.Combine(savePath, saveName + ".vesseltrails");
+        }
+        public static void SaveTrailData(VesselRouteManager manager)
+        {
+            try
+            {
+                string path = GetSaveFilePath();
+                using (var writer = new BinaryWriter(File.Create(path)))
+                {
+                    writer.Write(1); 
+                    writer.Write(manager.RoutePaths.Count);
+                    foreach (var kvp in manager.RoutePaths)
+                    {
+                        writer.Write(kvp.Key.Item1);
+                        writer.Write(kvp.Key.Item2);
+                        writer.Write(kvp.Value.ItemHistories.Count);
+                        foreach (var ih in kvp.Value.ItemHistories)
+                        {
+                            writer.Write(ih.Key); 
+                            writer.Write(ih.Value.AverageVesselCount);
+                            writer.Write(ih.Value.TripStartTimes.Count);
+                            foreach (float t in ih.Value.TripStartTimes)
+                                writer.Write(t);
+                        }
+                    }
+                }
+                Log.Info($"Saved vessel trail data to {path}");
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"Failed to save vessel trail data: {ex.Message}");
+            }
+        }
+        public static void LoadTrailData(VesselRouteManager manager)
+        {
+            try
+            {
+                string path = GetSaveFilePath();
+                if (!File.Exists(path)) return;
+                using (var reader = new BinaryReader(File.OpenRead(path)))
+                {
+                    int version = reader.ReadInt32();
+                    if (version != 1) return;
+                    int routeCount = reader.ReadInt32();
+                    for (int i = 0; i < routeCount; i++)
+                    {
+                        int starA = reader.ReadInt32();
+                        int starB = reader.ReadInt32();
+                        var key = (starA, starB);
+                        if (!manager.RoutePaths.TryGetValue(key, out var route))
+                        {
+                            route = new VesselRouteManager.RoutePath { StarA = starA, StarB = starB };
+                            manager.RoutePaths[key] = route;
+                        }
+                        int itemCount = reader.ReadInt32();
+                        for (int j = 0; j < itemCount; j++)
+                        {
+                            int itemId = reader.ReadInt32();
+                            float avgCount = reader.ReadSingle();
+                            int tripCount = reader.ReadInt32();
+                            var trips = new List<float>();
+                            for (int k = 0; k < tripCount; k++)
+                                trips.Add(reader.ReadSingle());
+                            if (!route.ItemHistories.ContainsKey(itemId))
+                            {
+                                route.ItemHistories[itemId] = new VesselRouteManager.ItemHistory
+                                {
+                                    ItemId = itemId,
+                                    FirstSeenTime = Time.time,
+                                    LastSeenTime = Time.time,
+                                    AverageVesselCount = avgCount,
+                                    TripStartTimes = trips
+                                };
+                            }
+                        }
+                    }
+                }
+                Log.Info($"Loaded vessel trail data from {path}");
+            }
+            catch (Exception ex)
+            {
+                Log.Warning($"Failed to load vessel trail data: {ex.Message}");
             }
         }
     }

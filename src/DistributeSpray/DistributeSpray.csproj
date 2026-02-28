@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Auto-spray items planet-wide using proliferator from station storage.</Description>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>com.Valoneu.DistributeSpray</BepInExPluginGuid>
+    <BepInExPluginName>DistributeSpray</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />
+  </ItemGroup>
+</Project>

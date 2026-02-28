@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Copy and paste station item slot configurations between ILS/PLS.</Description>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>com.Valoneu.CopyPasteStations</BepInExPluginGuid>
+    <BepInExPluginName>CopyPasteStations</BepInExPluginName>
+    <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />
+  </ItemGroup>
+</Project>
