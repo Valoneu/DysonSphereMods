@@ -20,7 +20,7 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.2.1";
+        public const string MOD_VERSION = "1.2.2";
         public static ConfigEntry<float> PLS_DroneMultiplier;
         public static ConfigEntry<float> PLS_ShipMultiplier;
         public static ConfigEntry<float> PLS_StorageMultiplier;
@@ -217,8 +217,10 @@ namespace SpaciousStations
             desc.stationMaxDroneCount = (int)(original.DroneCount * droneMul);
             if (isExchangeStation)
                 desc.stationMaxShipCount = (int)(original.ShipCount * shipMul);
+            else if (desc.isStellarStation)
+                desc.stationMaxShipCount = Math.Min(50, (int)(original.ShipCount * shipMul));
             else
-                desc.stationMaxShipCount = (int)(original.ShipCount > 10 ? 10 : original.ShipCount);
+                desc.stationMaxShipCount = original.ShipCount;
             desc.stationMaxItemCount = (int)(original.ItemCount * storageMul);
             desc.stationMaxEnergyAcc = (long)(original.EnergyMax * energyMul);
             if (!desc.isCollectStation)
@@ -307,7 +309,7 @@ namespace SpaciousStations
             var desc = itemProto.prefabDesc;
             if (desc == null) return;
             __instance.PatchDroneArray(desc.stationMaxDroneCount);
-            if (itemProto.IsExchangeStation())
+            if (itemProto.IsExchangeStation() || (desc.isStellarStation && desc.stationMaxShipCount > 10))
                 __instance.PatchShipArray(desc.stationMaxShipCount);
             __instance.energyMax = desc.stationMaxEnergyAcc;
             __instance.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
@@ -330,7 +332,7 @@ namespace SpaciousStations
                         if (itemProto?.prefabDesc == null || !_originalValues.TryGetValue(itemProto.ID, out var original)) continue;
                         var desc = itemProto.prefabDesc;
                         station.PatchDroneArray(desc.stationMaxDroneCount);
-                        if (itemProto.IsExchangeStation())
+                        if (itemProto.IsExchangeStation() || (desc.isStellarStation && desc.stationMaxShipCount > 10))
                             station.PatchShipArray(desc.stationMaxShipCount);
                         station.energyMax = desc.stationMaxEnergyAcc;
                         station.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
