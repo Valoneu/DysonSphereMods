@@ -12,7 +12,7 @@ namespace StationLaunchSystem
     {
         public const string GUID = "com.Valoneu.StationLaunchSystem";
         public const string NAME = "StationLaunchSystem";
-        public const string VERSION = "1.0.0";
+        public const string VERSION = "1.0.1";
         public static ConfigEntry<bool> ModEnabled;
         public static ConfigEntry<int> RocketsPerTick;
         public static ConfigEntry<int> SailsPerTick;
@@ -80,7 +80,13 @@ namespace StationLaunchSystem
                 for (int si = 1; si < layer.shellCursor; si++) {
                     var shell = layer.shellPool[si];
                     if (shell == null || shell.id != si || !IsShellReady(shell)) continue;
-                    if (shell.nodecps[shell.nodecps.Length - 1] >= shell.cellPointMax) continue;
+                    if (shell.nodes == null || shell.nodes.Count == 0 || shell.nodecps == null) continue;
+                    bool fullyConstructed = true;
+                    for (int ni = 0; ni < shell.nodes.Count; ni++) {
+                        int maxCp = (shell.vertsqOffset[ni + 1] - shell.vertsqOffset[ni]) * shell.cpPerVertex;
+                        if (shell.nodecps[ni] < maxCp) { fullyConstructed = false; break; }
+                    }
+                    if (fullyConstructed) continue;
                     float sumY = 0;
                     if (shell.nodes != null && shell.nodes.Count > 0) {
                         foreach (var node in shell.nodes) sumY += Math.Abs(node.pos.y);
