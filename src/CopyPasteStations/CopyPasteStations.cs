@@ -72,7 +72,6 @@ namespace CopyPasteStations
             if (player == null) return;
             int droneItemId = 5001; 
             int shipItemId = 5002; 
-            int warperItemId = 1210; 
             int currentDrones = station.idleDroneCount + station.workDroneCount;
             int wantedDrones = _clipboardDroneCount;
             if (currentDrones < wantedDrones)

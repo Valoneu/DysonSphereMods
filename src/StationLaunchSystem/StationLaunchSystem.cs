@@ -12,7 +12,7 @@ namespace StationLaunchSystem
     {
         public const string GUID = "com.Valoneu.StationLaunchSystem";
         public const string NAME = "StationLaunchSystem";
-        public const string VERSION = "1.0.1";
+        public const string VERSION = "1.0.2";
         public static ConfigEntry<bool> ModEnabled;
         public static ConfigEntry<int> RocketsPerTick;
         public static ConfigEntry<int> SailsPerTick;

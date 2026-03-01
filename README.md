@@ -31,7 +31,7 @@
 | **HideWarnings** | Hide specific in-game warnings with a toggleable UI (Ctrl+Numpad5). | v1.0.0 |
 | **DistributeSpray** | Auto-spray items planet-wide using proliferator stored in logistics stations. | v1.0.1 |
 | **CopyPasteStations** | Copy and paste item slot configurations between ILS/PLS stations. | v1.0.0 |
-| **StationLaunchSystem** | Auto-launch rockets and solar sails from ILS stations to the Dyson Sphere. | v1.0.1 |
+| **StationLaunchSystem** | Auto-launch rockets and solar sails from ILS stations to the Dyson Sphere. | v1.0.2 |
 
 ---
 
