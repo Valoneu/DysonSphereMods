@@ -19,7 +19,7 @@ namespace VesselTrails
     {
         public const string MOD_GUID = "com.Valoneu.VesselTrails";
         public const string MOD_NAME = "VesselTrails";
-        public const string MOD_VERSION = "1.3.1";
+        public const string MOD_VERSION = "1.3.2";
         public static ConfigEntry<bool> ShowTrails;
         public static ConfigEntry<bool> ShowHoverTooltips;
         public static ConfigEntry<float> TrailOpacity;
@@ -32,9 +32,10 @@ namespace VesselTrails
         public static ConfigEntry<float> WindowY;
         public static ConfigEntry<float> WindowW;
         public static ConfigEntry<float> WindowH;
+        private static VesselTrailsWindow _window;
+        public static float CurrentGameTime => GameMain.data != null ? GameMain.gameTick / 60.0f : 0f;
         private static VesselTrailRenderer _renderer;
         private static VesselRouteManager _routeManager;
-        private static VesselTrailsWindow _window;
         private void Awake()
         {
             ShowTrails = Config.Bind("Visuals", "ShowTrails", true, "Whether to show vessel trails.");
@@ -85,6 +86,7 @@ namespace VesselTrails
         public static void GameMain_Begin_Postfix()
         {
             if (_routeManager == null) _routeManager = new VesselRouteManager();
+            else _routeManager.RoutePaths.Clear();
             if (_window == null) _window = new VesselTrailsWindow(_routeManager);
             if (_renderer == null)
             {
@@ -116,15 +118,15 @@ namespace VesselTrails
             {
                 if (!ItemHistories.TryGetValue(itemId, out var hist))
                 {
-                    hist = new ItemHistory { ItemId = itemId, FirstSeenTime = Time.time };
+                    hist = new ItemHistory { ItemId = itemId, FirstSeenTime = VesselTrailsPlugin.CurrentGameTime };
                     ItemHistories[itemId] = hist;
                 }
                 hist.RecordSample(shipKeys, interval, historyMinutes);
             }
             public void CleanUp(float historyMinutes)
             {
-                float lifetime = 60f * 60f;
-                var toRemove = ItemHistories.Where(kvp => Time.time - kvp.Value.LastSeenTime > lifetime).Select(kvp => kvp.Key).ToList();
+                float lifetime = Mathf.Max(60f * 60f, historyMinutes * 60f);
+                var toRemove = ItemHistories.Where(kvp => VesselTrailsPlugin.CurrentGameTime - kvp.Value.LastSeenTime > lifetime).Select(kvp => kvp.Key).ToList();
                 foreach (var k in toRemove) ItemHistories.Remove(k);
             }
         }
@@ -149,12 +151,12 @@ namespace VesselTrails
                     _historySum -= _history.Dequeue();
                 }
                 AverageVesselCount = (float)_historySum / _history.Count;
-                LastSeenTime = Time.time;
+                LastSeenTime = VesselTrailsPlugin.CurrentGameTime;
                 foreach (var key in shipKeys)
                 {
                     if (!ActiveShipKeys.Contains(key))
                     {
-                        TripStartTimes.Add(Time.time);
+                        TripStartTimes.Add(VesselTrailsPlugin.CurrentGameTime);
                         ActiveShipKeys.Add(key);
                     }
                 }
@@ -164,7 +166,7 @@ namespace VesselTrails
             {
                 float windowSecs = windowMin * 60f;
                 if (windowSecs <= 0) windowSecs = 60f; 
-                float cutoff = Time.time - windowSecs;
+                float cutoff = VesselTrailsPlugin.CurrentGameTime - windowSecs;
                 TripStartTimes.RemoveAll(t => t < cutoff - 120f); 
                 return TripStartTimes.Count(t => t >= cutoff);
             }
@@ -172,17 +174,17 @@ namespace VesselTrails
             {
                 float windowSecs = windowMin * 60f;
                 if (windowSecs <= 0) windowSecs = 60f;
-                float cutoff = Time.time - windowSecs;
-                float earliest = Time.time;
+                float cutoff = VesselTrailsPlugin.CurrentGameTime - windowSecs;
+                float earliest = VesselTrailsPlugin.CurrentGameTime;
                 foreach (float t in TripStartTimes)
                     if (t >= cutoff && t < earliest) earliest = t;
-                float elapsed = (Time.time - earliest) / 60f;
+                float elapsed = (VesselTrailsPlugin.CurrentGameTime - earliest) / 60f;
                 return Mathf.Clamp(elapsed, 0.1f, windowMin);
             }
             public float GetAlpha(float lifetimeSecs)
             {
-                float age = Time.time - FirstSeenTime;
-                float timeSinceGone = Time.time - LastSeenTime;
+                float age = VesselTrailsPlugin.CurrentGameTime - FirstSeenTime;
+                float timeSinceGone = VesselTrailsPlugin.CurrentGameTime - LastSeenTime;
                 float buildUp = Mathf.Clamp01(age / 10f); 
                 float fadeOut = Mathf.Clamp01(1.0f - timeSinceGone / lifetimeSecs);
                 return buildUp * fadeOut;
@@ -318,7 +320,7 @@ namespace VesselTrails
             }
             foreach (var k in toRemove) RoutePaths.Remove(k);
             if (GlobalMinTraffic == float.MaxValue) GlobalMinTraffic = 0f;
-            if (Time.time - Cache.LastRefreshTime > 1.0f) RefreshUICache();
+            if (VesselTrailsPlugin.CurrentGameTime - Cache.LastRefreshTime > 1.0f / 60.0f) RefreshUICache();
         }
         private void RefreshUICache()
         {
@@ -362,7 +364,7 @@ namespace VesselTrails
             Cache.ClusterTotalTrips = clusterTotalTrips;
             Cache.ClusterTotalLoad = clusterTotalLoad;
             Cache.ClusterTripsPerMin = clusterTotalTrips / clusterEffMin;
-            Cache.LastRefreshTime = Time.time;
+            Cache.LastRefreshTime = VesselTrailsPlugin.CurrentGameTime;
         }
     }
     public class VesselTrailRenderer : MonoBehaviour
@@ -794,7 +796,7 @@ namespace VesselTrails
         private static string GetSaveFilePath()
         {
             string savePath = GameConfig.gameSaveFolder;
-            string saveName = DSPGame.LoadFile ?? "unknown";
+            string saveName = GameMain.data?.gameName ?? "unknown";
             return Path.Combine(savePath, saveName + ".vesseltrails");
         }
         public static void SaveTrailData(VesselRouteManager manager)
@@ -863,8 +865,8 @@ namespace VesselTrails
                                 route.ItemHistories[itemId] = new VesselRouteManager.ItemHistory
                                 {
                                     ItemId = itemId,
-                                    FirstSeenTime = Time.time,
-                                    LastSeenTime = Time.time,
+                                    FirstSeenTime = VesselTrailsPlugin.CurrentGameTime,
+                                    LastSeenTime = VesselTrailsPlugin.CurrentGameTime,
                                     AverageVesselCount = avgCount,
                                     TripStartTimes = trips
                                 };

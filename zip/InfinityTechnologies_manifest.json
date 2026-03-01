@@ -1,6 +1,6 @@
 {
     "name": "InfinityTechnologies",
-    "version_number": "1.0.1",
+    "version_number": "1.0.2",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/InfinityTechnologies",
     "description": "Expands the late-game by adding 6 new custom infinite technologies to the research tree: Infinite Inventory, Wireless Power Boost, Dyson Sphere Efficiency, Proliferator Enhancement, Logistics Combat Fire Rate, and Research Productivity.",
     "dependencies": [
