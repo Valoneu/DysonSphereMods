@@ -181,8 +181,6 @@ namespace StationLaunchSystem
                                 if (actualTaken >= toTake) break;
                                 shell.Construct(ni, true);
                                 actualTaken++;
-                                if (GameMain.statistics?.production?.factoryStatPool?[factory.index] != null)
-                                    GameMain.statistics.production.factoryStatPool[factory.index].productRegister[6006]++;
                                 if (sphereProdReg != null) { lock (sphereProdReg) sphereProdReg[11903]++; }
                             }
                             if (actualTaken >= toTake) break;
