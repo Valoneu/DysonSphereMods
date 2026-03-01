@@ -18,7 +18,7 @@
 | **MaxLVLIncrease** | Extension of the infinite research level cap. | v1.1.0 |
 | **TechHashReduce** | Dynamic scaling of technology research costs. | v1.2.2 |
 | **LessShipPower** | Optimization of logistics vessel energy consumption. | v1.1.0 |
-| **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.2 |
+| **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.3 |
 | **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.3.2 |
 | **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.1.0 |
 | **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.1.0 |

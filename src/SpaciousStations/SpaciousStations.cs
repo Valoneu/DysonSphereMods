@@ -20,7 +20,7 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.2.2";
+        public const string MOD_VERSION = "1.2.3";
         public static ConfigEntry<float> PLS_DroneMultiplier;
         public static ConfigEntry<float> PLS_ShipMultiplier;
         public static ConfigEntry<float> PLS_StorageMultiplier;
@@ -46,6 +46,9 @@ namespace SpaciousStations
         public static ConfigEntry<float> InternalLastPLSChargeMultiplier;
         public static ConfigEntry<float> InternalLastEXCStorageMultiplier;
         public static ConfigEntry<float> InternalLastEXCChargeMultiplier;
+        public static ConfigEntry<float> DroneCarryMultiplier;
+        public static ConfigEntry<float> ShipCarryMultiplier;
+        public static ConfigEntry<float> CourierCarryMultiplier;
         private void Awake()
         {
             PLS_DroneMultiplier = Config.Bind("Planetary Logistics Station", "DroneMultiplier", 2f, "Multiplies max number of drones in a PLS.");
@@ -73,6 +76,9 @@ namespace SpaciousStations
             InternalLastPLSChargeMultiplier = Config.Bind("Internal", "LastPLSChargeMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
             InternalLastEXCStorageMultiplier = Config.Bind("Internal", "LastEXCStorageMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
             InternalLastEXCChargeMultiplier = Config.Bind("Internal", "LastEXCChargeMultiplier", 1f, new ConfigDescription("DO NOT CHANGE. Used internally to track migration between sessions.", null, new ConfigurationManagerAttributes { IsAdvanced = true, Browsable = false }));
+            DroneCarryMultiplier = Config.Bind("General", "DroneCarryMultiplier", 1f, "Multiplies the carrying capacity of logistics drones.");
+            ShipCarryMultiplier = Config.Bind("General", "ShipCarryMultiplier", 1f, "Multiplies the carrying capacity of logistics vessels.");
+            CourierCarryMultiplier = Config.Bind("General", "CourierCarryMultiplier", 1f, "Multiplies the carrying capacity of logistics couriers.");
             Log.Init(Logger);
             SyncConfigToService();
             var harmony = new Harmony(MOD_GUID);
@@ -96,9 +102,15 @@ namespace SpaciousStations
             MultiplierService.SetMultiplier("Station_EXC_Storage", EXC_StorageMultiplier.Value);
             MultiplierService.SetMultiplier("Station_EXC_Charge", EXC_ChargeMultiplier.Value);
             MultiplierService.SetMultiplier("Station_EXC_Energy", EXC_EnergyMultiplier.Value);
+            MultiplierService.SetMultiplier("Carry_Drone", DroneCarryMultiplier.Value);
+            MultiplierService.SetMultiplier("Carry_Ship", ShipCarryMultiplier.Value);
+            MultiplierService.SetMultiplier("Carry_Courier", CourierCarryMultiplier.Value);
             MultiplierService.CommitChanges();
         }
         public static float GetStorageMultiplier(bool isStellar) => isStellar ? ILS_StorageMultiplier.Value : PLS_StorageMultiplier.Value;
+        public static int GetMultipliedDroneCarry(int vanillaValue) => (int)(vanillaValue * DroneCarryMultiplier.Value);
+        public static int GetMultipliedShipCarry(int vanillaValue) => (int)(vanillaValue * ShipCarryMultiplier.Value);
+        public static int GetMultipliedCourierCarry(int vanillaValue) => (int)(vanillaValue * CourierCarryMultiplier.Value);
     }
     public class ConfigurationManagerAttributes
     {
@@ -407,6 +419,11 @@ namespace SpaciousStations
             SpaciousStationsPlugin.InternalLastEXCStorageMultiplier.Value = MultiplierService.GetMultiplier("Station_EXC_Storage");
             SpaciousStationsPlugin.InternalLastEXCChargeMultiplier.Value = MultiplierService.GetMultiplier("Station_EXC_Charge");
             Log.Info("GameMain.Begin: All station limits synced.");
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(GameHistoryData), nameof(GameHistoryData.UnlockTechFunction))]
+        public static void GameHistoryData_UnlockTechFunction_Postfix()
+        {
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStationWindow), "_OnOpen")]
@@ -922,6 +939,42 @@ namespace SpaciousStations
                 float dz = _myDock.z - otherDock.z;
                 return dx * dx + dy * dy + dz * dz;
             }
+        }
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.GameTick))]
+        [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.RefreshStationTraffic))]
+        [HarmonyPatch(typeof(UITechTree), nameof(UITechTree.RefreshDataValueText))]
+        [HarmonyPatch(typeof(ItemProto), nameof(ItemProto.GetPropValue))]
+        [HarmonyPatch(typeof(UIPlayerDeliveryPanel), "_OnUpdate")]
+        [HarmonyPatch(typeof(DispenserComponent), nameof(DispenserComponent.InternalTick))]
+        public static IEnumerable<CodeInstruction> CapacityTranspiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var codes = new List<CodeInstruction>(instructions);
+            var droneField = AccessTools.Field(typeof(GameHistoryData), nameof(GameHistoryData.logisticDroneCarries));
+            var shipField = AccessTools.Field(typeof(GameHistoryData), nameof(GameHistoryData.logisticShipCarries));
+            var courierField = AccessTools.Field(typeof(GameHistoryData), nameof(GameHistoryData.logisticCourierCarries));
+            for (int i = 0; i < codes.Count; i++)
+            {
+                if (codes[i].opcode == OpCodes.Ldfld)
+                {
+                    if (codes[i].operand as FieldInfo == droneField)
+                    {
+                        codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpaciousStationsPlugin), nameof(SpaciousStationsPlugin.GetMultipliedDroneCarry))));
+                        i++;
+                    }
+                    else if (codes[i].operand as FieldInfo == shipField)
+                    {
+                        codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpaciousStationsPlugin), nameof(SpaciousStationsPlugin.GetMultipliedShipCarry))));
+                        i++;
+                    }
+                    else if (codes[i].operand as FieldInfo == courierField)
+                    {
+                        codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpaciousStationsPlugin), nameof(SpaciousStationsPlugin.GetMultipliedCourierCarry))));
+                        i++;
+                    }
+                }
+            }
+            return codes;
         }
     }
     public static class StationExtensions

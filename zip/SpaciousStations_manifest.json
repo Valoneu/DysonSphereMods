@@ -1,6 +1,6 @@
 {
     "name": "SpaciousStations",
-    "version_number": "1.2.2",
+    "version_number": "1.2.3",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/SpaciousStations",
     "description": "Comprehensive logistics station upgrade. Multiplies storage, drone/vessel capacity, and charging speed. Optimized drone dispatch prioritizes the closest available station.",
     "dependencies": [
