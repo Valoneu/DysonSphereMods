@@ -1,13 +1,6 @@
-// Decompiled with JetBrains decompiler
-// Type: PlanetGen
-// Assembly: Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: B32F9C0F-1A26-45C3-8038-96B8728A02F4
-// Assembly location: H:\SteamLibrary\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\Assembly-CSharp.dll
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 #nullable disable
 public static class PlanetGen
 {
@@ -18,7 +11,6 @@ public static class PlanetGen
   public const float kGiantMassCoef = 3.33333f;
   public const float kGiantMass = 0.0199999791f;
   public static float gasCoef = 1f;
-
   public static PlanetData CreatePlanet(
     GalaxyData galaxy,
     StarData star,
@@ -229,7 +221,7 @@ public static class PlanetGen
     }
     else
     {
-      planet.precision = 64 /*0x40*/;
+      planet.precision = 64 ;
       planet.segment = 2;
     }
     planet.luminosity = Mathf.Pow(planet.star.lightBalanceRadius / (planet.sunDistance + 0.01f), 0.6f);
@@ -247,7 +239,6 @@ public static class PlanetGen
     star.galaxy.astrosData[planet.id].uRadius = planet.realRadius;
     return planet;
   }
-
   public static void SetPlanetTheme(
     PlanetData planet,
     int[] themeIds,

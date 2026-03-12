@@ -1,25 +1,14 @@
-// Decompiled with JetBrains decompiler
-// Type: UniverseGen
-// Assembly: Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: B32F9C0F-1A26-45C3-8038-96B8728A02F4
-// Assembly location: H:\SteamLibrary\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\Assembly-CSharp.dll
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 #nullable disable
 public static class UniverseGen
 {
   public static int algoVersion = 20200403;
   private static int[] tmp_state = (int[]) null;
-
   public static void Start() => PlanetModelingManager.Start();
-
   public static void End() => PlanetModelingManager.End();
-
   public static void Update() => PlanetModelingManager.Update();
-
   public static GalaxyData CreateGalaxy(GameDesc gameDesc)
   {
     int galaxyAlgo = gameDesc.galaxyAlgo;
@@ -117,7 +106,6 @@ public static class UniverseGen
     PlanetGen.gasCoef = 1f;
     return galaxy;
   }
-
   private static int GenerateTempPoses(
     int seed,
     int targetCount,
@@ -145,7 +133,6 @@ public static class UniverseGen
     }
     return tmp_poses.Count;
   }
-
   private static void RandomPoses(
     int seed,
     int maxCount,
@@ -227,7 +214,6 @@ public static class UniverseGen
       }
     }
   }
-
   private static bool CheckCollision(List<VectorLF3> pts, VectorLF3 pt, double min_dist)
   {
     double num1 = min_dist * min_dist;
@@ -241,7 +227,6 @@ public static class UniverseGen
     }
     return false;
   }
-
   public static void CreateGalaxyStarGraph(GalaxyData galaxy)
   {
     galaxy.graphNodes = new StarGraphNode[galaxy.starCount];
@@ -261,7 +246,6 @@ public static class UniverseGen
       UniverseGen.line_arragement_for_add_node(graphNode1);
     }
   }
-
   private static void list_sorted_add(List<StarGraphNode> l, StarGraphNode n)
   {
     int count = l.Count;
@@ -284,7 +268,6 @@ public static class UniverseGen
       return;
     l.Add(n);
   }
-
   private static void line_arragement_for_add_node(StarGraphNode node)
   {
     if (UniverseGen.tmp_state == null)

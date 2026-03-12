@@ -1,20 +1,16 @@
 using System;
 using System.Collections.Generic;
-
 public static class NameGen
 {
     public static string[] roman = new string[100] { "0", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "XXII", "XXIII", "XXIV", "XXV", "XXVI", "XXVII", "XXVIII", "XXIX", "XXX", "XXXI", "XXXII", "XXXIII", "XXXIV", "XXXV", "XXXVI", "XXXVII", "XXXVIII", "XXXIX", "XL", "XLI", "XLII", "XLIII", "XLIV", "XLV", "XLVI", "XLVII", "XLVIII", "XLIX", "L", "LI", "LII", "LIII", "LIV", "LV", "LVI", "LVII", "LVIII", "LIX", "LX", "LXI", "LXII", "LXIII", "LXIV", "LXV", "LXVI", "LXVII", "LXVIII", "LXIX", "LXX", "LXXI", "LXXII", "LXXIII", "LXXIV", "LXXV", "LXXVI", "LXXVII", "LXXVIII", "LXXIX", "LXXX", "LXXXI", "LXXXII", "LXXXIII", "LXXXIV", "LXXXV", "LXXXVI", "LXXXVII", "LXXXVIII", "LXXXIX", "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX" };
-
     public static string[] con0 = new string[39] { "p", "t", "c", "k", "b", "d", "g", "f", "ph", "s", "sh", "th", "h", "v", "z", "th", "r", "ch", "tr", "dr", "m", "n", "l", "y", "w", "sp", "st", "sk", "sc", "sl", "pl", "cl", "bl", "gl", "fr", "fl", "pr", "br", "cr" };
     public static string[] con1 = new string[16] { "thr", "ex", "ec", "el", "er", "ev", "il", "is", "it", "ir", "up", "ut", "ur", "un", "gt", "phr" };
     public static string[] vow0 = new string[7] { "a", "an", "am", "al", "o", "u", "xe" };
     public static string[] vow1 = new string[23] { "ea", "ee", "ie", "i", "e", "a", "er", "a", "u", "oo", "u", "or", "o", "oa", "ar", "a", "ei", "ai", "i", "au", "ou", "ao", "ir" };
     public static string[] vow2 = new string[7] { "y", "oi", "io", "iur", "ur", "ac", "ic" };
     public static string[] ending = new string[18] { "er", "n", "un", "or", "ar", "o", "o", "ans", "us", "ix", "us", "iurs", "a", "eo", "urn", "es", "eon", "y" };
-
     public static string[] alphabeta = new string[] { "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda" };
     public static string[] alphabeta_letter = new string[] { "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ" };
-
     public static string[] raw_star_names = new string[] {
         "Acamar", "Achernar", "Achird", "Acrab", "Acrux", "Acubens", "Adhafera", "Adhara", "Adhil", "Agena",
         "Aladfar", "Albaldah", "Albali", "Albireo", "Alchiba", "Alcor", "Alcyone", "Alderamin", "Aldhibain", "Aldib",
@@ -60,7 +56,6 @@ public static class NameGen
         "Vindemiatrix", "Wasat", "Wazn", "YedPosterior", "YedPrior", "Zaniah", "Zaurak", "Zavijava", "ZenithStar", "Zibel", "Zosma",
         "Zubenelakrab", "ZubenElgenubi", "Zubeneschamali", "ZubenHakrabi", "Zubra"
     };
-
     public static string[] constellations = new string[] {
         "Andromedae", "Antliae", "Apodis", "Aquarii", "Aquilae", "Arae", "Arietis", "Aurigae", "Bootis", "Caeli",
         "Camelopardalis", "Cancri", "Canum Venaticorum", "Canis Majoris", "Canis Minoris", "Capricorni", "Carinae",
@@ -73,7 +68,6 @@ public static class NameGen
         "Trianguli", "Trianguli Australis", "Tucanae", "Ursae Majoris", "Ursae Minoris", "Velorum", "Virginis", "Volantis",
         "Vulpeculae"
     };
-
     public static string RandomName(int seed)
     {
         DotNet35Random dotNet35Random = new DotNet35Random(seed);
@@ -93,7 +87,6 @@ public static class NameGen
         }
         return str1.Substring(0, 1).ToUpper() + str1.Substring(1);
     }
-
     public static string RandomStarName(int seed, StarData starData, GalaxyData galaxy)
     {
         if (starData.id == 1) return "Birth Star";
@@ -115,7 +108,6 @@ public static class NameGen
         }
         return "XStar";
     }
-
     private static string _RandomStarName(int seed, StarData starData)
     {
         DotNet35Random dotNet35Random = new DotNet35Random(seed);
@@ -133,7 +125,6 @@ public static class NameGen
         if (num1 < 0.6) return raw_star_names[new DotNet35Random(seed1).Next() % raw_star_names.Length];
         return num1 < 0.93 ? RandomStarNameWithConstellationAlpha(seed1) : RandomStarNameWithConstellationNumber(seed1);
     }
-
     public static string RandomStarNameWithConstellationAlpha(int seed)
     {
         DotNet35Random dotNet35Random = new DotNet35Random(seed);
@@ -142,7 +133,6 @@ public static class NameGen
         string constellation = constellations[index1];
         return constellation.Length > 10 ? alphabeta_letter[index2] + " " + constellation : alphabeta[index2] + " " + constellation;
     }
-
     public static string RandomStarNameWithConstellationNumber(int seed)
     {
         DotNet35Random dotNet35Random = new DotNet35Random(seed);
@@ -150,7 +140,6 @@ public static class NameGen
         int num = dotNet35Random.Next(27, 75);
         return num.ToString() + " " + constellations[index];
     }
-
     public static string[] raw_giant_names = new string[] {
         "AH Scorpii", "Aldebaran", "Alpha Herculis", "Antares", "Arcturus", "AV Persei", "BC Cygni", "Betelgeuse", "BI Cygni", "BO Carinae",
         "Canopus", "CE Tauri", "CK Carinae", "CW Leonis", "Deneb", "Epsilon Aurigae", "Eta Carinae", "EV Carinae", "IX Carinae", "KW Sagittarii",

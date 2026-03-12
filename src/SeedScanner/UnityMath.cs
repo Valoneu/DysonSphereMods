@@ -1,5 +1,4 @@
 using System;
-
 namespace UnityEngine
 {
     public struct Vector3
@@ -27,7 +26,6 @@ namespace UnityEngine
         public Vector3 normalized { get { float m = magnitude; return m > 1e-5 ? this / m : zero; } }
         public void Normalize() { float m = magnitude; if (m > 1e-5) { x /= m; y /= m; z /= m; } }
         public static explicit operator Vector3(VectorLF3 v) => new Vector3((float)v.x, (float)v.y, (float)v.z);
-
         public static Vector3 Slerp(Vector3 a, Vector3 b, float t)
         {
             float dot = Dot(a.normalized, b.normalized);
@@ -37,7 +35,6 @@ namespace UnityEngine
             return a * (float)Math.Cos(theta) + relative * (float)Math.Sin(theta);
         }
     }
-
     public struct Vector2
     {
         public float x, y;
@@ -49,7 +46,6 @@ namespace UnityEngine
         public static Vector2 operator *(Vector2 a, float d) => new Vector2(a.x * d, a.y * d);
         public void Normalize() { float m = (float)Math.Sqrt(x * x + y * y); if (m > 1e-5) { x /= m; y /= m; } }
     }
-
     public struct Vector4
     {
         public float x, y, z, w;
@@ -61,7 +57,6 @@ namespace UnityEngine
         public static Vector4 operator *(Vector4 a, float d) => new Vector4(a.x * d, a.y * d, a.z * d, a.w * d);
         public void Normalize() { float m = (float)Math.Sqrt(x * x + y * y + z * z + w * w); if (m > 1e-5) { x /= m; y /= m; z /= m; w /= m; } }
     }
-
     public struct Quaternion
     {
         public float x, y, z, w;
@@ -74,7 +69,6 @@ namespace UnityEngine
             return new Quaternion(axis.x * s, axis.y * s, axis.z * s, Mathf.Cos(rad));
         }
         public static Quaternion FromToRotation(Vector3 from, Vector3 to) => identity;
-        
         public static Quaternion operator *(Quaternion lhs, Quaternion rhs)
         {
             return new Quaternion(
@@ -83,7 +77,6 @@ namespace UnityEngine
                 lhs.w * rhs.z + lhs.z * rhs.w + lhs.x * rhs.y - lhs.y * rhs.x,
                 lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z);
         }
-
         public static Vector3 operator *(Quaternion rotation, Vector3 point)
         {
             float num = rotation.x * 2f;
@@ -105,7 +98,6 @@ namespace UnityEngine
             return result;
         }
     }
-
     public static class Mathf
     {
         public const float PI = (float)Math.PI;
@@ -129,7 +121,6 @@ namespace UnityEngine
         public static int FloorToInt(float f) => (int)Math.Floor(f);
         public static int RoundToInt(float f) => (int)Math.Round(f);
     }
-
     public struct Color
     {
         public float r, g, b, a;
@@ -137,7 +128,6 @@ namespace UnityEngine
         public static implicit operator Color(float f) => new Color(f, f, f, f);
         public static implicit operator float(Color c) => c.r;
     }
-
     public class Debug {
         public static void Log(object m) {}
         public static void LogWarning(object m) {}

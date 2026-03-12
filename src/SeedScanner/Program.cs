@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
-
 public class ScannerConfig
 {
     public int SeedStart { get; set; }
@@ -16,20 +15,17 @@ public class ScannerConfig
     public string OutputFolder { get; set; } = "seeds";
     public CombatConfig CombatSettings { get; set; } = new CombatConfig();
 }
-
 public class CombatConfig {
     public float Aggressiveness { get; set; } = 1.0f;
     public float InitialLevel { get; set; } = 0.0f;
     public float MaxDensity { get; set; } = 1.0f;
 }
-
 public class GalaxyResult
 {
     public int Seed { get; set; }
     public int StarCount { get; set; }
     public List<StarResult> Stars { get; set; } = new List<StarResult>();
 }
-
 public class StarResult
 {
     public int Id { get; set; }
@@ -51,13 +47,11 @@ public class StarResult
     public Dictionary<string, long> TotalVeins { get; set; } = new Dictionary<string, long>();
     public List<PlanetResult> Planets { get; set; } = new List<PlanetResult>();
 }
-
 public class DarkFogStarData {
     public int MaxHiveCount { get; set; }
     public int InitialHiveCount { get; set; }
     public float SafetyFactor { get; set; }
 }
-
 public class PlanetResult
 {
     public int Id { get; set; }
@@ -76,7 +70,6 @@ public class PlanetResult
     public Dictionary<string, long> Veins { get; set; } = new Dictionary<string, long>();
     public int StartingFogBases { get; set; }
 }
-
 class Program
 {
     static Dictionary<int, string> themeNames = new Dictionary<int, string> {
@@ -86,12 +79,10 @@ class Program
         {16,"Desert"}, {17,"Arid Desert"}, {18,"Ice Field"}, {19,"Cyclonius"}, {20,"Barren Desert"},
         {21,"Gas Giant"}, {22,"Sulfuria"}, {23,"Glacieon"}, {24,"Halitum"}, {25,"Icefrostia"}
     };
-
     static Dictionary<int, string> itemNames = new Dictionary<int, string> {
         {1000,"Water"}, {1116,"Sulfuric Acid"}, {1120,"Hydrogen"}, {1121,"Deuterium"}, {1011,"Fireice"},
         {1001,"Iron"}, {1002,"Copper"}, {1003,"Silicon"}, {1004,"Titanium"}, {1005,"Stone"}, {1006,"Coal"}
     };
-
     static Dictionary<EVeinType, string> veinNames = new Dictionary<EVeinType, string> {
         {EVeinType.Iron, "Iron"}, {EVeinType.Copper, "Copper"}, {EVeinType.Silicon, "Silicon"},
         {EVeinType.Titanium, "Titanium"}, {EVeinType.Stone, "Stone"}, {EVeinType.Coal, "Coal"},
@@ -99,20 +90,15 @@ class Program
         {EVeinType.Fractal, "Fractal"}, {EVeinType.Organic, "Organic"}, {EVeinType.Grating, "Grating"},
         {EVeinType.Stalagmite, "Stalagmite"}, {EVeinType.Magnet, "Magnet"}
     };
-
     static void Main(string[] args)
     {
         string configPath = args.Length > 0 ? args[0] : "scanner_config.json";
         if (!File.Exists(configPath)) return;
-
         var config = JsonConvert.DeserializeObject<ScannerConfig>(File.ReadAllText(configPath));
         if (!Directory.Exists(config.OutputFolder)) Directory.CreateDirectory(config.OutputFolder);
-
         LDB.themes.Load(File.ReadAllText("src/SeedScanner/ThemeProtoSet.json"));
         LDB.items.Load(File.ReadAllText("src/SeedScanner/ItemProtoSet.json"));
-
         Console.WriteLine($"Strategic Scan: seeds {config.SeedStart} to {config.SeedEnd} on {config.Threads} threads...");
-
         Parallel.For(config.SeedStart, config.SeedEnd + 1, new ParallelOptions { MaxDegreeOfParallelism = config.Threads }, seed =>
         {
             try {
@@ -127,21 +113,16 @@ class Program
                         maxDensity = config.CombatSettings.MaxDensity
                     }
                 };
-
                 var galaxy = UniverseGen.CreateGalaxy(gameDesc);
                 var birthStarPos = galaxy.stars[0].uPosition;
-
                 var gRes = new GalaxyResult { Seed = seed, StarCount = galaxy.starCount };
-
                 foreach (var star in galaxy.stars)
                 {
                     if (star == null) continue;
-                    
                     var starConnections = new List<int>();
                     if (galaxy.graphNodes != null && galaxy.graphNodes[star.index] != null) {
                         foreach (var line in galaxy.graphNodes[star.index].lines) starConnections.Add(line.star.id);
                     }
-
                     var sRes = new StarResult {
                         Id = star.id,
                         Name = star.id == 1 ? "Birth Star" : star.name,
@@ -164,13 +145,11 @@ class Program
                             SafetyFactor = (float)Math.Round(star.safetyFactor, 4)
                         }
                     };
-
                     if (star.planets != null)
                     {
                         foreach (var planet in star.planets)
                         {
                             if (planet == null) continue;
-                            
                             var pRes = new PlanetResult {
                                 Id = planet.index + 1,
                                 Name = planet.name.EndsWith("号星") ? planet.name.Substring(0, planet.name.Length - 2) : planet.name,
@@ -185,7 +164,6 @@ class Program
                                 Ocean = planet.waterItemId == 1116 ? "Sulfuric Acid" : (planet.waterItemId == 1000 ? "Water" : "None"),
                                 StartingFogBases = (int)(new DotNet35Random(planet.seed).NextDouble() * 3 + 1)
                             };
-
                             if (planet.type == EPlanetType.Gas) {
                                 if (planet.gasItems != null) {
                                     for (int i = 0; i < planet.gasItems.Length; i++) {
@@ -202,7 +180,6 @@ class Program
                                     sRes.TotalVeins[vName] += kvp.Value;
                                 }
                             }
-
                             if (planet.singularity != EPlanetSingularity.None) {
                                 foreach (EPlanetSingularity val in Enum.GetValues(typeof(EPlanetSingularity))) {
                                     if (val != EPlanetSingularity.None && (planet.singularity & val) == val) pRes.Anomalies.Add(val.ToString());
@@ -213,7 +190,6 @@ class Program
                     }
                     gRes.Stars.Add(sRes);
                 }
-
                 File.WriteAllText(Path.Combine(config.OutputFolder, $"{seed}.json"), JsonConvert.SerializeObject(gRes, Formatting.Indented));
                 if (seed % 10 == 0) Console.WriteLine($"Processed seed {seed}");
             }
@@ -221,7 +197,6 @@ class Program
                 Console.WriteLine($"Error on seed {seed}: {ex.Message}");
             }
         });
-
         Console.WriteLine("Scan complete!");
     }
 }

@@ -1,30 +1,25 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-
 public static class VeinLogic
 {
     public static void GenerateVeins(PlanetData planet)
     {
         ThemeProto themeProto = LDB.themes.Select(planet.theme);
         if (themeProto == null) return;
-
         DotNet35Random rand1 = new DotNet35Random(planet.seed);
         rand1.Next(); rand1.Next(); rand1.Next(); rand1.Next();
         int birthSeed = rand1.Next();
         DotNet35Random rand2 = new DotNet35Random(rand1.Next());
-
         int[] veinSpots = new int[20];
         float[] veinCounts = new float[20];
         float[] veinOpacities = new float[20];
-
         if (themeProto.VeinSpot != null)
             Array.Copy(themeProto.VeinSpot, 0, veinSpots, 1, Math.Min(themeProto.VeinSpot.Length, 19));
         if (themeProto.VeinCount != null)
             Array.Copy(themeProto.VeinCount, 0, veinCounts, 1, Math.Min(themeProto.VeinCount.Length, 19));
         if (themeProto.VeinOpacity != null)
             Array.Copy(themeProto.VeinOpacity, 0, veinOpacities, 1, Math.Min(themeProto.VeinOpacity.Length, 19));
-
         float p = 1f;
         switch (planet.star.type)
         {
@@ -45,8 +40,6 @@ public static class VeinLogic
             case EStarType.NeutronStar: p = 4.5f; break;
             case EStarType.BlackHole: p = 5f; break;
         }
-
-        // Special Star processing
         if (planet.star.type == EStarType.WhiteDwarf) {
             veinSpots[9]++; veinSpots[9]++;
             for (int i = 1; i < 12 && rand1.NextDouble() < 0.45; ++i) veinSpots[9]++;
@@ -62,8 +55,6 @@ public static class VeinLogic
             for (int i = 1; i < 12 && rand1.NextDouble() < 0.65; ++i) veinSpots[14]++;
             veinCounts[14] = 0.7f; veinOpacities[14] = 0.3f;
         }
-
-        // Rare veins
         if (themeProto.RareVeins != null && themeProto.RareSettings != null) {
             for (int i = 0; i < themeProto.RareVeins.Length; ++i)
             {
@@ -81,15 +72,12 @@ public static class VeinLogic
                 }
             }
         }
-
         float resourceCoef = planet.star.resourceCoef;
         if (planet.galaxy.birthPlanetId == planet.id) resourceCoef *= 0.6666667f;
-
         for (int i = 1; i < 15; i++)
         {
             int spots = veinSpots[i];
             if (spots == 0) continue;
-            
             float opacity = veinOpacities[i];
             float countMult = veinCounts[i];
             long totalAmount = (long)(spots * 22.5f * opacity * 100000f * resourceCoef * countMult);

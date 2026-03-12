@@ -5,30 +5,24 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-
 public enum EStarType { MainSeqStar, GiantStar, WhiteDwarf, NeutronStar, BlackHole }
 public enum ESpectrType { M, K, G, F, A, B, O, X }
 public enum EPlanetType { None, Vocano, Ocean, Desert, Ice, Gas }
-
 [Flags]
 public enum EPlanetSingularity { 
     None = 0, TidalLocked = 1, LaySide = 2, ClockwiseRotate = 4, MultipleSatellites = 8, TidalLocked2 = 16, TidalLocked4 = 32
 }
-
 public enum EThemeDistribute { Default, Birth, Interstellar }
 public enum EAstroType { Planet, Star, Station }
-
 public enum EVeinType : byte
 {
   None, Iron, Copper, Silicon, Titanium, Stone, Coal, Oil, Fireice, Diamond, Fractal, Organic, Grating, Stalagmite, Magnet, Max,
   Bamboo = 13, Silicium = 3
 }
-
 public struct VectorLF2 {
     public double x, y;
     public VectorLF2(double x, double y) { this.x = x; this.y = y; }
 }
-
 public class AstroOrbitData {
     public float orbitRadius;
     public float orbitInclination;
@@ -38,7 +32,6 @@ public class AstroOrbitData {
     public UnityEngine.Quaternion orbitRotation;
     public UnityEngine.Vector3 orbitNormal;
 }
-
 public class GalaxyData {
     public int seed;
     public int starCount;
@@ -50,7 +43,6 @@ public class GalaxyData {
     public StarGraphNode[] graphNodes;
     public void UpdatePoses(double time) {}
 }
-
 public class StarGraphNode {
     public StarData star;
     public int index;
@@ -63,7 +55,6 @@ public class StarGraphNode {
         this.pos = new UnityEngine.Vector3((float)star.position.x, (float)star.position.y, (float)star.position.z);
     }
 }
-
 public class StarData {
     public int id;
     public int astroId => id * 100;
@@ -107,7 +98,6 @@ public class StarData {
     public AstroOrbitData[] hiveAstroOrbits = new AstroOrbitData[0];
     public UnityEngine.Color color;
 }
-
 public struct AstroData {
     public int id;
     public int parentId;
@@ -118,7 +108,6 @@ public struct AstroData {
     public UnityEngine.Quaternion uRotNext;
     public float uRadius;
 }
-
 public class PlanetData {
     public int id;
     public int index;
@@ -163,7 +152,6 @@ public class PlanetData {
     public UnityEngine.Quaternion runtimeSystemRotation;
     public float landPercent;
     public float realRadius => radius * scale;
-
     public int algoId;
     public double mod_x;
     public double mod_y;
@@ -175,7 +163,6 @@ public class PlanetData {
     public float[] gasSpeeds;
     public Dictionary<EVeinType, long> VeinAmounts = new Dictionary<EVeinType, long>();
 }
-
 public class ThemeProto {
     public int ID;
     public string Name;
@@ -201,18 +188,15 @@ public class ThemeProto {
     public int[] GasItems;
     public float[] GasSpeeds;
 }
-
 public class ItemProto {
     public int ID;
     public string Name;
     public long HeatValue;
 }
-
 public static class LDB {
     public static ThemeProtoSet themes = new ThemeProtoSet();
     public static ItemProtoSet items = new ItemProtoSet();
 }
-
 public class ThemeProtoSet {
     private Dictionary<int, ThemeProto> data = new Dictionary<int, ThemeProto>();
     public void Load(string json) {
@@ -225,7 +209,6 @@ public class ThemeProtoSet {
     }
     public ThemeProto Select(int id) => data.ContainsKey(id) ? data[id] : null;
 }
-
 public class ItemProtoSet {
     private Dictionary<int, ItemProto> data = new Dictionary<int, ItemProto>();
     public void Load(string json) {
@@ -237,24 +220,20 @@ public class ItemProtoSet {
     }
     public ItemProto Select(int id) => data.ContainsKey(id) ? data[id] : new ItemProto();
 }
-
 public static class Localization {
     public static string Translate(this string s) => s;
 }
-
 public static class Assert {
     public static void True(bool b) {}
     public static void NotNull(object o) {}
     public static void Positive(double a) {}
 }
-
 public static class PlanetModelingManager {
     public static void Start() {}
     public static void End() {}
     public static void Update() {}
     public static float gasCoef = 1f;
 }
-
 public class GameDesc {
     public int galaxyAlgo = 20210318;
     public int galaxySeed;
@@ -265,7 +244,6 @@ public class GameDesc {
     public int[] savedThemeIds = null;
     public Version creationVersion = new Version(1, 0);
 }
-
 public class CombatSettings {
     public float aggressiveness = 1f;
     public float initialLevel;
@@ -277,11 +255,9 @@ public class CombatSettings {
     public float battleThreatFactor = 1f;
     public float battleExpFactor = 1f;
 }
-
 public static class DotNet35Locale {
     public static string GetText(string s) => s;
 }
-
 public static class Maths
 {
   public const double PI = 3.1415926535897931;

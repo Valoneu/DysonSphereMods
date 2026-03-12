@@ -1,12 +1,6 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: StarGen
-// Assembly: Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: B32F9C0F-1A26-45C3-8038-96B8728A02F4
-// Assembly location: H:\SteamLibrary\steamapps\common\Dyson Sphere Program\DSPGAME_Data\Managed\Assembly-CSharp.dll
-
+﻿
 using System;
 using UnityEngine;
-
 #nullable disable
 public static class StarGen
 {
@@ -69,7 +63,6 @@ public static class StarGen
   public static float specifyBirthStarAge = 0.0f;
   private static double[] pGas = new double[10];
   private const double PI = 3.1415926535897931;
-
   public static StarData CreateStar(
     GalaxyData galaxy,
     VectorLF3 pos,
@@ -255,7 +248,7 @@ public static class StarGen
         standardDeviation2 = (float) ((double) Mathf.Sqrt(num16) * 0.28999999165534973 + 0.20999999344348907);
       else if ((double) num16 > 1.0)
         standardDeviation2 = (float) (0.30000001192092896 + 0.20000000298023224 * (double) num16);
-      int num17 = 64 /*0x40*/;
+      int num17 = 64 ;
       do
       {
         double r1_2 = dotNet35Random3.NextDouble();
@@ -278,7 +271,6 @@ public static class StarGen
     }
     return star;
   }
-
   public static StarData CreateBirthStar(GalaxyData galaxy, GameDesc gameDesc, int seed)
   {
     StarData birthStar = new StarData();
@@ -361,7 +353,7 @@ public static class StarGen
         standardDeviation = (float) ((double) Mathf.Sqrt(num9) * 0.28999999165534973 + 0.20999999344348907);
       else if ((double) num9 > (double) birthStar.maxHiveCount)
         num9 = (float) birthStar.maxHiveCount;
-      int num10 = 16 /*0x10*/;
+      int num10 = 16 ;
       do
       {
         double r1_2 = dotNet35Random3.NextDouble();
@@ -376,13 +368,11 @@ public static class StarGen
     }
     return birthStar;
   }
-
   private static double _signpow(double x, double pow)
   {
     double num = x > 0.0 ? 1.0 : -1.0;
     return Math.Abs(Math.Pow(x, pow)) * num;
   }
-
   public static void CreateStarPlanets(GalaxyData galaxy, StarData star, GameDesc gameDesc)
   {
     DotNet35Random dotNet35Random1 = new DotNet35Random(star.seed);
@@ -803,7 +793,6 @@ label_62:
       hiveAstroOrbits[index8].orbitNormal = Maths.QRotateLF(hiveAstroOrbits[index8].orbitRotation, new VectorLF3(0.0f, 1f, 0.0f)).normalized;
     }
   }
-
   public static void SetStarAge(StarData star, float age, double rn, double rt)
   {
     float num1 = (float) (rn * 0.1 + 0.95);
@@ -872,7 +861,6 @@ label_62:
       star.orbitScaler = 3.3f * star.orbitScaler;
     }
   }
-
   private static float RandNormal(
     float averageValue,
     float standardDeviation,
@@ -881,13 +869,11 @@ label_62:
   {
     return averageValue + standardDeviation * (float) (Math.Sqrt(-2.0 * Math.Log(1.0 - r1)) * Math.Sin(2.0 * Math.PI * r2));
   }
-
   private static void SetHiveOrbitsConditionsTrue()
   {
     for (int index = 0; index < StarGen.hiveOrbitCondition.Length; ++index)
       StarGen.hiveOrbitCondition[index] = true;
   }
-
   private static void SetHiveOrbitConditionFalse(
     int planetOrbitIndex,
     int orbitAroundOrbitIndex,

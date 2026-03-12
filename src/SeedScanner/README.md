@@ -21,7 +21,7 @@ Edit `src/SeedScanner/scanner_config.json`.
 #### Available Settings
 | Key | Min | Max | Description |
 | :--- | :--- | :--- | :--- |
-| **SeedStart** | 0 | 99,999,999 | Starting galaxy seed. |
+| **1.0.0** | 0 | 99,999,999 | Starting galaxy seed. |
 | **SeedEnd** | 0 | 99,999,999 | Ending galaxy seed. |
 | **StarCount** | 32 | 64 | Total stars in the cluster (Game default is 64). |
 | **ResourceMultiplier** | 0.1 | 100.0 | Resource richness (100.0 = Infinite in-game). |

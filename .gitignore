@@ -55,6 +55,7 @@ MODS.md
 /tmp
 /oldsrc
 /externalModDefinitions
+seeds/
 
 # NuGet
 *.nuget.props
