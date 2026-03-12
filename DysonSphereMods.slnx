@@ -20,5 +20,6 @@
     <Project Path="src/DistributeSpray/DistributeSpray.csproj" />
     <Project Path="src/CopyPasteStations/CopyPasteStations.csproj" />
     <Project Path="src/StationLaunchSystem/StationLaunchSystem.csproj" />
+    <Project Path="src/SeedScanner/SeedScanner.csproj" />
   </Folder>
 </Solution>

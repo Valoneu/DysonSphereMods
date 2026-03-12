@@ -178,7 +178,7 @@ def clean_and_create_dir(path):
 def get_mod_folders():
     mods = []
     for item in os.listdir(SRC_DIR):
-        if os.path.isdir(os.path.join(SRC_DIR, item)) and item != "Shared" and not item.startswith("."):
+        if os.path.isdir(os.path.join(SRC_DIR, item)) and item not in ["Shared", "SeedScanner"] and not item.startswith("."):
             mods.append(item)
     return sorted(mods)
 
