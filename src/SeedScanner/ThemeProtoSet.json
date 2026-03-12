@@ -1,0 +1,2421 @@
+{
+  "m_GameObject": {
+    "m_FileID": 0,
+    "m_PathID": 0
+  },
+  "m_Enabled": 1,
+  "m_Script": {
+    "m_FileID": 1,
+    "m_PathID": 281
+  },
+  "m_Name": "ThemeProtoSet",
+  "TableName": "Theme",
+  "Signature": "",
+  "dataArray": [
+    {
+      "Name": "Ocean 1",
+      "ID": 1,
+      "SID": "",
+      "DisplayName": "地中海",
+      "BriefIntroduction": "地中海介绍",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Ocean 1/",
+      "Temperature": 0.0,
+      "Distribute": 1,
+      "Algos": [
+        1
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 1,
+      "Vegetables0": [
+        604,
+        605,
+        603,
+        604,
+        102,
+        604,
+        605,
+        105,
+        602,
+        601
+      ],
+      "Vegetables1": [
+        103,
+        102,
+        103,
+        104,
+        104,
+        104,
+        101,
+        104,
+        604,
+        106
+      ],
+      "Vegetables2": [
+        1001,
+        1002,
+        1003
+      ],
+      "Vegetables3": [
+        1005,
+        1006,
+        1007,
+        1006,
+        1007
+      ],
+      "Vegetables4": [
+        1004
+      ],
+      "Vegetables5": [],
+      "VeinSpot": [
+        7,
+        5,
+        0,
+        0,
+        8,
+        11,
+        18
+      ],
+      "VeinCount": [
+        0.7,
+        0.6,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.5,
+        0.0,
+        0.0,
+        0.7,
+        1.0,
+        1.0
+      ],
+      "RareVeins": [
+        11
+      ],
+      "RareSettings": [
+        0.0,
+        1.0,
+        0.3,
+        0.3
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.0,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1000,
+      "Musics": [
+        9,
+        15,
+        25
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-1",
+      "SFXVolume": 0.53,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Gas 1",
+      "ID": 2,
+      "SID": "",
+      "DisplayName": "气态巨星",
+      "BriefIntroduction": "气巨星介绍1;气巨星介绍2",
+      "PlanetType": 5,
+      "MaterialPath": "Universe/Materials/Planets/Gas 1/",
+      "Temperature": 2.0,
+      "Distribute": 0,
+      "Algos": [
+        0
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 0,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [],
+      "VeinCount": [],
+      "VeinOpacity": [],
+      "RareVeins": [],
+      "RareSettings": [],
+      "GasItems": [
+        1120,
+        1121
+      ],
+      "GasSpeeds": [
+        0.96,
+        0.04
+      ],
+      "UseHeightForBuild": false,
+      "Wind": 0.0,
+      "IonHeight": 0.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [],
+      "SFXPath": "SFX/sfx-amb-massive",
+      "SFXVolume": 0.35,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Gas 2",
+      "ID": 3,
+      "SID": "",
+      "DisplayName": "气态巨星",
+      "BriefIntroduction": "气巨星介绍3;气巨星介绍4",
+      "PlanetType": 5,
+      "MaterialPath": "Universe/Materials/Planets/Gas 2/",
+      "Temperature": 1.0,
+      "Distribute": 0,
+      "Algos": [
+        0
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 0,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [],
+      "VeinCount": [],
+      "VeinOpacity": [],
+      "RareVeins": [],
+      "RareSettings": [],
+      "GasItems": [
+        1120,
+        1121
+      ],
+      "GasSpeeds": [
+        0.96,
+        0.04
+      ],
+      "UseHeightForBuild": false,
+      "Wind": 0.0,
+      "IonHeight": 0.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [],
+      "SFXPath": "SFX/sfx-amb-massive",
+      "SFXVolume": 0.27,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Gas 3",
+      "ID": 4,
+      "SID": "",
+      "DisplayName": "冰巨星",
+      "BriefIntroduction": "冰巨星介绍6;冰巨星介绍8",
+      "PlanetType": 5,
+      "MaterialPath": "Universe/Materials/Planets/Gas 3/",
+      "Temperature": -1.0,
+      "Distribute": 0,
+      "Algos": [
+        0
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 0,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [],
+      "VeinCount": [],
+      "VeinOpacity": [],
+      "RareVeins": [],
+      "RareSettings": [],
+      "GasItems": [
+        1011,
+        1120
+      ],
+      "GasSpeeds": [
+        0.7,
+        0.3
+      ],
+      "UseHeightForBuild": false,
+      "Wind": 0.0,
+      "IonHeight": 0.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [],
+      "SFXPath": "SFX/sfx-amb-massive",
+      "SFXVolume": 0.2,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Gas 4",
+      "ID": 5,
+      "SID": "",
+      "DisplayName": "冰巨星",
+      "BriefIntroduction": "冰巨星介绍7;冰巨星介绍9",
+      "PlanetType": 5,
+      "MaterialPath": "Universe/Materials/Planets/Gas 4/",
+      "Temperature": -2.0,
+      "Distribute": 0,
+      "Algos": [
+        0
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 0,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [],
+      "VeinCount": [],
+      "VeinOpacity": [],
+      "RareVeins": [],
+      "RareSettings": [],
+      "GasItems": [
+        1011,
+        1120
+      ],
+      "GasSpeeds": [
+        0.7,
+        0.3
+      ],
+      "UseHeightForBuild": false,
+      "Wind": 0.0,
+      "IonHeight": 0.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [],
+      "SFXPath": "SFX/sfx-amb-massive",
+      "SFXVolume": 0.25,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 1",
+      "ID": 6,
+      "SID": "",
+      "DisplayName": "干旱荒漠",
+      "BriefIntroduction": "干旱荒漠介绍A;干旱荒漠介绍B",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 1/",
+      "Temperature": 2.0,
+      "Distribute": 0,
+      "Algos": [
+        2
+      ],
+      "ModX": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 2,
+      "Vegetables0": [
+        617,
+        619,
+        616,
+        618,
+        1044,
+        615,
+        618,
+        615,
+        614,
+        613,
+        612,
+        611
+      ],
+      "Vegetables1": [
+        616,
+        618,
+        619,
+        617,
+        619,
+        615,
+        1044,
+        613,
+        614,
+        612
+      ],
+      "Vegetables2": [
+        1041,
+        1042,
+        1043,
+        1044
+      ],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        3,
+        10,
+        0,
+        6,
+        10,
+        1,
+        0
+      ],
+      "VeinCount": [
+        0.5,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        0.3,
+        0.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.6,
+        0.0,
+        1.0,
+        1.0,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        9
+      ],
+      "RareSettings": [
+        0.0,
+        0.18,
+        0.2,
+        0.3
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.5,
+      "IonHeight": 70.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        11,
+        4
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-3",
+      "SFXVolume": 0.47,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 2",
+      "ID": 7,
+      "SID": "",
+      "DisplayName": "灰烬冻土",
+      "BriefIntroduction": "灰烬冻土介绍",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 2/",
+      "Temperature": -1.0,
+      "Distribute": 0,
+      "Algos": [
+        2
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 3,
+      "Vegetables0": [
+        629,
+        628,
+        627,
+        626,
+        625,
+        628,
+        625,
+        624,
+        623,
+        622,
+        621
+      ],
+      "Vegetables1": [
+        628,
+        629,
+        627,
+        626,
+        625
+      ],
+      "Vegetables2": [
+        1051,
+        1052,
+        1053,
+        1054,
+        1054,
+        1055,
+        1055
+      ],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        7,
+        2,
+        7,
+        3,
+        8,
+        1,
+        0
+      ],
+      "VeinCount": [
+        1.0,
+        0.5,
+        1.0,
+        1.0,
+        0.7,
+        0.3,
+        0.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.6,
+        1.0,
+        1.0,
+        0.5,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        8,
+        10
+      ],
+      "RareSettings": [
+        0.3,
+        0.5,
+        0.7,
+        0.5,
+        0.0,
+        0.3,
+        0.2,
+        0.6
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 0.4,
+      "IonHeight": 50.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        4,
+        11
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-4",
+      "SFXVolume": 0.2,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Ocean 2",
+      "ID": 8,
+      "SID": "",
+      "DisplayName": "海洋丛林",
+      "BriefIntroduction": "海洋丛林介绍",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Ocean 2/",
+      "Temperature": 0.0,
+      "Distribute": 2,
+      "Algos": [
+        1
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 4,
+      "Vegetables0": [
+        1023,
+        124,
+        603,
+        126,
+        121,
+        605
+      ],
+      "Vegetables1": [
+        605,
+        121,
+        122,
+        125,
+        1021,
+        604,
+        603,
+        126
+      ],
+      "Vegetables2": [
+        1023
+      ],
+      "Vegetables3": [
+        1023,
+        1021,
+        1006
+      ],
+      "Vegetables4": [
+        1023,
+        1021
+      ],
+      "Vegetables5": [
+        1022
+      ],
+      "VeinSpot": [
+        7,
+        2,
+        12,
+        0,
+        4,
+        10,
+        22
+      ],
+      "VeinCount": [
+        0.6,
+        0.3,
+        0.9,
+        0.0,
+        0.8,
+        1.0,
+        1.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.6,
+        0.6,
+        0.0,
+        0.5,
+        1.0,
+        1.0
+      ],
+      "RareVeins": [
+        11,
+        13
+      ],
+      "RareSettings": [
+        0.0,
+        1.0,
+        0.3,
+        1.0,
+        0.0,
+        0.5,
+        0.2,
+        1.0
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.0,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1000,
+      "Musics": [
+        16
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-3",
+      "SFXVolume": 1.0,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Lava 1",
+      "ID": 9,
+      "SID": "",
+      "DisplayName": "熔岩",
+      "BriefIntroduction": "熔岩介绍",
+      "PlanetType": 1,
+      "MaterialPath": "Universe/Materials/Planets/Lava 1/",
+      "Temperature": 5.0,
+      "Distribute": 0,
+      "Algos": [
+        5
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 5,
+      "Vegetables0": [
+        647,
+        646,
+        647,
+        646,
+        645,
+        645,
+        644,
+        643,
+        642,
+        634,
+        635,
+        632,
+        633,
+        636,
+        631
+      ],
+      "Vegetables1": [
+        647,
+        646,
+        644,
+        643,
+        647,
+        646,
+        645,
+        644,
+        643,
+        642,
+        634,
+        635
+      ],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [
+        637,
+        639,
+        640,
+        638,
+        636,
+        641
+      ],
+      "Vegetables5": [],
+      "VeinSpot": [
+        15,
+        15,
+        2,
+        9,
+        4,
+        2,
+        0
+      ],
+      "VeinCount": [
+        1.0,
+        1.0,
+        0.6,
+        1.0,
+        0.6,
+        0.3,
+        0.0
+      ],
+      "VeinOpacity": [
+        1.0,
+        1.0,
+        0.6,
+        1.0,
+        0.5,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        9,
+        10,
+        12
+      ],
+      "RareSettings": [
+        0.0,
+        0.2,
+        0.6,
+        0.7,
+        0.0,
+        0.2,
+        0.6,
+        0.7,
+        0.0,
+        0.1,
+        0.2,
+        0.8
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 0.7,
+      "IonHeight": 60.0,
+      "WaterHeight": -2.5,
+      "WaterItemId": -1,
+      "Musics": [
+        20,
+        10
+      ],
+      "SFXPath": "SFX/sfx-amb-lava-2",
+      "SFXVolume": 0.4,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Ice 1",
+      "ID": 10,
+      "SID": "",
+      "DisplayName": "冰原冻土",
+      "BriefIntroduction": "冰原冻土介绍A;冰原冻土介绍C;冰原冻土介绍B",
+      "PlanetType": 4,
+      "MaterialPath": "Universe/Materials/Planets/Ice 1/",
+      "Temperature": -5.0,
+      "Distribute": 0,
+      "Algos": [
+        3
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.34,
+        "y": -0.15
+      },
+      "EigenBit": 6,
+      "Vegetables0": [
+        669,
+        670,
+        671
+      ],
+      "Vegetables1": [
+        665,
+        666,
+        667,
+        668,
+        665,
+        666,
+        667,
+        668,
+        664,
+        663,
+        662,
+        661
+      ],
+      "Vegetables2": [
+        1071,
+        1072
+      ],
+      "Vegetables3": [
+        1073,
+        1074,
+        1071,
+        1072
+      ],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        5,
+        1,
+        3,
+        10,
+        2,
+        1,
+        0
+      ],
+      "VeinCount": [
+        0.6,
+        0.2,
+        0.8,
+        1.0,
+        0.8,
+        0.2,
+        0.0
+      ],
+      "VeinOpacity": [
+        1.0,
+        0.5,
+        1.0,
+        1.0,
+        1.0,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        8,
+        10,
+        12
+      ],
+      "RareSettings": [
+        0.3,
+        1.0,
+        0.8,
+        1.0,
+        0.0,
+        0.2,
+        0.6,
+        0.4,
+        0.0,
+        0.1,
+        0.2,
+        0.4
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 0.7,
+      "IonHeight": 55.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1000,
+      "Musics": [
+        27,
+        4
+      ],
+      "SFXPath": "SFX/sfx-amb-ice-1",
+      "SFXVolume": 0.3,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 3",
+      "ID": 11,
+      "SID": "",
+      "DisplayName": "贫瘠荒漠",
+      "BriefIntroduction": "贫瘠荒漠介绍",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 3/",
+      "Temperature": -2.0,
+      "Distribute": 0,
+      "Algos": [
+        4
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 7,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        3,
+        3,
+        3,
+        6,
+        12,
+        0,
+        0
+      ],
+      "VeinCount": [
+        0.5,
+        0.5,
+        0.5,
+        1.0,
+        1.2,
+        0.0,
+        0.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.6,
+        0.9,
+        0.9,
+        1.5,
+        0.0,
+        0.0
+      ],
+      "RareVeins": [
+        8,
+        9,
+        12,
+        13
+      ],
+      "RareSettings": [
+        0.25,
+        0.5,
+        0.6,
+        0.8,
+        0.0,
+        0.2,
+        0.6,
+        0.7,
+        0.0,
+        0.2,
+        0.3,
+        0.7,
+        0.1,
+        0.2,
+        0.2,
+        0.7
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 0.0,
+      "IonHeight": 0.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        5,
+        11,
+        14
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-2",
+      "SFXVolume": 0.15,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 4",
+      "ID": 12,
+      "SID": "",
+      "DisplayName": "戈壁",
+      "BriefIntroduction": "戈壁介绍",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 4/",
+      "Temperature": 1.0,
+      "Distribute": 0,
+      "Algos": [
+        3
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 8,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        2,
+        7,
+        8,
+        0,
+        7,
+        3,
+        0
+      ],
+      "VeinCount": [
+        0.4,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.7,
+        0.0
+      ],
+      "VeinOpacity": [
+        0.8,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        0.7,
+        0.0
+      ],
+      "RareVeins": [
+        9,
+        10,
+        12
+      ],
+      "RareSettings": [
+        0.0,
+        0.25,
+        0.6,
+        0.6,
+        0.0,
+        0.25,
+        0.6,
+        0.6,
+        0.0,
+        0.1,
+        0.2,
+        0.5
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 0.8,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        26,
+        11
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-5",
+      "SFXVolume": 0.4,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Volcanic 1",
+      "ID": 13,
+      "SID": "",
+      "DisplayName": "火山灰",
+      "BriefIntroduction": "火山灰介绍",
+      "PlanetType": 1,
+      "MaterialPath": "Universe/Materials/Planets/Volcanic 1/",
+      "Temperature": 4.0,
+      "Distribute": 2,
+      "Algos": [
+        3
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 9,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        10,
+        10,
+        2,
+        7,
+        4,
+        1,
+        0
+      ],
+      "VeinCount": [
+        1.0,
+        1.0,
+        0.6,
+        1.0,
+        0.6,
+        0.3,
+        0.0
+      ],
+      "VeinOpacity": [
+        1.0,
+        1.0,
+        0.6,
+        1.0,
+        0.5,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [],
+      "RareSettings": [],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 0.8,
+      "IonHeight": 70.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1116,
+      "Musics": [
+        10,
+        20,
+        11
+      ],
+      "SFXPath": "SFX/sfx-amb-lava-1",
+      "SFXVolume": 0.38,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Ocean 3",
+      "ID": 14,
+      "SID": "",
+      "DisplayName": "红石",
+      "BriefIntroduction": "红石介绍",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Ocean 3/",
+      "Temperature": 0.0,
+      "Distribute": 2,
+      "Algos": [
+        1
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 10,
+      "Vegetables0": [
+        604,
+        114,
+        603,
+        605,
+        116,
+        113,
+        115,
+        112,
+        111
+      ],
+      "Vegetables1": [
+        114,
+        604,
+        1011,
+        114,
+        116,
+        1011,
+        113,
+        605,
+        112,
+        115,
+        111
+      ],
+      "Vegetables2": [
+        1012
+      ],
+      "Vegetables3": [
+        1012,
+        1013
+      ],
+      "Vegetables4": [
+        1013
+      ],
+      "Vegetables5": [],
+      "VeinSpot": [
+        4,
+        6,
+        0,
+        0,
+        10,
+        8,
+        12
+      ],
+      "VeinCount": [
+        0.7,
+        0.7,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "VeinOpacity": [
+        0.5,
+        0.6,
+        0.0,
+        0.0,
+        0.8,
+        1.0,
+        1.0
+      ],
+      "RareVeins": [
+        9,
+        11,
+        13
+      ],
+      "RareSettings": [
+        0.0,
+        0.4,
+        0.3,
+        0.5,
+        0.0,
+        1.0,
+        0.3,
+        0.8,
+        0.0,
+        0.5,
+        0.2,
+        0.8
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.0,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1000,
+      "Musics": [
+        15
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-1",
+      "SFXVolume": 0.53,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Ocean 4",
+      "ID": 15,
+      "SID": "",
+      "DisplayName": "草原",
+      "BriefIntroduction": "草原介绍",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Ocean 4/",
+      "Temperature": 0.0,
+      "Distribute": 2,
+      "Algos": [
+        6
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 11,
+      "Vegetables0": [
+        1001,
+        1001,
+        1003,
+        1003,
+        1001,
+        1002
+      ],
+      "Vegetables1": [
+        1001,
+        1001,
+        1003,
+        604,
+        1002,
+        1003,
+        1002
+      ],
+      "Vegetables2": [
+        1001,
+        1002,
+        1003
+      ],
+      "Vegetables3": [
+        1001,
+        1003,
+        1002
+      ],
+      "Vegetables4": [
+        1004
+      ],
+      "Vegetables5": [
+        1001,
+        1001,
+        1002,
+        1002,
+        1003,
+        101
+      ],
+      "VeinSpot": [
+        7,
+        4,
+        7,
+        1,
+        2,
+        7,
+        18
+      ],
+      "VeinCount": [
+        0.7,
+        0.6,
+        0.7,
+        0.4,
+        0.5,
+        1.0,
+        1.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.5,
+        0.6,
+        0.5,
+        0.7,
+        1.0,
+        1.2
+      ],
+      "RareVeins": [
+        11,
+        13
+      ],
+      "RareSettings": [
+        0.0,
+        1.0,
+        0.3,
+        1.0,
+        0.0,
+        0.5,
+        0.2,
+        1.0
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.1,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1000,
+      "Musics": [
+        9,
+        16
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-1",
+      "SFXVolume": 0.35,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Ocean 5",
+      "ID": 16,
+      "SID": "",
+      "DisplayName": "水世界",
+      "BriefIntroduction": "水世界介绍",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Ocean 5/",
+      "Temperature": 0.0,
+      "Distribute": 2,
+      "Algos": [
+        7
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 12,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        10
+      ],
+      "VeinCount": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5,
+        5.0
+      ],
+      "VeinOpacity": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.8,
+        2.0
+      ],
+      "RareVeins": [
+        13
+      ],
+      "RareSettings": [
+        1.0,
+        1.0,
+        1.0,
+        0.9
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.1,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1000,
+      "Musics": [
+        25,
+        15,
+        16
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-2",
+      "SFXVolume": 0.48,
+      "CullingRadius": -10.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 5",
+      "ID": 17,
+      "SID": "",
+      "DisplayName": "红土荒漠",
+      "BriefIntroduction": "黑石岩滩介绍",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 5/",
+      "Temperature": 1.0,
+      "Distribute": 0,
+      "Algos": [
+        2
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 13,
+      "Vegetables0": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "Vegetables1": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        2,
+        8,
+        9,
+        1,
+        3,
+        1,
+        0
+      ],
+      "VeinCount": [
+        1.0,
+        0.8,
+        0.8,
+        1.0,
+        0.7,
+        0.3,
+        0.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.6,
+        1.0,
+        1.0,
+        0.5,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        9,
+        12
+      ],
+      "RareSettings": [
+        0.0,
+        0.7,
+        0.7,
+        0.5,
+        0.0,
+        0.1,
+        0.2,
+        0.7
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.1,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        4,
+        11
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-4",
+      "SFXVolume": 0.2,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Ocean 6",
+      "ID": 18,
+      "SID": "",
+      "DisplayName": "白色海洋",
+      "BriefIntroduction": "樱林海介绍",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Ocean 6/",
+      "Temperature": 0.0,
+      "Distribute": 2,
+      "Algos": [
+        1
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 14,
+      "Vegetables0": [
+        605,
+        602,
+        133,
+        135,
+        1006,
+        603,
+        604,
+        135,
+        133,
+        134
+      ],
+      "Vegetables1": [
+        135,
+        133,
+        132,
+        134,
+        605,
+        135,
+        1033,
+        131,
+        1006,
+        135
+      ],
+      "Vegetables2": [
+        1033,
+        1031,
+        135
+      ],
+      "Vegetables3": [
+        1005,
+        1006,
+        1007
+      ],
+      "Vegetables4": [
+        1031,
+        1031,
+        1033
+      ],
+      "Vegetables5": [
+        136
+      ],
+      "VeinSpot": [
+        5,
+        6,
+        8,
+        0,
+        4,
+        8,
+        22
+      ],
+      "VeinCount": [
+        0.6,
+        0.5,
+        0.8,
+        0.0,
+        0.8,
+        1.0,
+        1.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.6,
+        0.6,
+        0.0,
+        0.5,
+        1.0,
+        1.0
+      ],
+      "RareVeins": [
+        11,
+        13
+      ],
+      "RareSettings": [
+        0.0,
+        1.0,
+        0.3,
+        1.0,
+        0.0,
+        0.5,
+        0.2,
+        1.0
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.0,
+      "IonHeight": 60.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 1000,
+      "Musics": [
+        16,
+        9
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-3",
+      "SFXVolume": 1.0,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 6",
+      "ID": 19,
+      "SID": "",
+      "DisplayName": "三色荒漠",
+      "BriefIntroduction": "飓风石林介绍",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 6/",
+      "Temperature": 1.0,
+      "Distribute": 2,
+      "Algos": [
+        8
+      ],
+      "ModX": {
+        "x": 1.5,
+        "y": 1.5
+      },
+      "ModY": {
+        "x": -5.0,
+        "y": -5.0
+      },
+      "EigenBit": 15,
+      "Vegetables0": [
+        1061,
+        1062,
+        659,
+        1066,
+        658,
+        1065,
+        657,
+        656,
+        1064,
+        651,
+        1063,
+        654,
+        653,
+        652,
+        655
+      ],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        2,
+        8,
+        2,
+        7,
+        4,
+        1,
+        0
+      ],
+      "VeinCount": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.5,
+        0.0
+      ],
+      "VeinOpacity": [
+        0.6,
+        0.8,
+        1.0,
+        0.8,
+        0.6,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        9,
+        10,
+        12
+      ],
+      "RareSettings": [
+        0.0,
+        0.25,
+        0.6,
+        0.6,
+        0.0,
+        0.25,
+        0.6,
+        0.6,
+        0.0,
+        0.4,
+        0.3,
+        0.9
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.6,
+      "IonHeight": 70.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        26,
+        11,
+        4
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-5",
+      "SFXVolume": 0.4,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 7",
+      "ID": 20,
+      "SID": "",
+      "DisplayName": "红冰荒漠",
+      "BriefIntroduction": "猩红冰湖介绍",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 7/",
+      "Temperature": -2.0,
+      "Distribute": 0,
+      "Algos": [
+        9
+      ],
+      "ModX": {
+        "x": 6.0,
+        "y": 6.0
+      },
+      "ModY": {
+        "x": 8.0,
+        "y": 8.0
+      },
+      "EigenBit": 16,
+      "Vegetables0": [],
+      "Vegetables1": [
+        748,
+        749,
+        750,
+        743,
+        744,
+        745,
+        746,
+        747,
+        741,
+        742
+      ],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        5,
+        11,
+        1,
+        8,
+        3,
+        1,
+        0
+      ],
+      "VeinCount": [
+        0.8,
+        1.0,
+        0.5,
+        1.0,
+        0.7,
+        0.3,
+        0.0
+      ],
+      "VeinOpacity": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        0.5,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        8,
+        9,
+        12
+      ],
+      "RareSettings": [
+        0.25,
+        1.0,
+        0.6,
+        0.7,
+        0.0,
+        0.2,
+        0.6,
+        0.9,
+        0.0,
+        0.3,
+        0.4,
+        1.0
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 0.7,
+      "IonHeight": 55.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": -2,
+      "Musics": [
+        4,
+        11,
+        27
+      ],
+      "SFXPath": "SFX/sfx-amb-ice-1",
+      "SFXVolume": 0.3,
+      "CullingRadius": -5.0,
+      "IceFlag": 1
+    },
+    {
+      "Name": "Gas 5",
+      "ID": 21,
+      "SID": "",
+      "DisplayName": "气态巨星",
+      "BriefIntroduction": "气巨星介绍5",
+      "PlanetType": 5,
+      "MaterialPath": "Universe/Materials/Planets/Gas 5/",
+      "Temperature": 1.0,
+      "Distribute": 2,
+      "Algos": [
+        0
+      ],
+      "ModX": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "ModY": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "EigenBit": 0,
+      "Vegetables0": [],
+      "Vegetables1": [],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [],
+      "VeinCount": [],
+      "VeinOpacity": [],
+      "RareVeins": [],
+      "RareSettings": [],
+      "GasItems": [
+        1120,
+        1121
+      ],
+      "GasSpeeds": [
+        0.84,
+        0.16
+      ],
+      "UseHeightForBuild": false,
+      "Wind": 0.0,
+      "IonHeight": 0.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [],
+      "SFXPath": "SFX/sfx-amb-massive",
+      "SFXVolume": 0.35,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 8",
+      "ID": 22,
+      "SID": "",
+      "DisplayName": "草原荒漠",
+      "BriefIntroduction": "热带草原介绍",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Desert 8/",
+      "Temperature": 0.0,
+      "Distribute": 2,
+      "Algos": [
+        10
+      ],
+      "ModX": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 11,
+      "Vegetables0": [
+        1093,
+        1093,
+        1092,
+        164,
+        165,
+        163,
+        166,
+        1094
+      ],
+      "Vegetables1": [
+        692,
+        693,
+        691,
+        694,
+        167,
+        168,
+        161,
+        162,
+        169,
+        170
+      ],
+      "Vegetables2": [
+        1094,
+        166,
+        161,
+        693,
+        694
+      ],
+      "Vegetables3": [
+        1093,
+        1092,
+        1091,
+        1094
+      ],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        7,
+        4,
+        7,
+        2,
+        3,
+        6,
+        14
+      ],
+      "VeinCount": [
+        0.7,
+        0.6,
+        1.0,
+        0.8,
+        0.7,
+        1.0,
+        1.0
+      ],
+      "VeinOpacity": [
+        0.7,
+        0.6,
+        0.8,
+        0.7,
+        1.0,
+        1.2,
+        1.0
+      ],
+      "RareVeins": [
+        11,
+        13
+      ],
+      "RareSettings": [
+        0.0,
+        1.0,
+        0.5,
+        1.0,
+        0.0,
+        0.6,
+        0.25,
+        1.0
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.1,
+      "IonHeight": 60.0,
+      "WaterHeight": -0.7,
+      "WaterItemId": 1000,
+      "Musics": [
+        25,
+        16
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-1",
+      "SFXVolume": 0.35,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 9",
+      "ID": 23,
+      "SID": "",
+      "DisplayName": "橙晶荒漠",
+      "BriefIntroduction": "橙晶荒漠介绍",
+      "PlanetType": 3,
+      "MaterialPath": "Universe/Materials/Planets/Desert 9/",
+      "Temperature": 0.08,
+      "Distribute": 2,
+      "Algos": [
+        11
+      ],
+      "ModX": {
+        "x": 1.5,
+        "y": 1.5
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 17,
+      "Vegetables0": [
+        701,
+        702,
+        703
+      ],
+      "Vegetables1": [
+        713,
+        712,
+        711
+      ],
+      "Vegetables2": [
+        710,
+        709,
+        708,
+        707,
+        706,
+        705,
+        704
+      ],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        13,
+        2,
+        0,
+        2,
+        0,
+        2,
+        0
+      ],
+      "VeinCount": [
+        1.0,
+        0.5,
+        0.0,
+        0.7,
+        0.0,
+        0.6,
+        0.0
+      ],
+      "VeinOpacity": [
+        1.2,
+        0.8,
+        0.0,
+        1.0,
+        0.0,
+        0.5,
+        0.0
+      ],
+      "RareVeins": [
+        11,
+        12
+      ],
+      "RareSettings": [
+        0.0,
+        0.7,
+        0.2,
+        0.6,
+        0.0,
+        1.0,
+        1.0,
+        0.84
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.5,
+      "IonHeight": 55.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        26,
+        11
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-5",
+      "SFXVolume": 0.3,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 10",
+      "ID": 24,
+      "SID": "",
+      "DisplayName": "极寒荒漠",
+      "BriefIntroduction": "极寒冻土介绍",
+      "PlanetType": 4,
+      "MaterialPath": "Universe/Materials/Planets/Desert 10/",
+      "Temperature": -4.0,
+      "Distribute": 0,
+      "Algos": [
+        12
+      ],
+      "ModX": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "ModY": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "EigenBit": 18,
+      "Vegetables0": [
+        734,
+        733,
+        732,
+        731,
+        730,
+        729,
+        724,
+        723,
+        722,
+        721
+      ],
+      "Vegetables1": [
+        728,
+        727,
+        726,
+        725
+      ],
+      "Vegetables2": [],
+      "Vegetables3": [],
+      "Vegetables4": [],
+      "Vegetables5": [],
+      "VeinSpot": [
+        9,
+        2,
+        2,
+        6,
+        2,
+        1,
+        0
+      ],
+      "VeinCount": [
+        0.8,
+        0.5,
+        0.8,
+        1.0,
+        0.7,
+        0.3,
+        0.0
+      ],
+      "VeinOpacity": [
+        0.8,
+        0.8,
+        1.2,
+        1.0,
+        1.0,
+        0.3,
+        0.0
+      ],
+      "RareVeins": [
+        8,
+        9,
+        12
+      ],
+      "RareSettings": [
+        0.3,
+        1.0,
+        0.8,
+        1.0,
+        0.0,
+        1.0,
+        0.7,
+        1.0,
+        0.0,
+        0.4,
+        0.5,
+        0.7
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.3,
+      "IonHeight": 55.0,
+      "WaterHeight": 0.0,
+      "WaterItemId": 0,
+      "Musics": [
+        27,
+        4
+      ],
+      "SFXPath": "SFX/sfx-amb-desert-1",
+      "SFXVolume": 0.4,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    },
+    {
+      "Name": "Desert 11",
+      "ID": 25,
+      "SID": "",
+      "DisplayName": "潘多拉荒漠",
+      "BriefIntroduction": "潘多拉沼泽介绍A;潘多拉沼泽介绍B",
+      "PlanetType": 2,
+      "MaterialPath": "Universe/Materials/Planets/Desert 11/",
+      "Temperature": 0.0,
+      "Distribute": 2,
+      "Algos": [
+        13
+      ],
+      "ModX": {
+        "x": 1.0,
+        "y": 1.0
+      },
+      "ModY": {
+        "x": 3.0,
+        "y": 3.0
+      },
+      "EigenBit": 19,
+      "Vegetables0": [
+        681,
+        682,
+        683,
+        684,
+        685,
+        151,
+        148,
+        149,
+        1085
+      ],
+      "Vegetables1": [
+        1085,
+        681,
+        142,
+        685,
+        143,
+        682,
+        1086,
+        144,
+        150
+      ],
+      "Vegetables2": [
+        1084,
+        1081,
+        1082,
+        1083,
+        1085,
+        1086
+      ],
+      "Vegetables3": [
+        141,
+        145
+      ],
+      "Vegetables4": [
+        1084,
+        681,
+        682,
+        683,
+        684,
+        1086,
+        685,
+        146,
+        147
+      ],
+      "Vegetables5": [],
+      "VeinSpot": [
+        8,
+        3,
+        8,
+        1,
+        3,
+        9,
+        20
+      ],
+      "VeinCount": [
+        0.7,
+        0.6,
+        1.0,
+        1.0,
+        0.6,
+        1.0,
+        1.0
+      ],
+      "VeinOpacity": [
+        0.7,
+        0.5,
+        1.0,
+        1.0,
+        0.7,
+        1.2,
+        1.0
+      ],
+      "RareVeins": [
+        10,
+        11,
+        13
+      ],
+      "RareSettings": [
+        0.0,
+        0.5,
+        0.3,
+        1.0,
+        0.0,
+        1.0,
+        0.3,
+        1.0,
+        0.0,
+        0.5,
+        0.2,
+        1.0
+      ],
+      "GasItems": [],
+      "GasSpeeds": [],
+      "UseHeightForBuild": false,
+      "Wind": 1.0,
+      "IonHeight": 60.0,
+      "WaterHeight": -2.0,
+      "WaterItemId": 0,
+      "Musics": [
+        15,
+        16
+      ],
+      "SFXPath": "SFX/sfx-amb-ocean-3",
+      "SFXVolume": 1.0,
+      "CullingRadius": 0.0,
+      "IceFlag": 0
+    }
+  ]
+}
