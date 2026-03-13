@@ -35,15 +35,22 @@ Edit `src/SeedScanner/scanner_config.json`.
 ```json
 {
   "SeedStart": 0,
-  "SeedEnd": 100,
+  "SeedEnd": 0,
   "StarCount": 64,
-  "ResourceMultiplier": 1.0,
-  "Threads": 16,
+  "ResourceMultiplier": 1,
+  "Threads": 1,
   "OutputFolder": "seeds",
+  "DeepScan": true,
   "CombatSettings": {
-    "Aggressiveness": 1.0,
-    "InitialLevel": 0.0,
-    "MaxDensity": 1.0
+    "Aggressiveness": 1,
+    "InitialLevel": 0,
+    "InitialGrowth": 1,
+    "InitialColonize": 1,
+    "MaxDensity": 1,
+    "GrowthSpeedFactor": 1,
+    "PowerThreatFactor": 1,
+    "BattleThreatFactor": 1,
+    "BattleExpFactor": 1
   }
 }
 ```
