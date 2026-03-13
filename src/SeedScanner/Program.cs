@@ -125,7 +125,7 @@ class Program
                     }
                     var sRes = new StarResult {
                         Id = star.id,
-                        Name = star.id == 1 ? "Birth Star" : star.name,
+                        Name = star.name,
                         Type = star.type.ToString(),
                         Spectr = star.spectr.ToString(),
                         Luminosity = (float)Math.Round(star.luminosity, 3),

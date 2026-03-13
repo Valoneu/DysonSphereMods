@@ -89,7 +89,6 @@ public static class NameGen
     }
     public static string RandomStarName(int seed, StarData starData, GalaxyData galaxy)
     {
-        if (starData.id == 1) return "Birth Star";
         DotNet35Random dotNet35Random = new DotNet35Random(seed);
         int num = 0;
         while (num++ < 256)
