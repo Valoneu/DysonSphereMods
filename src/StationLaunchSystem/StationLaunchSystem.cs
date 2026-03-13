@@ -12,7 +12,7 @@ namespace StationLaunchSystem
     {
         public const string GUID = "com.Valoneu.StationLaunchSystem";
         public const string NAME = "StationLaunchSystem";
-        public const string VERSION = "1.0.2";
+        public const string VERSION = "1.0.3";
         public static ConfigEntry<bool> ModEnabled;
         public static ConfigEntry<int> RocketsPerTick;
         public static ConfigEntry<int> SailsPerTick;
@@ -30,23 +30,12 @@ namespace StationLaunchSystem
     [HarmonyPatch]
     public static class GameBeginPatch
     {
-        private static bool _subscribed = false;
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(GameMain), "Begin")]
-        public static void OnGameBegin()
+        [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.GameTick))]
+        public static void PlanetTransport_GameTick_Postfix(PlanetTransport __instance, long time)
         {
-            try {
-                if (_subscribed) { GameMain.logic.onFactoryFrameEnd -= LaunchLogic.OnFactoryFrameEnd; _subscribed = false; }
-                GameMain.logic.onFactoryFrameEnd += LaunchLogic.OnFactoryFrameEnd;
-                _subscribed = true;
-                Log.Info("[StationLaunch] Subscribed to onFactoryFrameEnd");
-            } catch (Exception ex) { Log.Info($"[StationLaunch] ERROR subscribing: {ex.Message}"); }
-        }
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(GameMain), "End")]
-        public static void OnGameEnd()
-        {
-            try { if (_subscribed) { GameMain.logic.onFactoryFrameEnd -= LaunchLogic.OnFactoryFrameEnd; _subscribed = false; } } catch { }
+            if (!StationLaunchSystemPlugin.ModEnabled.Value || time % 10 != 0) return;
+            LaunchLogic.ProcessFactory(__instance.factory, time);
         }
     }
     public static class LaunchLogic
@@ -69,8 +58,10 @@ namespace StationLaunchSystem
             = new System.Collections.Generic.Dictionary<int, (long tick, System.Collections.Generic.List<ConstructibleShell> shells)>();
         private static System.Collections.Generic.List<ConstructibleShell> GetShellCache(DysonSphere sphere, long tick)
         {
-            if (_shellCaches.TryGetValue(sphere.starData.index, out var entry) && tick - entry.tick < 120) {
-                return entry.shells;
+            lock (_shellCaches) {
+                if (_shellCaches.TryGetValue(sphere.starData.index, out var entry) && tick - entry.tick < 120) {
+                    return entry.shells;
+                }
             }
             var list = new System.Collections.Generic.List<ConstructibleShell>();
             if (sphere.layersIdBased == null) return list;
@@ -95,34 +86,28 @@ namespace StationLaunchSystem
                 }
             }
             list.Sort((a, b) => a.absY.CompareTo(b.absY));
-            _shellCaches[sphere.starData.index] = (tick, list);
+            lock (_shellCaches) {
+                _shellCaches[sphere.starData.index] = (tick, list);
+            }
             return list;
         }
-        public static void OnFactoryFrameEnd()
+        public static void ProcessFactory(PlanetFactory factory, long tick)
         {
             try {
-                if (!StationLaunchSystemPlugin.ModEnabled.Value) return;
-                var data = GameMain.data;
-                if (data == null) return;
-                long tick = GameMain.gameTick;
-                if (tick % 10 != 0) return; 
-                for (int fi = 0; fi < data.factoryCount; fi++) {
-                    var factory = data.factories[fi];
-                    if (factory?.transport == null || factory.planet == null) continue;
-                    int starIndex = factory.planet.star?.index ?? -1;
-                    if (starIndex < 0 || starIndex >= data.dysonSpheres.Length) continue;
-                    var sphere = data.dysonSpheres[starIndex];
-                    if (sphere == null) continue;
-                    int[] consumeReg = GameMain.statistics?.production?.factoryStatPool?[factory.index]?.consumeRegister;
-                    LaunchRockets(factory, sphere, consumeReg, tick);
-                    LaunchSails(factory, sphere, consumeReg, tick);
-                }
+                if (factory?.transport == null || factory.planet == null || GameMain.data == null) return;
+                int starIndex = factory.planet.star?.index ?? -1;
+                if (starIndex < 0 || starIndex >= GameMain.data.dysonSpheres.Length) return;
+                var sphere = GameMain.data.dysonSpheres[starIndex];
+                if (sphere == null) return;
+                int[] consumeReg = GameMain.statistics?.production?.factoryStatPool?[factory.index]?.consumeRegister;
+                LaunchRockets(factory, sphere, consumeReg, tick);
+                LaunchSails(factory, sphere, consumeReg, tick);
             } catch (Exception ex) { Log.Info($"[StationLaunch] ERROR: {ex.Message}"); }
         }
         private static void LaunchRockets(PlanetFactory factory, DysonSphere sphere, int[] consumeReg, long tick)
         {
             int maxPerStation = StationLaunchSystemPlugin.RocketsPerTick.Value * 10; 
-            if (maxPerStation <= 0 || sphere.GetAutoNodeCount() <= 0) return;
+            if (maxPerStation <= 0) return;
             for (int si = 1; si < factory.transport.stationCursor; si++) {
                 var station = factory.transport.stationPool[si];
                 if (station == null || station.id != si || !station.isStellar || station.isCollector) continue;
@@ -132,13 +117,16 @@ namespace StationLaunchSystem
                     int rocketItemId = station.storage[slot].itemId;
                     int toUse = Math.Min(maxPerStation, station.storage[slot].count);
                     int used = 0;
-                    for (int r = 0; r < toUse; r++) {
+                    lock (sphere) {
                         if (sphere.GetAutoNodeCount() <= 0) break;
-                        DysonNode node = sphere.GetAutoDysonNode(si * 17 + r);
-                        if (node == null) break;
-                        sphere.OrderConstructSp(node);
-                        sphere.ConstructSp(node);
-                        used++;
+                        for (int r = 0; r < toUse; r++) {
+                            if (sphere.GetAutoNodeCount() <= 0) break;
+                            DysonNode node = sphere.GetAutoDysonNode(si * 17 + r);
+                            if (node == null) break;
+                            sphere.OrderConstructSp(node);
+                            sphere.ConstructSp(node);
+                            used++;
+                        }
                     }
                     if (used > 0) {
                         station.storage[slot].count -= used;
@@ -173,19 +161,21 @@ namespace StationLaunchSystem
                     int toTake = Math.Min(maxPerStation - stationUsed, station.storage[slot].count);
                     if (toTake <= 0) continue;
                     int actualTaken = 0;
-                    foreach (var shellInfo in shells) {
-                        var shell = shellInfo.shell;
-                        for (int ni = 0; ni < shell.nodes.Count; ni++) {
-                            int maxCp = (shell.vertsqOffset[ni + 1] - shell.vertsqOffset[ni]) * shell.cpPerVertex;
-                            while (shell.nodecps[ni] < maxCp) {
+                    lock (sphere) {
+                        foreach (var shellInfo in shells) {
+                            var shell = shellInfo.shell;
+                            for (int ni = 0; ni < shell.nodes.Count; ni++) {
+                                int maxCp = (shell.vertsqOffset[ni + 1] - shell.vertsqOffset[ni]) * shell.cpPerVertex;
+                                while (shell.nodecps[ni] < maxCp) {
+                                    if (actualTaken >= toTake) break;
+                                    shell.Construct(ni, true);
+                                    actualTaken++;
+                                    if (sphereProdReg != null) { lock (sphereProdReg) sphereProdReg[11903]++; }
+                                }
                                 if (actualTaken >= toTake) break;
-                                shell.Construct(ni, true);
-                                actualTaken++;
-                                if (sphereProdReg != null) { lock (sphereProdReg) sphereProdReg[11903]++; }
                             }
                             if (actualTaken >= toTake) break;
                         }
-                        if (actualTaken >= toTake) break;
                     }
                     if (actualTaken > 0) {
                         station.storage[slot].count -= actualTaken;

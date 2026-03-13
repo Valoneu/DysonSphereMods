@@ -1,6 +1,6 @@
 {
     "name": "PlanetMinerFast",
-    "version_number": "1.0.0",
+    "version_number": "1.0.1",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/PlanetMinerFast",
     "description": "An aggressively optimized mining system that pulls ores directly into Logistics Stations set to 'Local Demand'. Eliminates the need for miners, belts, and power lines over veins with minimal UPS impact.",
     "dependencies": [

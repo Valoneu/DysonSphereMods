@@ -11,7 +11,7 @@ namespace CopyPasteStations
     {
         public const string GUID = "com.Valoneu.CopyPasteStations";
         public const string NAME = "CopyPasteStations";
-        public const string VERSION = "1.0.0";
+        public const string VERSION = "1.0.1";
         private void Awake()
         {
             Log.Init(Logger);
@@ -57,6 +57,7 @@ namespace CopyPasteStations
             if (_clipboard == null) return;
             var station = GetStation(__instance, objectId);
             if (station == null) return;
+            if (_clipboardIsStellar && (station.isCollector || station.isVeinCollector)) return;
             int slotCount = Math.Min(_clipboard.Count, station.storage.Length);
             for (int i = 0; i < slotCount; i++)
             {

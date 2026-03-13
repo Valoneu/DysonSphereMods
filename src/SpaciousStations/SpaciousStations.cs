@@ -20,7 +20,7 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.2.3";
+        public const string MOD_VERSION = "1.2.4";
         public static ConfigEntry<float> PLS_DroneMultiplier;
         public static ConfigEntry<float> PLS_ShipMultiplier;
         public static ConfigEntry<float> PLS_StorageMultiplier;
@@ -79,6 +79,21 @@ namespace SpaciousStations
             DroneCarryMultiplier = Config.Bind("General", "DroneCarryMultiplier", 1f, "Multiplies the carrying capacity of logistics drones.");
             ShipCarryMultiplier = Config.Bind("General", "ShipCarryMultiplier", 1f, "Multiplies the carrying capacity of logistics vessels.");
             CourierCarryMultiplier = Config.Bind("General", "CourierCarryMultiplier", 1f, "Multiplies the carrying capacity of logistics couriers.");
+            PLS_DroneMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            PLS_ShipMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            PLS_StorageMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            PLS_ChargeMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            PLS_EnergyMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            ILS_DroneMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            ILS_ShipMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            ILS_StorageMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            ILS_ChargeMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            ILS_EnergyMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            EXC_DroneMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            EXC_ShipMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            EXC_StorageMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            EXC_ChargeMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
+            EXC_EnergyMultiplier.SettingChanged += (s, e) => { SyncConfigToService(); StationPatch.UpdateAllStations(); };
             Log.Init(Logger);
             SyncConfigToService();
             var harmony = new Harmony(MOD_GUID);
@@ -330,7 +345,26 @@ namespace SpaciousStations
         [HarmonyPatch(typeof(GameMain), "Begin")]
         public static void GameMain_Begin_Postfix()
         {
-            if (LDB.items != null) foreach (var item in LDB.items.dataArray) ApplyToItem(item);
+            UpdateAllStations();
+        }
+        public static void UpdateAllStations()
+        {
+            if (LDB.items != null)
+            {
+                foreach (var item in LDB.items.dataArray)
+                {
+                    if (item == null || item.prefabDesc == null || !item.prefabDesc.isStation) continue;
+                    ApplyToItem(item);
+                }
+            }
+            if (LDB.models != null)
+            {
+                foreach (var model in LDB.models.dataArray)
+                {
+                    if (model == null || model.prefabDesc == null || !model.prefabDesc.isStation) continue;
+                    ApplyToModel(model);
+                }
+            }
             if (GameMain.data?.factories != null)
             {
                 foreach (var factory in GameMain.data.factories)
@@ -350,18 +384,14 @@ namespace SpaciousStations
                         station.droneTaskInterval = SpaciousStationsPlugin.DroneTaskInterval.Value;
                         if (station.storage != null)
                         {
-                            bool isExchange = itemProto != null && (
-                                itemProto.ID >= 9400 ||
-                                (itemProto.name != null && (itemProto.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
-                                itemProto.Name == "星际组装厂" || itemProto.Name == "物资交换器" || itemProto.Name == "Interstellar Assembly" || itemProto.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0
-                            );
+                            bool isExchange = itemProto.IsExchangeStation();
                             float storageMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Storage") :
                                                desc.isStellarStation ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
                             float lastMul = isExchange ? SpaciousStationsPlugin.InternalLastEXCStorageMultiplier.Value :
                                             desc.isStellarStation ? SpaciousStationsPlugin.InternalLastStorageMultiplier.Value : SpaciousStationsPlugin.InternalLastPLSStorageMultiplier.Value;
                             int vanillaExtra = GetVanillaAdditionStorage(station);
                             int vanillaMax = original.ItemCount + vanillaExtra;
-                            int newMax = desc.stationMaxItemCount + (int)(vanillaExtra * storageMul);
+                            int newMax = (int)(original.ItemCount * storageMul) + (int)(vanillaExtra * storageMul);
                             bool multiplierChanged = Math.Abs(lastMul - storageMul) > 0.001f;
                             for (int i = 0; i < station.storage.Length; i++)
                             {
@@ -385,11 +415,7 @@ namespace SpaciousStations
                         if (!desc.isCollectStation && station.pcId > 0 && factory.powerSystem != null
                             && station.pcId < factory.powerSystem.consumerCursor)
                         {
-                            bool isExchange = itemProto != null && (
-                                itemProto.ID >= 9400 ||
-                                (itemProto.name != null && (itemProto.name.IndexOf("Exchange Logistic Station", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("Matter", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.name.IndexOf("星际组装厂", StringComparison.OrdinalIgnoreCase) >= 0)) ||
-                                itemProto.Name == "星际组装厂" || itemProto.Name == "物资交换器" || itemProto.Name == "Interstellar Assembly" || itemProto.Name.IndexOf("Exchange", StringComparison.OrdinalIgnoreCase) >= 0 || itemProto.Name.IndexOf("组装", StringComparison.OrdinalIgnoreCase) >= 0
-                            );
+                            bool isExchange = itemProto.IsExchangeStation();
                             float chargeMul = isExchange ? MultiplierService.GetMultiplier("Station_EXC_Charge") :
                                               desc.isStellarStation ? MultiplierService.GetMultiplier("Station_ILS_Charge") : MultiplierService.GetMultiplier("Station_PLS_Charge");
                             float lastChgMul = isExchange ? SpaciousStationsPlugin.InternalLastEXCChargeMultiplier.Value :
@@ -418,7 +444,7 @@ namespace SpaciousStations
             SpaciousStationsPlugin.InternalLastPLSChargeMultiplier.Value = MultiplierService.GetMultiplier("Station_PLS_Charge");
             SpaciousStationsPlugin.InternalLastEXCStorageMultiplier.Value = MultiplierService.GetMultiplier("Station_EXC_Storage");
             SpaciousStationsPlugin.InternalLastEXCChargeMultiplier.Value = MultiplierService.GetMultiplier("Station_EXC_Charge");
-            Log.Info("GameMain.Begin: All station limits synced.");
+            Log.Info("SpaciousStations: All station limits updated.");
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameHistoryData), nameof(GameHistoryData.UnlockTechFunction))]
@@ -943,6 +969,8 @@ namespace SpaciousStations
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.GameTick))]
         [HarmonyPatch(typeof(PlanetTransport), nameof(PlanetTransport.RefreshStationTraffic))]
+        [HarmonyPatch(typeof(GalacticTransport), nameof(GalacticTransport.GameTick))]
+        [HarmonyPatch(typeof(GalacticTransport), nameof(GalacticTransport.RefreshTraffic))]
         [HarmonyPatch(typeof(UITechTree), nameof(UITechTree.RefreshDataValueText))]
         [HarmonyPatch(typeof(ItemProto), nameof(ItemProto.GetPropValue))]
         [HarmonyPatch(typeof(UIPlayerDeliveryPanel), "_OnUpdate")]
@@ -955,19 +983,21 @@ namespace SpaciousStations
             var courierField = AccessTools.Field(typeof(GameHistoryData), nameof(GameHistoryData.logisticCourierCarries));
             for (int i = 0; i < codes.Count; i++)
             {
-                if (codes[i].opcode == OpCodes.Ldfld)
+                var opcode = codes[i].opcode;
+                if (opcode == OpCodes.Ldfld)
                 {
-                    if (codes[i].operand as FieldInfo == droneField)
+                    var field = codes[i].operand as FieldInfo;
+                    if (field == droneField)
                     {
                         codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpaciousStationsPlugin), nameof(SpaciousStationsPlugin.GetMultipliedDroneCarry))));
                         i++;
                     }
-                    else if (codes[i].operand as FieldInfo == shipField)
+                    else if (field == shipField)
                     {
                         codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpaciousStationsPlugin), nameof(SpaciousStationsPlugin.GetMultipliedShipCarry))));
                         i++;
                     }
-                    else if (codes[i].operand as FieldInfo == courierField)
+                    else if (field == courierField)
                     {
                         codes.Insert(i + 1, new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SpaciousStationsPlugin), nameof(SpaciousStationsPlugin.GetMultipliedCourierCarry))));
                         i++;
@@ -976,7 +1006,47 @@ namespace SpaciousStations
             }
             return codes;
         }
-    }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), "DispatchSupplyShip")]
+        public static void DispatchSupplyShip_Prefix(ref int carryCnt, StationComponent other, ref SupplyDemandPair pair)
+        {
+            int room = other.storage[pair.demandIndex].remoteDemandCount;
+            if (carryCnt > room) carryCnt = room > 0 ? room : 0;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(StationComponent), "DispatchDemandShip")]
+        public static void DispatchDemandShip_Prefix(StationComponent __instance, ref int shipCarries, StationComponent other, ref SupplyDemandPair pair)
+        {
+            int room = __instance.storage[pair.demandIndex].remoteDemandCount;
+            int supply = other.storage[pair.supplyIndex].remoteSupplyCount;
+            int cap = Math.Min(room, supply);
+            if (shipCarries > cap) shipCarries = cap > 0 ? cap : 0;
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ItemProto), nameof(ItemProto.GetPropValue))]
+        public static void ItemProto_GetPropValue_Postfix(ItemProto __instance, int index, ref string __result)
+        {
+            if (GameMain.history == null || index < 0 || index >= __instance.DescFields.Length) return;
+            int propId = __instance.DescFields[index];
+            if (propId == 25) 
+            {
+                __result = SpaciousStationsPlugin.GetMultipliedDroneCarry(GameMain.history.logisticDroneCarries).ToString();
+            }
+            else if (propId == 26) 
+            {
+                __result = SpaciousStationsPlugin.GetMultipliedShipCarry(GameMain.history.logisticShipCarries).ToString();
+            }
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(UIStationStorage), nameof(UIStationStorage.GetAdditionStorage))]
+        [HarmonyPatch(typeof(UIControlPanelStationStorage), nameof(UIControlPanelStationStorage.GetAdditionStorage))]
+        public static void UIStationStorage_GetAdditionStorage_Postfix(ref int __result, StationComponent ___station)
+        {
+            if (___station == null) return;
+            float storageMul = ___station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
+            __result = (int)(__result * storageMul);
+        }
+        }
     public static class StationExtensions
     {
         public static void PatchDroneArray(this StationComponent station, int newCount)

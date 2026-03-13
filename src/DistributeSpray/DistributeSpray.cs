@@ -13,7 +13,7 @@ namespace DistributeSpray
     {
         public const string GUID = "com.Valoneu.DistributeSpray";
         public const string NAME = "DistributeSpray";
-        public const string VERSION = "1.0.1";
+        public const string VERSION = "1.0.2";
         public static ConfigEntry<bool> ModEnabled;
         private void Awake()
         {
@@ -25,6 +25,8 @@ namespace DistributeSpray
             if (insertUint != null) harmony.Patch(insertUint, prefix: new HarmonyMethod(typeof(InsertPatches), nameof(InsertPatches.InsertInto_Prefix)), postfix: new HarmonyMethod(typeof(InsertPatches), nameof(InsertPatches.InsertInto_Postfix)));
             MethodInfo insertInt = AccessTools.Method(typeof(PlanetFactory), "InsertInto", new Type[] { typeof(int), typeof(int), typeof(int), typeof(byte), typeof(byte), typeof(byte).MakeByRefType() });
             if (insertInt != null) harmony.Patch(insertInt, prefix: new HarmonyMethod(typeof(InsertPatches), nameof(InsertPatches.InsertInto_Prefix)), postfix: new HarmonyMethod(typeof(InsertPatches), nameof(InsertPatches.InsertInto_Postfix)));
+            MethodInfo insertStorage = AccessTools.Method(typeof(PlanetFactory), nameof(PlanetFactory.InsertIntoStorage), new Type[] { typeof(int), typeof(int), typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(bool) });
+            if (insertStorage != null) harmony.Patch(insertStorage, prefix: new HarmonyMethod(typeof(InsertPatches), nameof(InsertPatches.InsertIntoStorage_Prefix)), postfix: new HarmonyMethod(typeof(InsertPatches), nameof(InsertPatches.InsertIntoStorage_Postfix)));
             MethodInfo addItem = AccessTools.Method(typeof(StationComponent), nameof(StationComponent.AddItem), new Type[] { typeof(int), typeof(int), typeof(int) });
             if (addItem != null) harmony.Patch(addItem, prefix: new HarmonyMethod(typeof(StationPatches), nameof(StationPatches.AddItem_Prefix)), postfix: new HarmonyMethod(typeof(StationPatches), nameof(StationPatches.AddItem_Postfix)));
             Log.Info($"{NAME} v{VERSION} loaded!");
@@ -222,6 +224,19 @@ namespace DistributeSpray
             __state = true; itemInc += (byte)deficit;
         }
         public static void InsertInto_Postfix(PlanetFactory __instance, int __result, bool __state)
+        {
+            if (__state && __result > 0) { var status = SprayLogic.GetStatus(__instance.index); if (status != null) Interlocked.Add(ref status.incDebt, __result); }
+        }
+        public static void InsertIntoStorage_Prefix(PlanetFactory __instance, int count, ref int inc, ref bool __state)
+        {
+            if (!DistributeSprayPlugin.ModEnabled.Value) return;
+            var status = SprayLogic.GetStatus(__instance.index);
+            if (status == null || status.incLevel <= 0) return;
+            int deficit = count * status.incLevel - inc;
+            if (deficit <= 0) return;
+            __state = true; inc += deficit;
+        }
+        public static void InsertIntoStorage_Postfix(PlanetFactory __instance, int __result, bool __state)
         {
             if (__state && __result > 0) { var status = SprayLogic.GetStatus(__instance.index); if (status != null) Interlocked.Add(ref status.incDebt, __result); }
         }

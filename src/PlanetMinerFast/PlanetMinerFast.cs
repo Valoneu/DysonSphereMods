@@ -120,29 +120,28 @@ namespace PlanetMinerFast
                     if ((int)sc.storage[i].localLogic != 2) continue;
                     int itemId = sc.storage[i].itemId;
                     if (itemId <= 0 || sc.storage[i].count >= sc.storage[i].max) continue;
+                    long currentEnergyCost = (sc.isCollector || sc.isVeinCollector) ? ENERGY_COST / 10 : ENERGY_COST;
+                    if (sc.energy < currentEnergyCost) continue;
                     float minedAmount = 0;
                     float timeFactor = 1.0f; 
                     if (itemId == factory.planet.waterItemId)
                     {
-                        if (sc.energy >= ENERGY_COST) minedAmount = 100f * miningSpeedScale * timeFactor;
+                        minedAmount = 100f * miningSpeedScale * timeFactor;
                     }
                     else if (cache.ItemToVeinIndices.TryGetValue(itemId, out var indices))
                     {
-                        if (sc.energy >= ENERGY_COST)
+                        bool isOil = LDB.veins.GetVeinTypeByItemId(itemId) == EVeinType.Oil;
+                        float amountPerVein = 1f * miningSpeedScale * timeFactor;
+                        foreach (int veinIdx in indices)
                         {
-                            bool isOil = LDB.veins.GetVeinTypeByItemId(itemId) == EVeinType.Oil;
-                            float amountPerVein = 1f * miningSpeedScale * timeFactor;
-                            foreach (int veinIdx in indices)
+                            if (veinPool[veinIdx].id == 0 || veinPool[veinIdx].amount <= 0) continue;
+                            if (isOil) 
                             {
-                                if (veinPool[veinIdx].id == 0 || veinPool[veinIdx].amount <= 0) continue;
-                                if (isOil) 
-                                {
-                                    minedAmount += (veinPool[veinIdx].amount / 6000f) * miningSpeedScale * timeFactor;
-                                }
-                                else if (TryMineVein(veinPool, veinIdx, miningCostRate, amountPerVein, factory, cache)) 
-                                {
-                                    minedAmount += amountPerVein;
-                                }
+                                minedAmount += (veinPool[veinIdx].amount / 6000f) * miningSpeedScale * timeFactor;
+                            }
+                            else if (TryMineVein(veinPool, veinIdx, miningCostRate, amountPerVein, factory, cache)) 
+                            {
+                                minedAmount += amountPerVein;
                             }
                         }
                     }
@@ -165,7 +164,7 @@ namespace PlanetMinerFast
                                     System.Threading.Interlocked.Add(ref cache.PendingProductRegister[itemId], finalAdded);
                                 }
                             }
-                            sc.energy -= ENERGY_COST;
+                            sc.energy -= currentEnergyCost;
                         }
                         cache.MinedFractions[itemId] = fraction;
                     }
