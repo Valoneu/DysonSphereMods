@@ -11,7 +11,7 @@ namespace CopyPasteStations
     {
         public const string GUID = "com.Valoneu.CopyPasteStations";
         public const string NAME = "CopyPasteStations";
-        public const string VERSION = "1.0.1";
+        public const string VERSION = "1.0.2";
         private void Awake()
         {
             Log.Init(Logger);
@@ -58,10 +58,26 @@ namespace CopyPasteStations
             var station = GetStation(__instance, objectId);
             if (station == null) return;
             if (_clipboardIsStellar && (station.isCollector || station.isVeinCollector)) return;
+            var player = GameMain.mainPlayer;
             int slotCount = Math.Min(_clipboard.Count, station.storage.Length);
             for (int i = 0; i < slotCount; i++)
             {
                 var slot = _clipboard[i];
+                if (station.storage[i].itemId != slot.ItemId && station.storage[i].count > 0)
+                {
+                    int itemId = station.storage[i].itemId;
+                    int count = station.storage[i].count;
+                    int inc = station.storage[i].inc;
+                    if (player != null)
+                    {
+                        int added = player.package.AddItem(itemId, count, inc, out int remainInc);
+                        count -= added;
+                    }
+                    if (count > 0)
+                    {
+                        GameMain.data.trashSystem.AddTrash(itemId, count, inc, station.entityId);
+                    }
+                }
                 station.storage[i].itemId = slot.ItemId;
                 station.storage[i].localLogic = slot.LocalLogic;
                 station.storage[i].remoteLogic = slot.RemoteLogic;
@@ -69,7 +85,6 @@ namespace CopyPasteStations
                 station.storage[i].keepMode = slot.KeepMode;
             }
             station.UpdateNeeds();
-            var player = GameMain.mainPlayer;
             if (player == null) return;
             int droneItemId = 5001; 
             int shipItemId = 5002; 

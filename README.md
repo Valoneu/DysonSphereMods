@@ -18,7 +18,7 @@
 | **MaxLVLIncrease** | Extension of the infinite research level cap. | v1.1.0 |
 | **TechHashReduce** | Dynamic scaling of technology research costs. | v1.2.2 |
 | **LessShipPower** | Optimization of logistics vessel energy consumption. | v1.1.0 |
-| **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.4 |
+| **SpaciousStations** | Multiplies station drone/ship counts, storage capacity and charge power. | v1.2.5 |
 | **VesselTrails** | Visualizes active logistics vessel routes in the Star Map. | v1.3.2 |
 | **StacksizeMultiplier** | Scalable item stack size multiplier for all game items. | v1.1.0 |
 | **FarZoom** | Allows zooming further away from the mech, planet, and in starmap. | v1.1.0 |
@@ -26,11 +26,11 @@
 | **BottleneckUI** | Shows a UI listing all crafting machines that lack input items or power. | v1.0.0 |
 | **InfinityTechnologies** | Allows for more granular control over infinite research levels. | v1.0.2 |
 | **SortByStorage** | Adds a "Storage" sort option to the Production Statistics panel to sort by total stored quantity. | v1.0.0 |
-| **PlanetMinerFast** | Optimized version of PlanetMiner. Mines veins directly into stations set to Local Demand. Low UPS impact. | v1.0.1 |
+| **PlanetMinerFast** | Optimized version of PlanetMiner. Mines veins directly into stations set to Local Demand. Low UPS impact. | v1.0.2 |
 | **PlanetWideFluid** | Addon for PlanetwideMining: Advanced Miners extract planet fluids when not over a vein. | v1.0.0 |
 | **HideWarnings** | Hide specific in-game warnings with a toggleable UI (Ctrl+Numpad5). | v1.0.0 |
 | **DistributeSpray** | Auto-spray items planet-wide using proliferator stored in logistics stations. | v1.0.2 |
-| **CopyPasteStations** | Copy and paste item slot configurations between ILS/PLS stations. | v1.0.1 |
+| **CopyPasteStations** | Copy and paste item slot configurations between ILS/PLS stations. | v1.0.2 |
 | **StationLaunchSystem** | Auto-launch rockets and solar sails from ILS stations to the Dyson Sphere. | v1.0.3 |
 
 ---

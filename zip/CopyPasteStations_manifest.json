@@ -1,6 +1,6 @@
 {
     "name": "CopyPasteStations",
-    "version_number": "1.0.1",
+    "version_number": "1.0.2",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/CopyPasteStations",
     "description": "Seamlessly integrates with the game's native building copy/paste system to transfer detailed station configurations. Automatically refills missing drones and ships from your inventory during the paste operation.",
     "dependencies": [

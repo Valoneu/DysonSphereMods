@@ -20,7 +20,7 @@ namespace SpaciousStations
     {
         public const string MOD_GUID = "com.Valoneu.SpaciousStations";
         public const string MOD_NAME = "SpaciousStations";
-        public const string MOD_VERSION = "1.2.4";
+        public const string MOD_VERSION = "1.2.5";
         public static ConfigEntry<float> PLS_DroneMultiplier;
         public static ConfigEntry<float> PLS_ShipMultiplier;
         public static ConfigEntry<float> PLS_StorageMultiplier;
@@ -975,6 +975,8 @@ namespace SpaciousStations
         [HarmonyPatch(typeof(ItemProto), nameof(ItemProto.GetPropValue))]
         [HarmonyPatch(typeof(UIPlayerDeliveryPanel), "_OnUpdate")]
         [HarmonyPatch(typeof(DispenserComponent), nameof(DispenserComponent.InternalTick))]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.DetermineDispatch))]
+        [HarmonyPatch(typeof(StationComponent), nameof(StationComponent.InternalTickLocal))]
         public static IEnumerable<CodeInstruction> CapacityTranspiler(IEnumerable<CodeInstruction> instructions)
         {
             var codes = new List<CodeInstruction>(instructions);
@@ -1008,19 +1010,21 @@ namespace SpaciousStations
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(StationComponent), "DispatchSupplyShip")]
-        public static void DispatchSupplyShip_Prefix(ref int carryCnt, StationComponent other, ref SupplyDemandPair pair)
+        public static bool DispatchSupplyShip_Prefix(ref int carryCnt, StationComponent other, ref SupplyDemandPair pair)
         {
             int room = other.storage[pair.demandIndex].remoteDemandCount;
-            if (carryCnt > room) carryCnt = room > 0 ? room : 0;
+            if (carryCnt > room) carryCnt = room;
+            return carryCnt > 0;
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(StationComponent), "DispatchDemandShip")]
-        public static void DispatchDemandShip_Prefix(StationComponent __instance, ref int shipCarries, StationComponent other, ref SupplyDemandPair pair)
+        public static bool DispatchDemandShip_Prefix(StationComponent __instance, ref int shipCarries, StationComponent other, ref SupplyDemandPair pair)
         {
             int room = __instance.storage[pair.demandIndex].remoteDemandCount;
             int supply = other.storage[pair.supplyIndex].remoteSupplyCount;
             int cap = Math.Min(room, supply);
-            if (shipCarries > cap) shipCarries = cap > 0 ? cap : 0;
+            if (shipCarries > cap) shipCarries = cap;
+            return shipCarries > 0;
         }
         [HarmonyPostfix]
         [HarmonyPatch(typeof(ItemProto), nameof(ItemProto.GetPropValue))]
@@ -1036,15 +1040,6 @@ namespace SpaciousStations
             {
                 __result = SpaciousStationsPlugin.GetMultipliedShipCarry(GameMain.history.logisticShipCarries).ToString();
             }
-        }
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(UIStationStorage), nameof(UIStationStorage.GetAdditionStorage))]
-        [HarmonyPatch(typeof(UIControlPanelStationStorage), nameof(UIControlPanelStationStorage.GetAdditionStorage))]
-        public static void UIStationStorage_GetAdditionStorage_Postfix(ref int __result, StationComponent ___station)
-        {
-            if (___station == null) return;
-            float storageMul = ___station.isStellar ? MultiplierService.GetMultiplier("Station_ILS_Storage") : MultiplierService.GetMultiplier("Station_PLS_Storage");
-            __result = (int)(__result * storageMul);
         }
         }
     public static class StationExtensions

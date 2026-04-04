@@ -3,10 +3,10 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <AssemblyName>SpaciousStations</AssemblyName>
     <Description>Multiplies station drone/ship counts, storage capacity and charge power.</Description>
-    <Version>1.2.4</Version>
+    <Version>1.2.5</Version>
     <BepInExPluginGuid>com.Valoneu.SpaciousStations</BepInExPluginGuid>
     <BepInExPluginName>SpaciousStations</BepInExPluginName>
-    <BepInExPluginVersion>1.2.4</BepInExPluginVersion>
+    <BepInExPluginVersion>1.2.5</BepInExPluginVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />

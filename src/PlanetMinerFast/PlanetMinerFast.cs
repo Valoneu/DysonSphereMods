@@ -111,7 +111,7 @@ namespace PlanetMinerFast
             foreach (var sc in transport.stationPool)
             {
                 if (sc == null || sc.id == 0 || sc.storage == null) continue;
-                if (sc.energy < sc.energyMax * 0.2f)
+                if (sc.energy < sc.energyMax * 0.2f && !sc.isCollector && !sc.isVeinCollector)
                 {
                     GenerateEnergyFromAnySlot(sc);
                 }
