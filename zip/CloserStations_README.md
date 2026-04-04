@@ -16,5 +16,5 @@ Transpiles `BuildTool_Click.CheckBuildConditions` and `BuildTool_BlueprintPaste.
 * **BepInEx**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

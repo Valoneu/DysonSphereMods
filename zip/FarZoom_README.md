@@ -18,5 +18,5 @@ Patches `GameCamera`, `RTSPoser`, and `PlanetPoser` calculation logic, modifying
 * **BepInEx**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

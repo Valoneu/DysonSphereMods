@@ -17,5 +17,5 @@ Uses custom GL rendering to draw trails in 3D space. Tracks vessel history in a 
 * **BepInEx, CommonAPI**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

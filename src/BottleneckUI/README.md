@@ -17,5 +17,5 @@ Uses Harmony patches to collect machine states during simulation, injecting a cu
 * **BepInEx, CommonAPI**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

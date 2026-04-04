@@ -13,7 +13,7 @@
 | Mod | Functional Description | Version |
 | :--- | :--- | :--- |
 | **FactoryOverclock** | Production speed multiplication and 3600/m station throughput. | v3.0.0 |
-| **DistributeWarpers** | Automated interstellar warper refills for all logistics stations. | v1.1.0 |
+| **DistributeWarpers** | Automated interstellar warper refills for all logistics stations. | v1.1.1 |
 | **CloserStations** | Reduced minimum distance for logistics stations placement. | v1.1.0 |
 | **MaxLVLIncrease** | Extension of the infinite research level cap. | v1.1.0 |
 | **TechHashReduce** | Dynamic scaling of technology research costs. | v1.2.2 |

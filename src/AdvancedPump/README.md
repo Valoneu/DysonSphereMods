@@ -16,5 +16,5 @@ Hooks into `onFactoryFrameEnd` to scan Vein Collectors every 30 ticks; forces `E
 * **BepInEx**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

@@ -17,5 +17,5 @@ Postfixes `WarningSystem.WarningLogic` to zero out hidden signal counts. Prefixe
 * **BepInEx, CommonAPI**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

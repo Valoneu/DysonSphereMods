@@ -16,5 +16,5 @@ Overwrites the game's native tech-tree maximum definitions during initialization
 * **BepInEx**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

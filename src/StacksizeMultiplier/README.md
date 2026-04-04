@@ -17,5 +17,5 @@ Implements a custom `StacksizeMultiplierWindow` inheriting from native `WindowBa
 * **BepInEx, CommonAPI**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

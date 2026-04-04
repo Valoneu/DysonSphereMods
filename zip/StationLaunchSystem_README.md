@@ -17,5 +17,5 @@ Uses a 120-tick shell cache and 10-tick batch processing to minimize UPS lag. Pr
 * **BepInEx**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

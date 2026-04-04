@@ -1,6 +1,6 @@
 {
     "name": "DistributeWarpers",
-    "version_number": "1.1.0",
+    "version_number": "1.1.1",
     "website_url": "https://github.com/Valoneu/DysonSphereMods/tree/main/src/DistributeWarpers",
     "description": "Automates Space Warper distribution across a planet. Aggregates warpers from any station storage and automatically refills the internal warper slots of all Interstellar Logistics Stations (ILS) on that planet.",
     "dependencies": [

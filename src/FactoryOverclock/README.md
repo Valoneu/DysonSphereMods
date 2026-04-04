@@ -17,5 +17,5 @@ Uses Harmony transpilers to double-tick logistics (splitters/pilers) and pre-cal
 * **BepInEx, CommonAPI**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

@@ -17,5 +17,5 @@ Patches `UISpaceGuideEntry` to force text visibility and `UISpaceGuide.ClipEntry
 * **BepInEx**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

@@ -16,5 +16,5 @@ Uses an optimized `PlanetVeinCache` (rebuilt on changes) to identify veins and d
 * **BepInEx**
 
 ---
-**Game Version:** V0.10.34.28455
+**Game Version:** V0.10.34.28485
 **Developer:** Valoneu

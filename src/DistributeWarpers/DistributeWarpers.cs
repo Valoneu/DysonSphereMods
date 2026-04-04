@@ -11,7 +11,7 @@ namespace DistributeWarpers
     {
         public const string GUID = "com.Valoneu.DistributeWarpers";
         public const string NAME = "DistributeWarpers";
-        public const string VERSION = "1.1.0";
+        public const string VERSION = "1.1.1";
         public static ConfigEntry<bool> ModEnabled;
         public static ConfigEntry<int> TargetWarperCount;
         public static ConfigEntry<int> CheckInterval;
@@ -57,7 +57,6 @@ namespace DistributeWarpers
                 for (int fi = 0; fi < data.factoryCount; fi++) {
                     var factory = data.factories[fi];
                     if (factory?.transport == null) continue;
-                    int[] consumeReg = GameMain.statistics?.production?.factoryStatPool?[factory.index]?.consumeRegister;
                     int totalAvailable = 0;
                     for (int i = 1; i < factory.transport.stationCursor; i++) {
                         var st = factory.transport.stationPool[i];
@@ -74,7 +73,6 @@ namespace DistributeWarpers
                         int removed = TakeWarpersFromDepot(factory.transport, toAdd);
                         if (removed > 0) {
                             st.warperCount += removed; totalAvailable -= removed;
-                            if (consumeReg != null) { lock (consumeReg) consumeReg[WARPER_ID] += removed; }
                         }
                         if (totalAvailable <= 0) break;
                     }
