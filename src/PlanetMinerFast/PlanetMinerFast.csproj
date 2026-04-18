@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>PlanetMinerFast</Description>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <BepInExPluginGuid>com.Valoneu.PlanetMinerFast</BepInExPluginGuid>
     <BepInExPluginName>PlanetMinerFast</BepInExPluginName>
-    <BepInExPluginVersion>1.0.2</BepInExPluginVersion>
+    <BepInExPluginVersion>1.0.3</BepInExPluginVersion>
   </PropertyGroup>
 
   <ItemGroup>

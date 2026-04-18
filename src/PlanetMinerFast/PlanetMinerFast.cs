@@ -45,7 +45,8 @@ namespace PlanetMinerFast
         }
         private static PlanetVeinCache GetCache(PlanetFactory factory)
         {
-            if (factory == null || factory.index >= _veinCaches.Length) return new PlanetVeinCache();
+            if (factory == null) return new PlanetVeinCache();
+            if (factory.index < 0 || factory.index >= _veinCaches.Length) return new PlanetVeinCache();
             var cache = _veinCaches[factory.index];
             if (cache == null)
             {
@@ -56,8 +57,10 @@ namespace PlanetMinerFast
             {
                 cache.ItemToVeinIndices.Clear();
                 var veinPool = factory.veinPool;
+                if (veinPool == null) return cache;
                 int count = 0;
-                for (int i = 1; i < factory.veinCursor; i++)
+                int cursor = factory.veinCursor;
+                for (int i = 1; i < cursor && i < veinPool.Length; i++)
                 {
                     if (veinPool[i].id == i && veinPool[i].amount > 0 && veinPool[i].productId > 0)
                     {
@@ -82,7 +85,7 @@ namespace PlanetMinerFast
         [HarmonyPatch(typeof(PlanetFactory), nameof(PlanetFactory.RemoveVeinWithComponents))]
         private static void PlanetFactory_RemoveVein_Postfix(PlanetFactory __instance)
         {
-            if (__instance != null && __instance.index < _veinCaches.Length && _veinCaches[__instance.index] != null)
+            if (__instance != null && __instance.index >= 0 && __instance.index < _veinCaches.Length && _veinCaches[__instance.index] != null)
             {
                 _veinCaches[__instance.index].IsDirty = true; 
             }
@@ -104,10 +107,17 @@ namespace PlanetMinerFast
             if (miningSpeedScale <= 0.0001f) return;
             var cache = GetCache(factory);
             var transport = factory.transport;
-            var factoryProductionStat = GameMain.statistics.production.factoryStatPool[factory.index];
+            if (transport == null || transport.stationPool == null) return;
+            FactoryProductionStat factoryProductionStat = null;
+            if (GameMain.statistics != null && GameMain.statistics.production != null && 
+                factory.index >= 0 && factory.index < GameMain.statistics.production.factoryStatPool.Length)
+            {
+                factoryProductionStat = GameMain.statistics.production.factoryStatPool[factory.index];
+            }
             int[] productRegister = factoryProductionStat?.productRegister;
             float miningCostRate = history.miningCostRate;
             var veinPool = factory.veinPool;
+            if (veinPool == null) return;
             foreach (var sc in transport.stationPool)
             {
                 if (sc == null || sc.id == 0 || sc.storage == null) continue;
@@ -134,6 +144,7 @@ namespace PlanetMinerFast
                         float amountPerVein = 1f * miningSpeedScale * timeFactor;
                         foreach (int veinIdx in indices)
                         {
+                            if (veinIdx < 0 || veinIdx >= veinPool.Length) continue;
                             if (veinPool[veinIdx].id == 0 || veinPool[veinIdx].amount <= 0) continue;
                             if (isOil) 
                             {
@@ -173,6 +184,7 @@ namespace PlanetMinerFast
         }
         private static bool TryMineVein(VeinData[] veinPool, int index, float miningRate, float minedAmount, PlanetFactory factory, PlanetVeinCache cache)
         {
+            if (index < 0 || index >= veinPool.Length) return false;
             if (veinPool[index].id == 0 || veinPool[index].amount <= 0) return false;
             if (miningRate > 0.00001f)
             {
@@ -183,8 +195,15 @@ namespace PlanetMinerFast
                     cache.CostFrac -= amountToConsume;
                     if (amountToConsume > veinPool[index].amount) amountToConsume = veinPool[index].amount;
                     veinPool[index].amount -= amountToConsume;
-                    factory.veinGroups[veinPool[index].groupIndex].amount -= amountToConsume;
-                    factory.veinAnimPool[index].time = veinPool[index].amount >= 20000 ? 0.0f : (float)(1.0 - (double)veinPool[index].amount * 4.9999998736893758E-05);
+                    int groupIdx = veinPool[index].groupIndex;
+                    if (factory.veinGroups != null && groupIdx >= 0 && groupIdx < factory.veinGroups.Length)
+                    {
+                        factory.veinGroups[groupIdx].amount -= amountToConsume;
+                    }
+                    if (factory.veinAnimPool != null && index >= 0 && index < factory.veinAnimPool.Length)
+                    {
+                        factory.veinAnimPool[index].time = veinPool[index].amount >= 20000 ? 0.0f : (float)(1.0 - (double)veinPool[index].amount * 4.9999998736893758E-05);
+                    }
                     if (veinPool[index].amount <= 0) 
                     {
                         int type = (int)veinPool[index].type;

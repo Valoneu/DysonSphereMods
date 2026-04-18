@@ -11,7 +11,7 @@ namespace CopyPasteStations
     {
         public const string GUID = "com.Valoneu.CopyPasteStations";
         public const string NAME = "CopyPasteStations";
-        public const string VERSION = "1.0.2";
+        public const string VERSION = "1.0.4";
         private void Awake()
         {
             Log.Init(Logger);
@@ -63,20 +63,25 @@ namespace CopyPasteStations
             for (int i = 0; i < slotCount; i++)
             {
                 var slot = _clipboard[i];
-                if (station.storage[i].itemId != slot.ItemId && station.storage[i].count > 0)
+                if (station.storage[i].itemId != slot.ItemId)
                 {
-                    int itemId = station.storage[i].itemId;
-                    int count = station.storage[i].count;
-                    int inc = station.storage[i].inc;
-                    if (player != null)
+                    if (station.storage[i].count > 0)
                     {
-                        int added = player.package.AddItem(itemId, count, inc, out int remainInc);
-                        count -= added;
+                        int itemId = station.storage[i].itemId;
+                        int count = station.storage[i].count;
+                        int inc = station.storage[i].inc;
+                        if (player != null)
+                        {
+                            int added = player.package.AddItem(itemId, count, inc, out int remainInc);
+                            count -= added;
+                        }
+                        if (count > 0)
+                        {
+                            GameMain.data.trashSystem.AddTrash(itemId, count, inc, station.entityId);
+                        }
                     }
-                    if (count > 0)
-                    {
-                        GameMain.data.trashSystem.AddTrash(itemId, count, inc, station.entityId);
-                    }
+                    station.storage[i].count = 0;
+                    station.storage[i].inc = 0;
                 }
                 station.storage[i].itemId = slot.ItemId;
                 station.storage[i].localLogic = slot.LocalLogic;
@@ -120,6 +125,11 @@ namespace CopyPasteStations
             var stationWindow = UIRoot.instance?.uiGame?.stationWindow;
             if (stationWindow != null && stationWindow.active)
                 stationWindow.OnStationIdChange();
+            __instance.transport.RefreshStationTraffic(station.id);
+            if (station.isStellar)
+            {
+                GameMain.data.galacticTransport.RefreshTraffic(station.gid);
+            }
         }
         private static StationComponent GetStation(PlanetFactory factory, int objectId)
         {
