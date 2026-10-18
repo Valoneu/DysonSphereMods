@@ -208,14 +208,25 @@ namespace PlanetMinerFast
                     {
                         int type = (int)veinPool[index].type;
                         int groupIndex = (int)veinPool[index].groupIndex;
+                        int productId = veinPool[index].productId;
                         Vector3 pos = veinPool[index].pos;
                         factory.RemoveVeinWithComponents(index);
                         factory.RecalculateVeinGroup(groupIndex);
-                        factory.NotifyVeinExhausted(type, groupIndex, pos);
+                        factory.NotifyVeinExhausted(type, groupIndex, pos, !HasVeinsLeft(veinPool, cache, productId));
                     }
                 }
             }
             return true;
+        }
+        // The station mines every vein of the ore, so it has lost all veins once none are left on the planet.
+        private static bool HasVeinsLeft(VeinData[] veinPool, PlanetVeinCache cache, int productId)
+        {
+            if (!cache.ItemToVeinIndices.TryGetValue(productId, out var indices)) return false;
+            foreach (int i in indices)
+            {
+                if (i >= 0 && i < veinPool.Length && veinPool[i].id != 0 && veinPool[i].amount > 0) return true;
+            }
+            return false;
         }
         private static void GenerateEnergyFromAnySlot(StationComponent sc)
         {
