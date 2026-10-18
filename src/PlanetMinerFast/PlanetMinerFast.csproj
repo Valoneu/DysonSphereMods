@@ -10,4 +10,8 @@
   <ItemGroup>
     <Compile Include="..\Shared\Shared.cs" Link="Shared.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- NotifyVeinExhausted gained a parameter in 0.10.35 -->
+    <PackageReference Update="DysonSphereProgram.GameLibs" Version="0.10.35.29145-r.0" />
+  </ItemGroup>
 </Project>
